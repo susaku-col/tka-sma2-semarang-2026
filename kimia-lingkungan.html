@@ -1,0 +1,1216 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kimia Lingkungan — TKA Kimia SMA Negeri 2 Semarang</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Sans+3:ital,wght@0,300;0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+    :root {
+        --bg: #0b1a17; --bg2: #132a24; --card: #1a3a32; --card2: #1e4a3f;
+        --text: #e8f0ec; --muted: #8aa8a0; --border: #2a4a42; --accent: #d4a04a;
+        --success: #34d399; --error: #f87171; --glow: rgba(212, 160, 74, 0.15);
+        --danger: #ef4444; --warn: #fbbf24;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+        font-family: 'Source Sans 3', sans-serif;
+        background: var(--bg); color: var(--text);
+        min-height: 100vh; padding-top: 52px;
+    }
+    .fd { font-family: 'Playfair Display', serif; }
+    .bg-noise {
+        position: fixed; top:0; left:0; right:0; bottom:0;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+        pointer-events: none; z-index: 0;
+    }
+    .hg {
+        position: absolute; width:300px; height:300px;
+        border-radius: 50%; filter: blur(100px);
+        opacity: 0.15; pointer-events: none;
+    }
+    .badge {
+        display: inline-flex; align-items: center; gap: 6px;
+        padding: 4px 14px; border-radius: 100px;
+        font-size: 0.75rem; font-weight: 600;
+        background: rgba(212,160,74,0.12); color: var(--accent);
+    }
+    .glow-card {
+        background: var(--card); border: 1px solid var(--border);
+        border-radius: 12px; padding: 16px 18px; cursor: pointer;
+        transition: all 0.25s ease; display: flex;
+        align-items: center; gap: 12px;
+        text-decoration: none; color: inherit;
+    }
+    .glow-card:hover {
+        border-color: var(--accent); background: var(--card2);
+        box-shadow: 0 0 20px var(--glow);
+    }
+    .bp {
+        background: var(--accent); color: #0b1a17; border: none;
+        padding: 8px 18px; border-radius: 30px; font-weight: 700;
+        font-size: 0.85rem; cursor: pointer; transition: all 0.25s ease;
+        display: inline-flex; align-items: center; gap: 6px;
+    }
+    .bp:hover { background: #e8b84a; transform: scale(1.02); }
+    .bs {
+        background: transparent; color: var(--text);
+        border: 1px solid var(--border); padding: 8px 18px;
+        border-radius: 30px; font-weight: 600; font-size: 0.85rem;
+        cursor: pointer; transition: all 0.25s ease;
+        display: inline-flex; align-items: center; gap: 6px;
+    }
+    .bs:hover { border-color: var(--accent); background: var(--card2); }
+    .view { display: none; }
+    .view.active { display: block; }
+    .stim {
+        background: var(--bg2); padding: 12px 16px;
+        border-radius: 8px; border-left: 3px solid var(--accent);
+        margin-bottom: 12px; font-size: 0.9rem;
+        line-height: 1.6; color: var(--muted);
+    }
+    .table-wrap {
+        overflow-x: auto; margin: 8px 0;
+        border-radius: 8px; border: 1px solid var(--border);
+    }
+    table.soal-table {
+        width: 100%; border-collapse: collapse;
+        font-size: 0.8rem; background: var(--bg2);
+    }
+    table.soal-table th {
+        background: var(--card); color: var(--accent);
+        font-weight: 600; padding: 6px 10px;
+        border: 1px solid var(--border); text-align: center;
+    }
+    table.soal-table td {
+        padding: 6px 10px; border: 1px solid var(--border);
+        text-align: center; color: var(--text);
+    }
+    table.soal-table tr:hover { background: rgba(212,160,74,0.05); }
+    .figure-wrap {
+        display: flex; flex-direction: column; align-items: center;
+        margin: 8px 0; padding: 10px; background: var(--bg2);
+        border-radius: 8px; border: 1px solid var(--border);
+    }
+    .figure-wrap svg { max-width: 100%; height: auto; }
+    .figure-caption {
+        font-size: 0.7rem; color: var(--muted);
+        margin-top: 4px; text-align: center;
+    }
+    .chem-eq {
+        display: block; text-align: center;
+        padding: 0.5rem 0.75rem;
+        font-family: "Times New Roman", serif;
+        font-size: 1rem; background: var(--bg2);
+        border-radius: 0.5rem; border: 1px solid var(--border);
+        margin: 0.5rem 0; color: var(--text);
+    }
+    .space-y-2\.5 > * + * { margin-top: 8px; }
+    .ob {
+        display: flex; align-items: center; gap: 10px;
+        width: 100%; padding: 8px 14px; border-radius: 8px;
+        border: 1px solid var(--border); background: var(--bg2);
+        color: var(--text); cursor: pointer;
+        transition: all 0.2s ease; font-size: 0.9rem; text-align: left;
+    }
+    .ob:hover { border-color: var(--muted); }
+    .ob.sel { border-color: var(--accent); background: rgba(212,160,74,0.1); }
+    .ob .ck {
+        width: 20px; height: 20px; min-width: 20px;
+        border-radius: 4px; border: 2px solid var(--border);
+        display: flex; align-items: center; justify-content: center;
+        font-size: 0.7rem; background: var(--bg);
+    }
+    .ob.sel .ck { border-color: var(--accent); background: var(--accent); }
+    .ob.ok .ck { border-color: var(--success); background: var(--success); }
+    .ob.no .ck { border-color: var(--error); background: var(--error); }
+    .modal-bg {
+        display: none; position: fixed; inset: 0;
+        background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
+        z-index: 50; justify-content: center; align-items: center;
+        padding: 20px;
+    }
+    .modal-bg.open { display: flex; }
+    .toast {
+        position: fixed; bottom: 30px; left: 50%;
+        transform: translateX(-50%); padding: 12px 28px;
+        border-radius: 12px; font-weight: 600; z-index: 100;
+        background: var(--card); border: 1px solid var(--border);
+        color: var(--text); max-width: 90%; text-align: center;
+    }
+    .hots-badge {
+        display: inline-block; padding: 0.15rem 0.5rem;
+        border-radius: 999px; font-size: 0.6rem;
+        font-weight: 700; margin-left: 0.5rem;
+    }
+    .hots-c2 { background: rgba(52,211,153,0.2); color: #34d399; }
+    .hots-c3 { background: rgba(251,191,36,0.2); color: #fbbf24; }
+    .hots-c4 { background: rgba(249,115,22,0.2); color: #f97316; }
+    .hots-c5 { background: rgba(239,68,68,0.2); color: #ef4444; }
+    .hots-c6 { background: rgba(139,92,246,0.2); color: #8b5cf6; }
+    .env-icon {
+        display: inline-flex; align-items: center; justify-content: center;
+        width: 40px; height: 40px; border-radius: 10px;
+        font-size: 1.1rem;
+    }
+    .env-icon.air { background: rgba(96,165,250,0.12); color: #60a5fa; }
+    .env-icon.water { background: rgba(45,212,191,0.12); color: #2dd4bf; }
+    .env-icon.soil { background: rgba(180,120,60,0.15); color: #b4783c; }
+    .env-icon.global { background: rgba(239,68,68,0.12); color: #ef4444; }
+    .env-icon.green { background: rgba(52,211,153,0.12); color: #34d399; }
+    .expbox {
+        margin-top: 14px; padding: 14px 18px;
+        border-radius: 8px; font-size: 0.9rem; line-height: 1.7;
+    }
+    .expbox.good {
+        background: rgba(52,211,153,0.06);
+        border-left: 4px solid var(--success);
+    }
+    .expbox.bad {
+        background: rgba(248,113,113,0.06);
+        border-left: 4px solid var(--error);
+    }
+    @media (max-width: 640px) {
+        .ob { font-size: 0.8rem; padding: 6px 12px; }
+        .bp, .bs { font-size: 0.75rem; padding: 6px 14px; }
+        .glow-card { padding: 12px 14px; }
+    }
+</style>
+</head>
+<body>
+<div class="bg-noise"></div>
+
+<nav class="fixed top-0 left-0 right-0 z-40 backdrop-blur-md border-b" style="background:rgba(11,26,23,.88);border-color:var(--border)">
+<div class="max-w-5xl mx-auto px-4 flex items-center justify-between" style="height:52px">
+<button onclick="location.href='index.html'" class="flex items-center gap-2 text-sm font-bold tracking-wide" style="color:var(--accent);background:none;border:none;cursor:pointer;">
+<i class="fa-solid fa-arrow-left"></i><span class="hidden sm:inline">Kembali</span>
+</button>
+<div class="flex items-center gap-3">
+<span class="hidden sm:flex items-center gap-1.5 text-xs" style="color:var(--muted)">
+<i class="fa-solid fa-trophy" style="color:var(--accent)"></i><span id="nst">0/0</span>
+</span>
+<button onclick="location.href='index.html'" class="text-sm px-2.5 py-1 rounded" style="color:var(--muted);background:none;border:none;cursor:pointer;">
+<i class="fa-solid fa-house"></i>
+</button>
+</div>
+</div>
+</nav>
+
+<!-- HOME -->
+<div id="vHome" class="view active pt-16 pb-12 px-4">
+<div class="max-w-4xl mx-auto">
+    <div class="relative rounded-2xl overflow-hidden mb-8 p-7 md:p-10" style="background:linear-gradient(135deg,var(--card),var(--card2))">
+        <div class="hg" style="background:#34d399;top:-180px;right:-80px"></div>
+        <div class="hg" style="background:#60a5fa;bottom:-180px;left:-80px"></div>
+        <div class="relative z-10">
+            <div class="badge mb-3"><i class="fa-solid fa-leaf"></i> Kimia Lingkungan</div>
+            <h1 class="fd text-3xl md:text-4xl font-black mb-2 leading-tight">Kimia <span style="color:var(--accent)">Lingkungan</span></h1>
+            <p class="text-sm md:text-base max-w-lg" style="color:var(--muted);line-height:1.65">Latihan soal HOTS level C2-C6 tentang pencemaran udara, air, tanah, efek rumah kaca, hujan asam, penipisan ozon, dan kimia hijau.</p>
+            <div class="flex flex-wrap gap-2 mt-4">
+                <span class="badge hots-badge hots-c2">C2 - Pemahaman</span>
+                <span class="badge hots-badge hots-c3">C3 - Menganalisis</span>
+                <span class="badge hots-badge hots-c4">C4 - Mengevaluasi</span>
+                <span class="badge hots-badge hots-c5">C5 - Mencipta</span>
+                <span class="badge hots-badge hots-c6">C6 - Menilai</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- KATEGORI -->
+    <div class="flex flex-wrap gap-2 mb-4">
+        <span class="env-icon air" title="Pencemaran Udara"><i class="fa-solid fa-wind"></i></span>
+        <span class="env-icon water" title="Pencemaran Air"><i class="fa-solid fa-water"></i></span>
+        <span class="env-icon soil" title="Pencemaran Tanah"><i class="fa-solid fa-mound"></i></span>
+        <span class="env-icon global" title="Pemanasan Global"><i class="fa-solid fa-temperature-high"></i></span>
+        <span class="env-icon green" title="Kimia Hijau"><i class="fa-solid fa-recycle"></i></span>
+    </div>
+
+    <div class="flex flex-wrap gap-2.5 mb-6">
+        <button onclick="startQuiz()" class="bp"><i class="fa-solid fa-play"></i> Mulai Quiz Semua Soal</button>
+        <button onclick="startRandom()" class="bs"><i class="fa-solid fa-shuffle"></i> Quiz Acak 10 Soal</button>
+        <button onclick="startWrong()" class="bs" id="bWR" style="display:none"><i class="fa-solid fa-rotate-left"></i> Ulangi Salah</button>
+        <button onclick="resetAll()" class="bs"><i class="fa-solid fa-trash-can"></i> Reset</button>
+    </div>
+
+    <div class="flex flex-wrap gap-2 mb-4">
+        <button onclick="filterLevel('all')" class="bs text-xs" id="filterAll" style="background:rgba(212,160,74,.15)">Semua</button>
+        <button onclick="filterLevel('c2')" class="bs text-xs" id="filterC2">C2</button>
+        <button onclick="filterLevel('c3')" class="bs text-xs" id="filterC3">C3</button>
+        <button onclick="filterLevel('c4')" class="bs text-xs" id="filterC4">C4</button>
+        <button onclick="filterLevel('c5')" class="bs text-xs" id="filterC5">C5</button>
+        <button onclick="filterLevel('c6')" class="bs text-xs" id="filterC6">C6</button>
+    </div>
+
+    <div id="qList"></div>
+</div>
+</div>
+
+<!-- QUIZ -->
+<div id="vQuiz" class="view pt-16 pb-12 px-4">
+<div class="max-w-3xl mx-auto">
+    <div class="flex items-center justify-between mb-3">
+        <button onclick="openExit()" class="text-sm flex items-center gap-1.5" style="color:var(--muted);background:none;border:none;cursor:pointer;"><i class="fa-solid fa-xmark"></i>Keluar</button>
+        <div class="flex items-center gap-2.5">
+            <span id="qCtr" class="text-sm font-semibold" style="color:var(--muted)"></span>
+            <span id="qTyp" class="badge" style="background:rgba(212,160,74,.12);color:var(--accent);font-size:0.7rem;"></span>
+            <span id="qLevel" class="badge" style="background:var(--bg2);color:var(--muted);font-size:0.7rem;"></span>
+        </div>
+    </div>
+    <div class="w-full h-1.5 rounded-full mb-5" style="background:var(--border)">
+        <div id="qBar" class="h-full rounded-full" style="background:var(--accent);width:0%"></div>
+    </div>
+    <div id="qArea"></div>
+    <div class="flex items-center justify-between mt-7">
+        <button id="bPrv" onclick="qPrev()" class="bs" style="visibility:hidden"><i class="fa-solid fa-chevron-left mr-1"></i>Sebelumnya</button>
+        <button id="bNxt" onclick="qNext()" class="bp">Selanjutnya <i class="fa-solid fa-chevron-right ml-1"></i></button>
+    </div>
+</div>
+</div>
+
+<!-- RESULTS -->
+<div id="vRes" class="view pt-16 pb-12 px-4">
+<div class="max-w-3xl mx-auto text-center">
+    <div class="mb-7">
+        <svg class="mx-auto mb-3" style="transform:rotate(-90deg)" width="130" height="130" viewBox="0 0 130 130">
+            <circle cx="65" cy="65" r="55" fill="none" stroke="var(--border)" stroke-width="7"/>
+            <circle id="rRing" cx="65" cy="65" r="55" fill="none" stroke="var(--accent)" stroke-width="7" stroke-linecap="round" stroke-dasharray="345.6" stroke-dashoffset="345.6"/>
+        </svg>
+        <div class="text-3xl font-bold" style="color:var(--accent)" id="rPct">0%</div>
+        <div class="text-sm mt-0.5" style="color:var(--muted)" id="rLbl">—</div>
+    </div>
+    <div class="grid grid-cols-3 gap-3 mb-7">
+        <div class="rounded-xl p-3.5" style="background:var(--card);border:1px solid var(--border)">
+            <div class="text-2xl font-bold" style="color:var(--success)" id="rOk">0</div>
+            <div class="text-xs" style="color:var(--muted)">Benar</div>
+        </div>
+        <div class="rounded-xl p-3.5" style="background:var(--card);border:1px solid var(--border)">
+            <div class="text-2xl font-bold" style="color:var(--error)" id="rNo">0</div>
+            <div class="text-xs" style="color:var(--muted)">Salah</div>
+        </div>
+        <div class="rounded-xl p-3.5" style="background:var(--card);border:1px solid var(--border)">
+            <div class="text-2xl font-bold" id="rTot">0</div>
+            <div class="text-xs" style="color:var(--muted)">Total</div>
+        </div>
+    </div>
+    <div class="flex flex-wrap justify-center gap-2.5">
+        <button onclick="location.href='index.html'" class="bs"><i class="fa-solid fa-house mr-1"></i>Beranda</button>
+        <button onclick="revWrong()" class="bp" id="bRW" style="display:none"><i class="fa-solid fa-eye mr-1"></i>Review Salah</button>
+        <button onclick="retryQ()" class="bs"><i class="fa-solid fa-rotate-left mr-1"></i>Ulangi</button>
+    </div>
+</div>
+</div>
+
+<!-- REVIEW -->
+<div id="vRev" class="view pt-16 pb-12 px-4">
+<div class="max-w-3xl mx-auto">
+    <button onclick="backRev()" class="flex items-center gap-2 text-sm mb-5" style="color:var(--muted);background:none;border:none;cursor:pointer;"><i class="fa-solid fa-arrow-left"></i>Kembali</button>
+    <div id="revA"></div>
+    <div class="flex justify-center gap-2.5 mt-7">
+        <button id="rvPr" onclick="rvNav(-1)" class="bs"><i class="fa-solid fa-chevron-left mr-1"></i>Sebelumnya</button>
+        <button id="rvNx" onclick="rvNav(1)" class="bp">Selanjutnya <i class="fa-solid fa-chevron-right ml-1"></i></button>
+    </div>
+</div>
+</div>
+
+<div id="exMod" class="modal-bg">
+    <div class="rounded-xl p-5 max-w-sm w-full" style="background:var(--card);border:1px solid var(--border)">
+        <h3 class="fd text-lg font-bold mb-1.5">Keluar dari Quiz?</h3>
+        <p class="text-sm mb-4" style="color:var(--muted)">Progress quiz ini akan hilang.</p>
+        <div class="flex gap-2.5 justify-end">
+            <button onclick="closeMod()" class="bs text-sm">Batal</button>
+            <button onclick="doExit()" class="text-sm font-bold px-4 py-2 rounded-lg border-none cursor-pointer" style="background:var(--error);color:#fff">Keluar</button>
+        </div>
+    </div>
+</div>
+
+<div id="toast" class="toast" style="display:none"></div>
+
+<script>
+// ================================================================
+// DATA SOAL KIMIA LINGKUNGAN - HOTS C2-C6
+// ================================================================
+var QS = [];
+
+// ================================================================
+// LEVEL C2 — Pemahaman Dasar (4 soal)
+// ================================================================
+
+// id:1 - Identifikasi pencemar udara
+QS.push({
+  id: 1, topic: "lingkungan", type: "mcma", level: "c2",
+  stim: `
+    <div class="stim">
+      <p>Data polutan udara dan sumber utamanya:</p>
+    </div>
+    <div class="table-wrap">
+      <table class="soal-table">
+        <tr><th>Polutan</th><th>Sumber Utama</th></tr>
+        <tr><td>CO</td><td>Pembakaran tidak sempurna</td></tr>
+        <tr><td>SO₂</td><td>Pembakaran batu bara</td></tr>
+        <tr><td>NOₓ</td><td>Kendaraan bermotor</td></tr>
+        <tr><td>CFC</td><td>Pendingin & aerosol</td></tr>
+      </table>
+    </div>
+  `,
+  q: "Pernyataan BENAR tentang polutan udara tersebut adalah... (Pilih 3 jawaban benar)",
+  opts: [
+    "CO dihasilkan dari pembakaran tidak sempurna bahan bakar karbon",
+    "SO₂ dapat menyebabkan hujan asam jika bereaksi dengan uap air",
+    "NOₓ hanya dihasilkan dari pembakaran batu bara",
+    "CFC dapat merusak lapisan ozon di stratosfer",
+    "CO tidak berbahaya bagi manusia karena tidak berbau",
+    "SO₂ tidak larut dalam air sehingga tidak mencemari"
+  ],
+  ans: [0, 1, 3],
+  exp: "CO dari pembakaran tidak sempurna (+). SO₂ + H₂O → H₂SO₃/H₂SO₄ (hujan asam) (+). CFC merusak ozon (+). NOₓ juga dari kendaraan, bukan hanya batu bara. CO berbahaya karena mengikat hemoglobin."
+});
+
+// id:2 - Efek rumah kaca
+QS.push({
+  id: 2, topic: "lingkungan", type: "mcma", level: "c2",
+  q: "Gas-gas berikut yang termasuk gas rumah kaca adalah... (Pilih 3 jawaban benar)",
+  opts: [
+    "CO₂ (karbon dioksida)",
+    "CH₄ (metana)",
+    "N₂ (nitrogen)",
+    "N₂O (dinitrogen oksida)",
+    "O₂ (oksigen)",
+    "Ar (argon)"
+  ],
+  ans: [0, 1, 3],
+  exp: "Gas rumah kaca: CO₂, CH₄, N₂O, H₂O (uap air), O₃, CFC. N₂, O₂, dan Ar bukan gas rumah kaca karena tidak menyerap radiasi infra merah."
+});
+
+// id:3 - Hujan asam
+QS.push({
+  id: 3, topic: "lingkungan", type: "single", level: "c2",
+  stim: `
+    <div class="chem-eq">
+      SO₂ + H₂O → H₂SO₃<br>
+      SO₃ + H₂O → H₂SO₄<br>
+      NO₂ + H₂O → HNO₃ + HNO₂
+    </div>
+  `,
+  q: "Reaksi-reaksi di atas menunjukkan proses terbentuknya...",
+  opts: [
+    "Efek rumah kaca",
+    "Hujan asam",
+    "Penipisan ozon",
+    "Eutrofikasi",
+    "Pemanasan global"
+  ],
+  ans: 1,
+  exp: "SO₂ dan NO₂ bereaksi dengan uap air membentuk asam sulfat (H₂SO₄) dan asam nitrat (HNO₃) yang turun sebagai hujan asam (pH < 5,6)."
+});
+
+// id:4 - Pencemaran air
+QS.push({
+  id: 4, topic: "lingkungan", type: "single", level: "c2",
+  q: "Penyebab utama eutrofikasi pada perairan adalah...",
+  opts: [
+    "Pembuangan logam berat dari industri",
+    "Limbah organik yang mengandung nitrogen dan fosfor berlebih",
+    "Tumpahan minyak dari kapal tanker",
+    "Peningkatan suhu air akibat pembangkit listrik",
+    "Pencemaran plastik mikro"
+  ],
+  ans: 1,
+  exp: "Eutrofikasi (pengayaan nutrien) disebabkan oleh kelebihan nitrogen dan fosfor (dari pupuk atau detergen) yang memicu pertumbuhan alga berlebih (blooming), kemudian pembusukan menghabiskan oksigen terlarut."
+});
+
+// ================================================================
+// LEVEL C3 — Menganalisis (5 soal)
+// ================================================================
+
+// C3.1 - Analisis siklus karbon
+QS.push({
+  id: 3001, topic: "lingkungan", type: "mcma", level: "c3",
+  stim: `
+    <div class="figure-wrap">
+      <svg width="420" height="220" viewBox="0 0 420 220">
+        <text x="180" y="20" fill="#d4a04a" font-size="11" font-weight="bold">Siklus Karbon</text>
+        <rect x="30" y="50" width="80" height="40" rx="5" fill="rgba(52,211,153,0.15)" stroke="#34d399"/>
+        <text x="55" y="75" fill="#34d399" font-size="9">Atmosfer</text>
+        <text x="60" y="88" fill="#34d399" font-size="8">CO₂</text>
+        <rect x="160" y="50" width="80" height="40" rx="5" fill="rgba(96,165,250,0.15)" stroke="#60a5fa"/>
+        <text x="180" y="75" fill="#60a5fa" font-size="9">Fotosintesis</text>
+        <rect x="290" y="50" width="80" height="40" rx="5" fill="rgba(251,191,36,0.15)" stroke="#fbbf24"/>
+        <text x="310" y="75" fill="#fbbf24" font-size="9">Tumbuhan</text>
+        <rect x="160" y="140" width="80" height="40" rx="5" fill="rgba(248,113,113,0.15)" stroke="#f87171"/>
+        <text x="180" y="165" fill="#f87171" font-size="9">Respirasi</text>
+        <rect x="290" y="140" width="80" height="40" rx="5" fill="rgba(139,92,246,0.15)" stroke="#8b5cf6"/>
+        <text x="310" y="165" fill="#8b5cf6" font-size="9">Fosil</text>
+        <line x1="110" y1="70" x2="160" y2="70" stroke="#8fa89e" stroke-width="1.5" marker-end="url(#arrow)"/>
+        <line x1="240" y1="70" x2="290" y2="70" stroke="#8fa89e" stroke-width="1.5" marker-end="url(#arrow)"/>
+        <line x1="330" y1="90" x2="330" y2="140" stroke="#8fa89e" stroke-width="1.5" marker-end="url(#arrow)"/>
+        <line x1="290" y1="160" x2="240" y2="160" stroke="#8fa89e" stroke-width="1.5" marker-end="url(#arrow)"/>
+        <line x1="200" y1="140" x2="80" y2="90" stroke="#8fa89e" stroke-width="1.5" marker-end="url(#arrow)"/>
+        <defs>
+          <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L6,3 z" fill="#8fa89e"/>
+          </marker>
+        </defs>
+      </svg>
+      <div class="figure-caption">Siklus karbon di alam</div>
+    </div>
+  `,
+  q: "Analisis yang PALING TEPAT tentang siklus karbon di atas adalah... (Pilih 2 jawaban benar)",
+  opts: [
+    "Pembakaran bahan bakar fosil melepaskan CO₂ yang tersimpan jutaan tahun ke atmosfer",
+    "Fotosintesis menyerap CO₂ dari atmosfer dan mengubahnya menjadi senyawa organik",
+    "Respirasi menyerap CO₂ dari atmosfer untuk menghasilkan energi",
+    "Siklus karbon tidak dipengaruhi oleh aktivitas manusia",
+    "Fosil tidak berkontribusi pada siklus karbon"
+  ],
+  ans: [0, 1],
+  exp: "Pembakaran fosil melepas CO₂ (+). Fotosintesis menyerap CO₂ (+). Respirasi MELEPAS CO₂ (bukan menyerap). Aktivitas manusia sangat memengaruhi siklus karbon. Fosil berkontribusi besar."
+});
+
+// C3.2 - Analisis pemanasan global
+QS.push({
+  id: 3002, topic: "lingkungan", type: "mcma", level: "c3",
+  stim: `
+    <div class="table-wrap">
+      <table class="soal-table">
+        <tr><th>Gas</th><th>Kontribusi (%)</th><th>Waktu Tinggal (tahun)</th><th>Potensi Pemanasan (GWP)</th></tr>
+        <tr><td>CO₂</td><td>55</td><td>50-200</td><td>1</td></tr>
+        <tr><td>CH₄</td><td>15</td><td>12</td><td>25</td></tr>
+        <tr><td>N₂O</td><td>6</td><td>114</td><td>298</td></tr>
+        <tr><td>CFC-12</td><td>24</td><td>100</td><td>10.900</td></tr>
+      </table>
+    </div>
+  `,
+  q: "Analisis yang PALING TEPAT tentang data gas rumah kaca di atas adalah... (Pilih 2 jawaban benar)",
+  opts: [
+    "CO₂ memiliki kontribusi terbesar (55%) meskipun GWP-nya paling rendah",
+    "CFC-12 hanya berkontribusi 24% tetapi GWP-nya sangat besar (10.900×)",
+    "CH₄ adalah gas rumah kaca paling berbahaya karena GWP tertinggi",
+    "N₂O memiliki waktu tinggal paling lama dan GWP paling tinggi",
+    "Semua gas memiliki kontribusi yang sama terhadap pemanasan global"
+  ],
+  ans: [0, 1],
+  exp: "CO₂ kontribusi 55% (terbesar) tapi GWP=1. CFC-12 kontribusi 24% tapi GWP=10.900 (sangat tinggi). CH₄ GWP=25 (bukan tertinggi). N₂O waktu tinggal 114 tahun (bukan paling lama)."
+});
+
+// C3.3 - Analisis penipisan ozon
+QS.push({
+  id: 3003, topic: "lingkungan", type: "single", level: "c3",
+  stim: `
+    <div class="chem-eq">
+      CF₂Cl₂ + UV → CF₂Cl• + Cl•<br>
+      Cl• + O₃ → ClO• + O₂<br>
+      ClO• + O → Cl• + O₂
+    </div>
+    <div style="font-size:0.85rem;color:var(--muted);margin-top:0.5rem;">
+      <i class="fa-solid fa-info-circle"></i> Satu atom Cl dapat menghancurkan ribuan molekul O₃.
+    </div>
+  `,
+  q: "Analisis yang PALING TEPAT tentang reaksi di atas adalah...",
+  opts: [
+    "Cl• bertindak sebagai katalis dalam perusakan ozon",
+    "CFC tidak berbahaya bagi lapisan ozon",
+    "O₃ terbentuk dari reaksi ClO• + O",
+    "Atom Cl habis bereaksi setelah menghancurkan satu O₃",
+    "UV tidak berperan dalam reaksi ini"
+  ],
+  ans: 0,
+  exp: "Cl• berperan sebagai katalis: masuk di awal, terbentuk kembali di akhir (ClO• + O → Cl• + O₂). Satu Cl• dapat menghancurkan ribuan O₃."
+});
+
+// C3.4 - Analisis pencemaran air
+QS.push({
+  id: 3004, topic: "lingkungan", type: "mcma", level: "c3",
+  stim: `
+    <div class="table-wrap">
+      <table class="soal-table">
+        <tr><th>Parameter</th><th>Sungai A</th><th>Sungai B</th><th>Standar</th></tr>
+        <tr><td>DO (mg/L)</td><td>2</td><td>7</td><td>≥ 5</td></tr>
+        <tr><td>BOD (mg/L)</td><td>15</td><td>3</td><td>≤ 5</td></tr>
+        <tr><td>E. coli (per 100 mL)</td><td>1000</td><td>50</td><td>≤ 100</td></tr>
+        <tr><td>pH</td><td>5,2</td><td>6,8</td><td>6,5-8,5</td></tr>
+      </table>
+    </div>
+  `,
+  q: "Analisis yang PALING TEPAT tentang kualitas air sungai di atas adalah... (Pilih 2 jawaban benar)",
+  opts: [
+    "Sungai A tercemar berat karena DO rendah dan BOD tinggi (indikasi limbah organik)",
+    "Sungai B masih memenuhi standar untuk semua parameter yang diuji",
+    "Sungai A lebih baik dari sungai B karena DO-nya rendah",
+    "Sungai B tercemar karena E. coli 50/100 mL",
+    "pH sungai A normal untuk perairan"
+  ],
+  ans: [0, 1],
+  exp: "Sungai A: DO 2 (rendah), BOD 15 (tinggi) → tercemar berat. Sungai B: DO 7, BOD 3, E. coli 50, pH 6,8 → semua memenuhi standar."
+});
+
+// C3.5 - Analisis logam berat
+QS.push({
+  id: 3005, topic: "lingkungan", type: "mcma", level: "c3",
+  stim: `
+    <div class="stim">
+      <p>Logam berat seperti Pb, Hg, Cd, dan Cr dapat mencemari perairan. Logam-logam ini dapat masuk ke rantai makanan melalui biomagnifikasi.</p>
+    </div>
+  `,
+  q: "Analisis yang PALING TEPAT tentang logam berat di perairan adalah... (Pilih 2 jawaban benar)",
+  opts: [
+    "Logam berat tidak dapat terdegradasi dan terakumulasi dalam tubuh organisme",
+    "Biomagnifikasi menyebabkan konsentrasi logam berat meningkat pada tingkat trofik yang lebih tinggi",
+    "Logam berat mudah terurai oleh mikroorganisme di perairan",
+    "Semua logam berat bersifat esensial bagi tubuh manusia",
+    "Logam berat hanya berbahaya pada konsentrasi tinggi"
+  ],
+  ans: [0, 1],
+  exp: "Logam berat tidak dapat terdegradasi (persisten) dan terakumulasi (+). Biomagnifikasi: konsentrasi meningkat di tingkat trofik tinggi (+). Logam berat tidak mudah terurai. Hanya sebagian (Fe, Zn, Cu) yang esensial."
+});
+
+// ================================================================
+// LEVEL C4 — Mengevaluasi (5 soal)
+// ================================================================
+
+// C4.1 - Evaluasi solusi pencemaran udara
+QS.push({
+  id: 4001, topic: "lingkungan", type: "mcma", level: "c4",
+  stim: `
+    <div class="stim">
+      <p>Sebuah kota besar memiliki masalah polusi udara dari kendaraan bermotor. Empat solusi diusulkan:</p>
+      <ol style="margin-left:1.2rem;margin-top:0.4rem;">
+        <li>Mengganti bus diesel dengan bus listrik</li>
+        <li>Mewajibkan catalytic converter pada kendaraan</li>
+        <li>Membangun lebih banyak jalan raya</li>
+        <li>Menerapkan ganjil-genap kendaraan</li>
+      </ol>
+    </div>
+  `,
+  q: "Evaluasi yang PALING TEPAT tentang solusi di atas adalah... (Pilih 2 jawaban benar)",
+  opts: [
+    "Solusi 1 dan 2 mengurangi emisi langsung dari sumber",
+    "Solusi 3 dapat mengurangi polusi dengan mengurangi kemacetan",
+    "Solusi 4 hanya mengurangi jumlah kendaraan, tidak menghilangkan polusi",
+    "Solusi 3 dan 4 paling efektif karena langsung mengurangi polusi",
+    "Solusi 1, 2, 3, dan 4 sama efektifnya"
+  ],
+  ans: [0, 2],
+  exp: "Solusi 1 (bus listrik) dan 2 (catalytic converter) mengurangi emisi di sumber. Solusi 3 (tambah jalan) justru dapat meningkatkan jumlah kendaraan (induced demand). Solusi 4 (ganjil-genap) hanya mengurangi jumlah, bukan menghilangkan."
+});
+
+// C4.2 - Evaluasi klaim pemanasan global
+QS.push({
+  id: 4002, topic: "lingkungan", type: "single", level: "c4",
+  stim: `
+    <div class="stim">
+      <p>Seorang siswa menulis:</p>
+      <blockquote style="margin-left:1rem;border-left:3px solid var(--accent);padding-left:0.8rem;font-style:italic;color:var(--muted);">
+        "Efek rumah kaca selalu buruk. Tanpa efek rumah kaca, Bumi akan lebih nyaman dihuni. 
+        Oleh karena itu, kita harus menghilangkan semua gas rumah kaca dari atmosfer."
+      </blockquote>
+    </div>
+  `,
+  q: "Evaluasi yang PALING TEPAT terhadap klaim siswa tersebut adalah...",
+  opts: [
+    "Klaim salah karena efek rumah kaca alami diperlukan untuk menjaga suhu Bumi tetap hangat (rata-rata 15°C)",
+    "Klaim benar karena efek rumah kaca selalu merusak lingkungan",
+    "Klaim benar karena gas rumah kaca harus dihilangkan seluruhnya",
+    "Klaim salah karena efek rumah kaca tidak mempengaruhi suhu Bumi",
+    "Klaim benar karena tanpa efek rumah kaca Bumi akan lebih dingin"
+  ],
+  ans: 0,
+  exp: "Klaim salah. Efek rumah kaca alami adalah mekanisme penting yang menjaga suhu Bumi rata-rata 15°C (tanpa efek rumah kaca: -18°C). Yang bermasalah adalah efek rumah kaca yang DIPERKUAT oleh aktivitas manusia."
+});
+
+// C4.3 - Evaluasi pengolahan limbah
+QS.push({
+  id: 4003, topic: "lingkungan", type: "mcma", level: "c4",
+  stim: `
+    <div class="table-wrap">
+      <table class="soal-table">
+        <tr><th>Metode</th><th>Prinsip</th><th>Keefektifan</th><th>Biaya</th></tr>
+        <tr><td>Koagulasi</td><td>Netralkan muatan partikel</td><td>Tinggi</td><td>Sedang</td></tr>
+        <tr><td>Filtrasi</td><td>Penyaringan fisik</td><td>Sedang</td><td>Rendah</td></tr>
+        <tr><td>Adsorpsi</td><td>Penyerapan pada permukaan</td><td>Tinggi</td><td>Sedang</td></tr>
+        <tr><td>Ozonasi</td><td>Oksidasi kimia</td><td>Sangat tinggi</td><td>Tinggi</td></tr>
+      </table>
+    </div>
+  `,
+  q: "Evaluasi yang PALING TEPAT untuk pengolahan air limbah industri adalah... (Pilih 2 jawaban benar)",
+  opts: [
+    "Kombinasi koagulasi + filtrasi + adsorpsi efektif untuk menghilangkan partikel dan logam",
+    "Ozonasi efektif untuk membunuh mikroorganisme dan mengoksidasi polutan organik",
+    "Filtrasi saja sudah cukup untuk semua jenis limbah industri",
+    "Adsorpsi tidak efektif untuk menghilangkan logam berat",
+    "Semua metode memiliki efektivitas dan biaya yang sama"
+  ],
+  ans: [0, 1],
+  exp: "Kombinasi koagulasi + filtrasi + adsorpsi efektif (multi-barrier). Ozonasi efektif untuk desinfeksi dan oksidasi. Filtrasi saja tidak cukup. Adsorpsi (karbon aktif) justru efektif untuk logam berat."
+});
+
+// C4.4 - Error analysis (BARU)
+QS.push({
+  id: 4004, topic: "lingkungan", type: "single", level: "c4",
+  stim: `
+    <div class="stim">
+      <p>Seorang siswa menulis:</p>
+      <blockquote style="margin-left:1rem;border-left:3px solid var(--accent);padding-left:0.8rem;font-style:italic;color:var(--muted);">
+        "Hujan asam disebabkan oleh CO₂ yang larut dalam air membentuk H₂CO₃. 
+        Semakin banyak CO₂ di atmosfer, semakin asam hujan yang turun."
+      </blockquote>
+    </div>
+  `,
+  q: "Kesalahan penalaran utama siswa tersebut terletak pada...",
+  opts: [
+    "Menyebut CO₂ sebagai penyebab utama hujan asam, padahal penyebab utama adalah SO₂ dan NOₓ",
+    "Menyebut H₂CO₃ sebagai asam lemah, padahal H₂CO₃ adalah asam kuat",
+    "Menyebut CO₂ larut dalam air, padahal CO₂ tidak larut",
+    "Menyebut hujan asam memiliki pH rendah, padahal pH hujan normal juga rendah",
+    "Menyebut hujan asam berasal dari atmosfer"
+  ],
+  ans: 0,
+  exp: "Kesalahan: CO₂ memang membentuk H₂CO₃ (asam lemah, pH ~5,6). Tapi hujan asam (pH < 5,6) terutama disebabkan oleh SO₂ dan NOₓ yang membentuk H₂SO₄ dan HNO₃ (asam kuat)."
+});
+
+// C4.5 - Nilai klaim (BARU)
+QS.push({
+  id: 4005, topic: "lingkungan", type: "single", level: "c4",
+  stim: `
+    <div class="stim">
+      <p>Dua siswa berdebat tentang penanganan sampah plastik:</p>
+      <ul style="margin-left:1.2rem;">
+        <li><strong>Siswa A:</strong> "Membakar plastik adalah solusi terbaik karena mengurangi volume sampah dengan cepat."</li>
+        <li><strong>Siswa B:</strong> "Membakar plastik PVC dapat menghasilkan dioksin yang sangat beracun. Daur ulang lebih baik."</li>
+      </ul>
+    </div>
+  `,
+  q: "Penilaian yang PALING TEPAT terhadap kedua argumen adalah...",
+  opts: [
+    "Siswa B benar karena pembakaran PVC menghasilkan dioksin (senyawa klorin yang sangat toksik)",
+    "Siswa A benar karena pembakaran selalu aman untuk semua jenis plastik",
+    "Kedua siswa benar karena pembakaran dan daur ulang sama baiknya",
+    "Kedua siswa salah karena plastik tidak dapat diolah",
+    "Tidak dapat dinilai tanpa data kuantitatif"
+  ],
+  ans: 0,
+  exp: "Siswa B benar. Pembakaran PVC (polivinil klorida) pada suhu rendah menghasilkan dioksin dan furan yang sangat beracun (karsinogenik). Daur ulang atau pirolisis pada suhu tinggi lebih aman."
+});
+
+// ================================================================
+// LEVEL C5 — Mencipta (3 soal)
+// ================================================================
+
+// C5.1 - Rancang solusi pencemaran
+QS.push({
+  id: 5001, topic: "lingkungan", type: "mcma", level: "c5",
+  stim: `
+    <div class="stim">
+      <p>Sebuah desa di tepi sungai mengalami penurunan kualitas air akibat:</p>
+      <ul style="margin-left:1.2rem;">
+        <li>Limbah domestik (detergen, sisa makanan)</li>
+        <li>Limbah peternakan (kotoran sapi)</li>
+        <li>Pupuk dari sawah</li>
+      </ul>
+      <p style="margin-top:0.4rem;">Target: menurunkan BOD dan fosfat dalam 6 bulan.</p>
+    </div>
+  `,
+  q: "Rancangan solusi yang PALING TEPAT adalah... (Pilih 3 jawaban benar)",
+  opts: [
+    "Membuat IPAL (Instalasi Pengolahan Air Limbah) komunal untuk limbah domestik",
+    "Mengolah kotoran sapi menjadi biogas sebelum dibuang ke sungai",
+    "Menggunakan pupuk organik dan mengurangi pupuk kimia di sawah",
+    "Membuang limbah langsung ke sungai agar terencerkan",
+    "Menambahkan kaporit ke sungai untuk membunuh bakteri",
+    "Membiarkan alga tumbuh untuk menyerap fosfat"
+  ],
+  ans: [0, 1, 2],
+  exp: "IPAL komunal untuk limbah domestik (+). Biogas dari kotoran sapi mengurangi BOD (+). Pupuk organik mengurangi fosfat (+). Membuang langsung memperparah. Kaporit membunuh bakteri tapi tidak mengurangi BOD. Alga justru memperparah eutrofikasi."
+});
+
+// C5.2 - Rancang kemasan ramah lingkungan
+QS.push({
+  id: 5002, topic: "lingkungan", type: "mcma", level: "c5",
+  stim: `
+    <div class="stim">
+      <p>Sebuah perusahaan makanan ingin mengganti kemasan plastik sekali pakai dengan alternatif yang lebih ramah lingkungan. Kriteria:</p>
+      <ul style="margin-left:1.2rem;">
+        <li>Dapat terurai secara alami</li>
+        <li>Tidak meninggalkan residu beracun</li>
+        <li>Kuat dan tahan air</li>
+      </ul>
+    </div>
+  `,
+  q: "Rancangan kemasan yang PALING TEPAT adalah... (Pilih 2 jawaban benar)",
+  opts: [
+    "Bioplastik dari pati singkong atau jagung yang dapat terurai",
+    "Kemasan dari daun pisang atau daun jati yang dapat dikompos",
+    "Styrofoam karena ringan dan tahan air",
+    "Plastik PET karena dapat didaur ulang",
+    "PVC karena kuat dan murah"
+  ],
+  ans: [0, 1],
+  exp: "Bioplastik dari pati (PLA) dapat terurai (+). Kemasan daun alami dapat dikompos (+). Styrofoam sulit terurai. PET memang dapat didaur ulang tapi tidak terurai alami. PVC menghasilkan dioksin jika dibakar."
+});
+
+// C5.3 - Rancang strategi pengurangan emisi
+QS.push({
+  id: 5003, topic: "lingkungan", type: "mcma", level: "c5",
+  stim: `
+    <div class="stim">
+      <p>Sebuah kota ingin mengurangi emisi CO₂ hingga 30% dalam 5 tahun. Sektor penyumbang emisi:</p>
+    </div>
+    <div class="table-wrap">
+      <table class="soal-table">
+        <tr><th>Sektor</th><th>Kontribusi Emisi</th></tr>
+        <tr><td>Transportasi</td><td>40%</td></tr>
+        <tr><td>Industri</td><td>30%</td></tr>
+        <tr><td>Rumah tangga</td><td>20%</td></tr>
+        <tr><td>Pertanian</td><td>10%</td></tr>
+      </table>
+    </div>
+  `,
+  q: "Strategi yang PALING TEPAT dan BERDAMPAK BESAR adalah... (Pilih 3 jawaban benar)",
+  opts: [
+    "Mengembangkan transportasi publik massal dan jalur sepeda untuk mengurangi emisi 40% dari transportasi",
+    "Mewajibkan industri menggunakan energi terbarukan dan teknologi bersih",
+    "Memasang panel surya di atap rumah untuk mengurangi beban listrik",
+    "Meningkatkan penggunaan kendaraan pribadi untuk kenyamanan",
+    "Membakar sampah rumah tangga untuk menghasilkan listrik",
+    "Mengimpor makanan dari luar kota untuk variasi"
+  ],
+  ans: [0, 1, 2],
+  exp: "Transportasi massal + sepeda: menyasar sektor 40% (+). Energi terbarukan industri: menyasar 30% (+). Panel surya rumah: menyasar 20% (+). Kendaraan pribadi meningkatkan emisi. Bakar sampah melepas CO₂. Impor makanan meningkatkan emisi transportasi."
+});
+
+// ================================================================
+// LEVEL C6 — Menilai (3 soal)
+// ================================================================
+
+// C6.1 - Nilai kebijakan lingkungan
+QS.push({
+  id: 6001, topic: "lingkungan", type: "mcma", level: "c6",
+  stim: `
+    <div class="stim">
+      <p>Pemerintah mengeluarkan kebijakan:</p>
+      <ol style="margin-left:1.2rem;">
+        <li>Pajak karbon untuk industri yang menghasilkan emisi tinggi</li>
+        <li>Subsidi untuk kendaraan listrik</li>
+        <li>Larangan penggunaan kantong plastik sekali pakai</li>
+        <li>Pembangunan PLTU batu bara baru untuk memenuhi kebutuhan listrik</li>
+      </ol>
+    </div>
+  `,
+  q: "Penilaian yang PALING TEPAT terhadap kebijakan tersebut adalah... (Pilih 2 jawaban benar)",
+  opts: [
+    "Kebijakan 1, 2, dan 3 konsisten dengan upaya pengurangan emisi karbon",
+    "Kebijakan 4 bertentangan dengan kebijakan 1, 2, dan 3 karena PLTU batu bara menghasilkan emisi tinggi",
+    "Semua kebijakan konsisten dengan tujuan pengurangan emisi",
+    "Kebijakan 4 diperlukan untuk mendukung kendaraan listrik",
+    "Kebijakan 1, 2, 3, dan 4 sama-sama menguntungkan lingkungan"
+  ],
+  ans: [0, 1],
+  exp: "Kebijakan 1 (pajak karbon), 2 (subsidi EV), 3 (larangan plastik) mendukung pengurangan emisi. Kebijakan 4 (PLTU batu bara) BERTENTANGAN karena menghasilkan emisi tinggi."
+});
+
+// C6.2 - Nilai klaim greenwashing
+QS.push({
+  id: 6002, topic: "lingkungan", type: "mcma", level: "c6",
+  stim: `
+    <div class="stim">
+      <p>Sebuah perusahaan mengklaim produknya "ramah lingkungan" karena:</p>
+      <ul style="margin-left:1.2rem;">
+        <li>Kemasan berwarna hijau</li>
+        <li>Menggunakan kata "eco" di label</li>
+        <li>Tidak ada data ilmiah tentang dampak lingkungan</li>
+      </ul>
+    </div>
+  `,
+  q: "Penilaian yang PALING TEPAT tentang klaim tersebut adalah... (Pilih 2 jawaban benar)",
+  opts: [
+    "Klaim tersebut termasuk greenwashing karena tidak didukung data ilmiah",
+    "Klaim yang valid harus didukung data LCA (Life Cycle Assessment) dan sertifikasi independen",
+    "Warna hijau pada kemasan adalah bukti kuat produk ramah lingkungan",
+    "Kata 'eco' pada label sudah cukup untuk membuktikan klaim",
+    "Semua klaim perusahaan tentang lingkungan selalu benar"
+  ],
+  ans: [0, 1],
+  exp: "Klaim tanpa data ilmiah = greenwashing (pencitraan hijau palsu). Klaim valid memerlukan LCA dan sertifikasi independen (misalnya Ecolabel, ISO 14001). Warna hijau dan kata 'eco' bukan bukti."
+});
+
+// C6.3 - Nilai solusi energi
+QS.push({
+  id: 6003, topic: "lingkungan", type: "single", level: "c6",
+  stim: `
+    <div class="stim">
+      <p>Tiga siswa berdebat tentang solusi energi untuk mengurangi emisi CO₂:</p>
+      <ul style="margin-left:1.2rem;">
+        <li><strong>Siswa A:</strong> "Energi nuklir adalah solusi terbaik karena tidak menghasilkan CO₂."</li>
+        <li><strong>Siswa B:</strong> "Energi surya dan angin lebih baik karena terbarukan dan tidak menghasilkan limbah radioaktif."</li>
+        <li><strong>Siswa C:</strong> "Batu bara 'bersih' dengan teknologi CCS (Carbon Capture Storage) adalah solusi terbaik."</li>
+      </ul>
+    </div>
+  `,
+  q: "Penilaian yang PALING TEPAT terhadap ketiga argumen adalah...",
+  opts: [
+    "Siswa A dan B sama-sama benar; keduanya memiliki kelebihan dan kekurangan masing-masing",
+    "Siswa C benar karena batu bara 'bersih' tidak menghasilkan emisi",
+    "Siswa A benar karena nuklir tidak memiliki risiko sama sekali",
+    "Siswa B benar karena energi surya dan angin tidak memiliki keterbatasan",
+    "Ketiga siswa salah karena semua energi memiliki dampak"
+  ],
+  ans: 0,
+  exp: "Siswa A benar (nuklir: rendah CO₂, tapi ada limbah radioaktif). Siswa B benar (surya/angin: terbarukan, tapi intermiten). Siswa C kurang tepat: CCS mahal dan belum efisien 100%. Jawaban paling tepat: A dan B sama-sama memiliki kelebihan dan kekurangan."
+});
+
+// ================================================================
+// STATE MANAGEMENT
+// ================================================================
+var S = {
+  view: "home", qids: [], qi: 0, ans: {}, mode: "topic",
+  ri: 0, rqs: [], wrong: [], done: {}, scores: {}, filter: "all"
+};
+
+function load() {
+  try {
+    var d = JSON.parse(localStorage.getItem("tka_kim_lingkungan"));
+    if (d) {
+      S.done = {};
+      (d.done || []).forEach(function(x) { S.done[x] = true; });
+      S.wrong = d.wrong || [];
+      S.scores = d.scores || {};
+    }
+  } catch(e) {}
+}
+function save() {
+  try {
+    localStorage.setItem("tka_kim_lingkungan", JSON.stringify({
+      done: Object.keys(S.done), wrong: S.wrong, scores: S.scores
+    }));
+  } catch(e) {}
+}
+load();
+
+function go(v) {
+  var names = {home:"vHome", quiz:"vQuiz", res:"vRes", rev:"vRev"};
+  document.querySelectorAll(".view").forEach(function(el) { el.classList.remove("active"); });
+  var el = document.getElementById(names[v]);
+  if (el) el.classList.add("active");
+  S.view = v;
+  window.scrollTo(0, 0);
+  if (v === "home") renderHome();
+}
+
+function renderHome() {
+  document.getElementById("bWR").style.display = S.wrong.length > 0 ? "flex" : "none";
+  updateNS();
+  renderList();
+}
+
+function updateNS() {
+  var tc = 0, cc = 0;
+  for (var k in S.scores) { tc += S.scores[k].t; cc += S.scores[k].c; }
+  document.getElementById("nst").textContent = tc > 0 ? cc + "/" + tc : "0/0";
+}
+
+function getLevelBadge(level) {
+  var labels = {c2:"C2", c3:"C3", c4:"C4", c5:"C5", c6:"C6"};
+  var colors = {c2:"#34d399", c3:"#fbbf24", c4:"#f97316", c5:"#ef4444", c6:"#8b5cf6"};
+  var bgColors = {
+    c2:"rgba(52,211,153,0.15)", c3:"rgba(251,191,36,0.15)",
+    c4:"rgba(249,115,22,0.15)", c5:"rgba(239,68,68,0.15)",
+    c6:"rgba(139,92,246,0.15)"
+  };
+  return '<span class="badge" style="background:' + bgColors[level] + ';color:' + colors[level] + ';font-size:0.65rem;">' + labels[level] + '</span>';
+}
+
+function renderList() {
+  var list = document.getElementById("qList");
+  list.innerHTML = "";
+  var filtered = QS.filter(function(q) {
+    if (S.filter === "all") return true;
+    return q.level === S.filter;
+  });
+  filtered.forEach(function(q, i) {
+    var answered = S.done[q.id];
+    var wasWrong = S.wrong.indexOf(q.id) >= 0;
+    var tl = q.type === "mcma" ? "MCMA" : "Pilihan Ganda";
+    var levelLabel = q.level ? getLevelBadge(q.level) : "";
+
+    var d = document.createElement("div");
+    d.className = "glow-card";
+    d.style.cursor = "pointer";
+    d.onclick = function() { singleQ(q.id); };
+    d.innerHTML =
+      '<div class="w-9 h-9 rounded-lg flex items-center justify-center text-sm font-bold flex-shrink-0" style="background:' +
+        (answered ? (wasWrong ? 'rgba(248,113,113,.12);color:var(--error)' : 'rgba(52,211,153,.12);color:var(--success)') : 'var(--bg2);color:var(--muted)') +
+      '">' + (answered ? (wasWrong ? '<i class="fa-solid fa-xmark"></i>' : '<i class="fa-solid fa-check"></i>') : (i + 1)) + '</div>' +
+      '<div class="flex-1 min-w-0">' +
+        '<div class="text-sm font-semibold mb-0.5 truncate" style="color:var(--text)">' + plain(q.q).substring(0, 75) + (q.q.length > 75 ? '...' : '') + '</div>' +
+        '<div class="flex items-center gap-2 flex-wrap">' +
+          '<span class="badge" style="background:var(--bg2);color:var(--muted);font-size:.68rem">' + tl + '</span>' +
+          levelLabel +
+        '</div>' +
+      '</div>' +
+      '<i class="fa-solid fa-chevron-right text-xs" style="color:var(--border)"></i>';
+    list.appendChild(d);
+  });
+}
+
+function filterLevel(level) {
+  S.filter = level;
+  document.querySelectorAll('[id^="filter"]').forEach(function(el) {
+    el.style.background = "transparent";
+  });
+  var btn = document.getElementById("filter" + level.toUpperCase());
+  if (btn) btn.style.background = "rgba(212,160,74,.15)";
+  renderList();
+}
+
+function plain(html) {
+  var d = document.createElement("div");
+  d.innerHTML = html;
+  return d.textContent || "";
+}
+
+function startQuiz() {
+  S.qids = QS.map(function(q) { return q.id; });
+  S.ans = {}; S.qi = 0; S.mode = "topic";
+  go("quiz"); renderQ();
+}
+function startRandom() {
+  var sh = QS.slice().sort(function() { return Math.random() - 0.5; }).slice(0, 10);
+  S.qids = sh.map(function(q) { return q.id; });
+  S.ans = {}; S.qi = 0; S.mode = "random";
+  go("quiz"); renderQ();
+}
+function startWrong() {
+  var wq = QS.filter(function(q) { return S.wrong.indexOf(q.id) >= 0; });
+  if (wq.length === 0) return;
+  S.qids = wq.map(function(q) { return q.id; });
+  S.ans = {}; S.qi = 0; S.mode = "wrong";
+  go("quiz"); renderQ();
+}
+function singleQ(qid) {
+  S.qids = [qid]; S.ans = {}; S.qi = 0; S.mode = "single";
+  go("quiz"); renderQ();
+}
+
+function renderQ() {
+  var qid = S.qids[S.qi];
+  var q = QS.find(function(x) { return x.id === qid; });
+  if (!q) return;
+  var total = S.qids.length;
+  var idx = S.qi + 1;
+  var pct = Math.round(idx / total * 100);
+
+  document.getElementById("qCtr").textContent = idx + " / " + total;
+  document.getElementById("qBar").style.width = pct + "%";
+  var tl = {single: "Pilihan Ganda", mcma: "MCMA"};
+  document.getElementById("qTyp").textContent = tl[q.type] || q.type;
+  var levelLabels = {c2:"C2 - Pemahaman", c3:"C3 - Menganalisis", c4:"C4 - Mengevaluasi", c5:"C5 - Mencipta", c6:"C6 - Menilai"};
+  document.getElementById("qLevel").textContent = q.level ? levelLabels[q.level] : "";
+  document.getElementById("bPrv").style.visibility = S.qi > 0 ? "visible" : "hidden";
+  var isLast = S.qi === total - 1;
+  document.getElementById("bNxt").innerHTML = isLast ? "Selesai <i class='fa-solid fa-check ml-1'></i>" : "Selanjutnya <i class='fa-solid fa-chevron-right ml-1'></i>";
+
+  var h = "";
+  if (q.stim) h += '<div class="stim">' + q.stim + '</div>';
+  h += '<h3 class="font-bold text-base mb-4 leading-relaxed" style="color:var(--text)">' + q.q + '</h3>';
+
+  if (q.type === "single") {
+    var letters = "ABCDE";
+    h += '<div class="space-y-2.5">';
+    q.opts.forEach(function(opt, i) {
+      var sel = S.ans[qid] === i;
+      h += '<button class="ob' + (sel ? ' sel' : '') + '" onclick="selS(' + qid + ',' + i + ')">' +
+        '<span class="w-7 h-7 min-w-[1.75rem] rounded-full border-2 flex items-center justify-center text-xs font-bold flex-shrink-0" style="border-color:' + (sel ? 'var(--accent)' : 'var(--border)') + ';color:' + (sel ? 'var(--accent)' : 'var(--muted)') + '">' + letters[i] + '</span>' +
+        '<span class="text-sm">' + opt + '</span></button>';
+    });
+    h += '</div>';
+  } else if (q.type === "mcma") {
+    var ua = S.ans[qid] || [];
+    h += '<div class="space-y-2.5">';
+    q.opts.forEach(function(opt, i) {
+      var sel = ua.indexOf(i) >= 0;
+      h += '<button class="ob' + (sel ? ' sel' : '') + '" onclick="togM(' + qid + ',' + i + ')">' +
+        '<div class="ck">' + (sel ? '<i class="fa-solid fa-check text-xs" style="color:#0b1a17"></i>' : '') + '</div>' +
+        '<span class="text-sm">' + opt + '</span></button>';
+    });
+    h += '</div>';
+    h += '<p class="text-xs mt-2.5" style="color:var(--muted)"><i class="fa-solid fa-circle-info mr-1"></i>Pilih SEMUA jawaban yang benar</p>';
+  }
+  document.getElementById("qArea").innerHTML = h;
+}
+
+function selS(qid, i) { S.ans[qid] = i; renderQ(); }
+function togM(qid, i) {
+  if (!S.ans[qid]) S.ans[qid] = [];
+  var arr = S.ans[qid];
+  var idx = arr.indexOf(i);
+  if (idx >= 0) arr.splice(idx, 1); else arr.push(i);
+  renderQ();
+}
+
+function qNext() {
+  if (S.qi === S.qids.length - 1) { finishQ(); return; }
+  S.qi++; renderQ(); window.scrollTo(0, 0);
+}
+function qPrev() {
+  if (S.qi > 0) { S.qi--; renderQ(); window.scrollTo(0, 0); }
+}
+
+function finishQ() {
+  var correct = 0, wrong = 0;
+  var ts = {};
+  S.qids.forEach(function(qid) {
+    var q = QS.find(function(x) { return x.id === qid; });
+    if (!q) return;
+    var ua = S.ans[qid];
+    var ok = false;
+    if (q.type === "single") ok = ua === q.ans;
+    else if (q.type === "mcma") {
+      var u = (ua || []).slice().sort().join(",");
+      var c = q.ans.slice().sort().join(",");
+      ok = u === c;
+    }
+    S.done[qid] = true;
+    if (ok) correct++; else { wrong++; S.wrong.push(qid); }
+    if (!ts[q.topic]) ts[q.topic] = {c:0, t:0};
+    ts[q.topic].t++;
+    if (ok) ts[q.topic].c++;
+  });
+  S.wrong = uniq(S.wrong);
+  for (var k in ts) {
+    if (!S.scores[k]) S.scores[k] = {c:0, t:0};
+    S.scores[k].c += ts[k].c;
+    S.scores[k].t += ts[k].t;
+  }
+  save();
+
+  var total = correct + wrong;
+  var pct = total > 0 ? Math.round(correct / total * 100) : 0;
+  document.getElementById("rPct").textContent = pct + "%";
+  document.getElementById("rOk").textContent = correct;
+  document.getElementById("rNo").textContent = wrong;
+  document.getElementById("rTot").textContent = total;
+
+  var circ = 2 * Math.PI * 55;
+  var ring = document.getElementById("rRing");
+  ring.style.strokeDasharray = circ;
+  ring.style.strokeDashoffset = circ - (circ * pct / 100);
+  ring.style.stroke = pct >= 70 ? "var(--success)" : pct >= 40 ? "var(--accent)" : "var(--error)";
+
+  var lbl = pct >= 90 ? "Luar Biasa!" : pct >= 70 ? "Bagus Sekali!" : pct >= 50 ? "Cukup Baik" : "Perlu Belajar Lagi";
+  document.getElementById("rLbl").textContent = lbl;
+  document.getElementById("bRW").style.display = wrong > 0 ? "inline-flex" : "none";
+  go("res");
+}
+
+function uniq(arr) {
+  var seen = {}, out = [];
+  arr.forEach(function(x) { if (!seen[x]) { seen[x] = true; out.push(x); } });
+  return out;
+}
+
+function retryQ() {
+  if (S.mode === "topic") startQuiz();
+  else if (S.mode === "random") startRandom();
+  else if (S.mode === "wrong") startWrong();
+  else if (S.mode === "single") singleQ(S.qids[0]);
+}
+
+function revWrong() {
+  var wqs = S.qids.filter(function(qid) { return S.wrong.indexOf(qid) >= 0; });
+  if (wqs.length === 0) { toast("Tidak ada jawaban salah", "var(--success)"); return; }
+  S.rqs = wqs.map(function(qid) { return QS.find(function(x) { return x.id === qid; }); }).filter(Boolean);
+  S.ri = 0;
+  go("rev"); renderRev();
+}
+
+function renderRev() {
+  var q = S.rqs[S.ri];
+  if (!q) return;
+  var total = S.rqs.length;
+  document.getElementById("rvPr").style.visibility = S.ri > 0 ? "visible" : "hidden";
+  document.getElementById("rvNx").innerHTML = S.ri === total - 1 ? "Kembali <i class='fa-solid fa-check ml-1'></i>" : "Selanjutnya <i class='fa-solid fa-chevron-right ml-1'></i>";
+
+  var ua = S.ans[q.id];
+  var ok = false;
+  if (q.type === "single") ok = ua === q.ans;
+  else if (q.type === "mcma") {
+    var u = (ua || []).slice().sort().join(",");
+    ok = u === q.ans.slice().sort().join(",");
+  }
+
+  var letters = "ABCDE";
+  var h = '<div class="text-xs mb-2 font-semibold" style="color:var(--muted)">Soal ' + (S.ri + 1) + " / " + total + '</div>';
+  if (q.stim) h += '<div class="stim">' + q.stim + '</div>';
+  h += '<h3 class="font-bold text-sm mb-4 leading-relaxed">' + q.q + '</h3>';
+  h += '<div class="space-y-2.5">';
+
+  if (q.type === "single") {
+    q.opts.forEach(function(opt, i) {
+      var cls = "off";
+      if (i === q.ans) cls += " ok";
+      else if (ua === i && i !== q.ans) cls += " no";
+      h += '<button class="ob ' + cls + '">' +
+        '<span class="w-7 h-7 min-w-[1.75rem] rounded-full border-2 flex items-center justify-center text-xs font-bold flex-shrink-0" style="border-color:' + (i === q.ans ? "var(--success)" : ua === i ? "var(--error)" : "var(--border)") + ';color:' + (i === q.ans ? "var(--success)" : ua === i ? "var(--error)" : "var(--muted)") + '">' + letters[i] + '</span>' +
+        '<span class="text-sm">' + opt + '</span>' +
+        (i === q.ans ? '<i class="fa-solid fa-circle-check ml-auto" style="color:var(--success)"></i>' : '') +
+        (ua === i && i !== q.ans ? '<i class="fa-solid fa-circle-xmark ml-auto" style="color:var(--error)"></i>' : '') +
+      '</button>';
+    });
+  } else if (q.type === "mcma") {
+    q.opts.forEach(function(opt, i) {
+      var isUA = (ua || []).indexOf(i) >= 0;
+      var isCA = q.ans.indexOf(i) >= 0;
+      var cls = "off";
+      if (isCA) cls += " ok";
+      else if (isUA && !isCA) cls += " no";
+      h += '<button class="ob ' + cls + '">' +
+        '<div class="ck">' + (isCA ? '<i class="fa-solid fa-check text-xs" style="color:#0b1a17"></i>' : isUA ? '<i class="fa-solid fa-xmark text-xs" style="color:#fff"></i>' : '') + '</div>' +
+        '<span class="text-sm">' + opt + '</span></button>';
+    });
+  }
+  h += '</div>';
+  h += '<div class="expbox ' + (ok ? 'good' : 'bad') + '">' +
+    '<div class="flex items-center gap-2 mb-1.5 font-bold text-sm">' +
+      '<i class="fa-solid ' + (ok ? 'fa-circle-check' : 'fa-circle-xmark') + '" style="color:' + (ok ? 'var(--success)' : 'var(--error)') + '"></i>' +
+      (ok ? 'Jawaban Benar' : 'Jawaban Salah') +
+    '</div>' +
+    '<p style="color:var(--text);line-height:1.6;font-size:0.9rem;">' + q.exp + '</p>' +
+  '</div>';
+
+  document.getElementById("revA").innerHTML = h;
+  window.scrollTo(0, 0);
+}
+
+function rvNav(dir) {
+  if (dir === 1 && S.ri === S.rqs.length - 1) { backRev(); return; }
+  S.ri = Math.max(0, Math.min(S.rqs.length - 1, S.ri + dir));
+  renderRev();
+}
+function backRev() {
+  if (S.mode === "single") go("home");
+  else go("res");
+}
+
+function openExit() { document.getElementById("exMod").classList.add("open"); }
+function closeMod() { document.getElementById("exMod").classList.remove("open"); }
+function doExit() { closeMod(); go("home"); }
+
+function resetAll() {
+  S.done = {}; S.wrong = []; S.scores = {};
+  save(); renderHome(); toast("Progress berhasil direset", "var(--success)");
+}
+function toast(msg, bg) {
+  var t = document.getElementById("toast");
+  t.style.display = "block";
+  t.style.background = bg || "var(--card)";
+  t.style.color = "#fff";
+  t.textContent = msg;
+  setTimeout(function() { t.style.display = "none"; }, 2200);
+}
+
+renderHome();
+console.log("Kimia Lingkungan - HOTS C2-C6 loaded: " + QS.length + " soal");
+</script>
+</body>
+</html>

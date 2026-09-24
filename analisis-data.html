@@ -1,0 +1,1171 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Analisis Data Kimia — TKA Kimia SMA Negeri 2 Semarang</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Sans+3:ital,wght@0,300;0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+    :root {
+        --bg: #0b1a17; --bg2: #132a24; --card: #1a3a32; --card2: #1e4a3f;
+        --text: #e8f0ec; --muted: #8aa8a0; --border: #2a4a42; --accent: #d4a04a;
+        --success: #34d399; --error: #f87171; --glow: rgba(212, 160, 74, 0.15);
+        --danger: #ef4444; --warn: #fbbf24; --info: #60a5fa;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+        font-family: 'Source Sans 3', sans-serif;
+        background: var(--bg); color: var(--text);
+        min-height: 100vh; padding-top: 52px;
+    }
+    .fd { font-family: 'Playfair Display', serif; }
+    .bg-noise {
+        position: fixed; top:0; left:0; right:0; bottom:0;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+        pointer-events: none; z-index: 0;
+    }
+    .hg {
+        position: absolute; width:300px; height:300px;
+        border-radius: 50%; filter: blur(100px);
+        opacity: 0.15; pointer-events: none;
+    }
+    .badge {
+        display: inline-flex; align-items: center; gap: 6px;
+        padding: 4px 14px; border-radius: 100px;
+        font-size: 0.75rem; font-weight: 600;
+        background: rgba(212,160,74,0.12); color: var(--accent);
+    }
+    .glow-card {
+        background: var(--card); border: 1px solid var(--border);
+        border-radius: 12px; padding: 16px 18px; cursor: pointer;
+        transition: all 0.25s ease; display: flex;
+        align-items: center; gap: 12px;
+        text-decoration: none; color: inherit;
+    }
+    .glow-card:hover {
+        border-color: var(--accent); background: var(--card2);
+        box-shadow: 0 0 20px var(--glow);
+    }
+    .bp {
+        background: var(--accent); color: #0b1a17; border: none;
+        padding: 8px 18px; border-radius: 30px; font-weight: 700;
+        font-size: 0.85rem; cursor: pointer; transition: all 0.25s ease;
+        display: inline-flex; align-items: center; gap: 6px;
+    }
+    .bp:hover { background: #e8b84a; transform: scale(1.02); }
+    .bs {
+        background: transparent; color: var(--text);
+        border: 1px solid var(--border); padding: 8px 18px;
+        border-radius: 30px; font-weight: 600; font-size: 0.85rem;
+        cursor: pointer; transition: all 0.25s ease;
+        display: inline-flex; align-items: center; gap: 6px;
+    }
+    .bs:hover { border-color: var(--accent); background: var(--card2); }
+    .view { display: none; }
+    .view.active { display: block; }
+    .stim {
+        background: var(--bg2); padding: 12px 16px;
+        border-radius: 8px; border-left: 3px solid var(--accent);
+        margin-bottom: 12px; font-size: 0.9rem;
+        line-height: 1.6; color: var(--muted);
+    }
+    .table-wrap {
+        overflow-x: auto; margin: 8px 0;
+        border-radius: 8px; border: 1px solid var(--border);
+    }
+    table.soal-table {
+        width: 100%; border-collapse: collapse;
+        font-size: 0.8rem; background: var(--bg2);
+    }
+    table.soal-table th {
+        background: var(--card); color: var(--accent);
+        font-weight: 600; padding: 6px 10px;
+        border: 1px solid var(--border); text-align: center;
+    }
+    table.soal-table td {
+        padding: 6px 10px; border: 1px solid var(--border);
+        text-align: center; color: var(--text);
+    }
+    table.soal-table tr:hover { background: rgba(212,160,74,0.05); }
+    .figure-wrap {
+        display: flex; flex-direction: column; align-items: center;
+        margin: 8px 0; padding: 10px; background: var(--bg2);
+        border-radius: 8px; border: 1px solid var(--border);
+    }
+    .figure-wrap svg { max-width: 100%; height: auto; }
+    .figure-caption {
+        font-size: 0.7rem; color: var(--muted);
+        margin-top: 4px; text-align: center;
+    }
+    .chem-eq {
+        display: block; text-align: center;
+        padding: 0.5rem 0.75rem;
+        font-family: "Times New Roman", serif;
+        font-size: 1rem; background: var(--bg2);
+        border-radius: 0.5rem; border: 1px solid var(--border);
+        margin: 0.5rem 0; color: var(--text);
+    }
+    .space-y-2\.5 > * + * { margin-top: 8px; }
+    .ob {
+        display: flex; align-items: center; gap: 10px;
+        width: 100%; padding: 8px 14px; border-radius: 8px;
+        border: 1px solid var(--border); background: var(--bg2);
+        color: var(--text); cursor: pointer;
+        transition: all 0.2s ease; font-size: 0.9rem; text-align: left;
+    }
+    .ob:hover { border-color: var(--muted); }
+    .ob.sel { border-color: var(--accent); background: rgba(212,160,74,0.1); }
+    .ob .ck {
+        width: 20px; height: 20px; min-width: 20px;
+        border-radius: 4px; border: 2px solid var(--border);
+        display: flex; align-items: center; justify-content: center;
+        font-size: 0.7rem; background: var(--bg);
+    }
+    .ob.sel .ck { border-color: var(--accent); background: var(--accent); }
+    .ob.ok .ck { border-color: var(--success); background: var(--success); }
+    .ob.no .ck { border-color: var(--error); background: var(--error); }
+    .modal-bg {
+        display: none; position: fixed; inset: 0;
+        background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
+        z-index: 50; justify-content: center; align-items: center;
+        padding: 20px;
+    }
+    .modal-bg.open { display: flex; }
+    .toast {
+        position: fixed; bottom: 30px; left: 50%;
+        transform: translateX(-50%); padding: 12px 28px;
+        border-radius: 12px; font-weight: 600; z-index: 100;
+        background: var(--card); border: 1px solid var(--border);
+        color: var(--text); max-width: 90%; text-align: center;
+    }
+    .hots-badge {
+        display: inline-block; padding: 0.15rem 0.5rem;
+        border-radius: 999px; font-size: 0.6rem;
+        font-weight: 700; margin-left: 0.5rem;
+    }
+    .hots-c2 { background: rgba(52,211,153,0.2); color: #34d399; }
+    .hots-c3 { background: rgba(251,191,36,0.2); color: #fbbf24; }
+    .hots-c4 { background: rgba(249,115,22,0.2); color: #f97316; }
+    .hots-c5 { background: rgba(239,68,68,0.2); color: #ef4444; }
+    .hots-c6 { background: rgba(139,92,246,0.2); color: #8b5cf6; }
+    .data-icon {
+        display: inline-flex; align-items: center; justify-content: center;
+        width: 40px; height: 40px; border-radius: 10px;
+        font-size: 1.1rem;
+    }
+    .data-icon.quant { background: rgba(52,211,153,0.12); color: #34d399; }
+    .data-icon.qual { background: rgba(96,165,250,0.12); color: #60a5fa; }
+    .data-icon.graph { background: rgba(251,191,36,0.12); color: #fbbf24; }
+    .data-icon.stat { background: rgba(167,139,250,0.12); color: #a78bfa; }
+    .expbox {
+        margin-top: 14px; padding: 14px 18px;
+        border-radius: 8px; font-size: 0.9rem; line-height: 1.7;
+    }
+    .expbox.good {
+        background: rgba(52,211,153,0.06);
+        border-left: 4px solid var(--success);
+    }
+    .expbox.bad {
+        background: rgba(248,113,113,0.06);
+        border-left: 4px solid var(--error);
+    }
+    @media (max-width: 640px) {
+        .ob { font-size: 0.8rem; padding: 6px 12px; }
+        .bp, .bs { font-size: 0.75rem; padding: 6px 14px; }
+        .glow-card { padding: 12px 14px; }
+    }
+</style>
+</head>
+<body>
+<div class="bg-noise"></div>
+
+<nav class="fixed top-0 left-0 right-0 z-40 backdrop-blur-md border-b" style="background:rgba(11,26,23,.88);border-color:var(--border)">
+<div class="max-w-5xl mx-auto px-4 flex items-center justify-between" style="height:52px">
+<button onclick="location.href='index.html'" class="flex items-center gap-2 text-sm font-bold tracking-wide" style="color:var(--accent);background:none;border:none;cursor:pointer;">
+<i class="fa-solid fa-arrow-left"></i><span class="hidden sm:inline">Kembali</span>
+</button>
+<div class="flex items-center gap-3">
+<span class="hidden sm:flex items-center gap-1.5 text-xs" style="color:var(--muted)">
+<i class="fa-solid fa-trophy" style="color:var(--accent)"></i><span id="nst">0/0</span>
+</span>
+<button onclick="location.href='index.html'" class="text-sm px-2.5 py-1 rounded" style="color:var(--muted);background:none;border:none;cursor:pointer;">
+<i class="fa-solid fa-house"></i>
+</button>
+</div>
+</div>
+</nav>
+
+<!-- HOME -->
+<div id="vHome" class="view active pt-16 pb-12 px-4">
+<div class="max-w-4xl mx-auto">
+    <div class="relative rounded-2xl overflow-hidden mb-8 p-7 md:p-10" style="background:linear-gradient(135deg,var(--card),var(--card2))">
+        <div class="hg" style="background:var(--accent);top:-180px;right:-80px"></div>
+        <div class="hg" style="background:#a78bfa;bottom:-180px;left:-80px"></div>
+        <div class="relative z-10">
+            <div class="badge mb-3"><i class="fa-solid fa-chart-line"></i> Analisis Data Kimia</div>
+            <h1 class="fd text-3xl md:text-4xl font-black mb-2 leading-tight">Analisis <span style="color:var(--accent)">Data Kimia</span></h1>
+            <p class="text-sm md:text-base max-w-lg" style="color:var(--muted);line-height:1.65">Latihan soal HOTS level C2-C6 tentang jenis data, penyajian data, statistik dasar, akurasi & presisi, angka penting, dan interpretasi grafik.</p>
+            <div class="flex flex-wrap gap-2 mt-4">
+                <span class="badge hots-badge hots-c2">C2 - Pemahaman</span>
+                <span class="badge hots-badge hots-c3">C3 - Menganalisis</span>
+                <span class="badge hots-badge hots-c4">C4 - Mengevaluasi</span>
+                <span class="badge hots-badge hots-c5">C5 - Mencipta</span>
+                <span class="badge hots-badge hots-c6">C6 - Menilai</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- KATEGORI -->
+    <div class="flex flex-wrap gap-2 mb-4">
+        <span class="data-icon quant" title="Data Kuantitatif"><i class="fa-solid fa-hashtag"></i></span>
+        <span class="data-icon qual" title="Data Kualitatif"><i class="fa-solid fa-quote-left"></i></span>
+        <span class="data-icon graph" title="Grafik"><i class="fa-solid fa-chart-bar"></i></span>
+        <span class="data-icon stat" title="Statistik"><i class="fa-solid fa-calculator"></i></span>
+    </div>
+
+    <div class="flex flex-wrap gap-2.5 mb-6">
+        <button onclick="startQuiz()" class="bp"><i class="fa-solid fa-play"></i> Mulai Quiz Semua Soal</button>
+        <button onclick="startRandom()" class="bs"><i class="fa-solid fa-shuffle"></i> Quiz Acak 10 Soal</button>
+        <button onclick="startWrong()" class="bs" id="bWR" style="display:none"><i class="fa-solid fa-rotate-left"></i> Ulangi Salah</button>
+        <button onclick="resetAll()" class="bs"><i class="fa-solid fa-trash-can"></i> Reset</button>
+    </div>
+
+    <div class="flex flex-wrap gap-2 mb-4">
+        <button onclick="filterLevel('all')" class="bs text-xs" id="filterAll" style="background:rgba(212,160,74,.15)">Semua</button>
+        <button onclick="filterLevel('c2')" class="bs text-xs" id="filterC2">C2</button>
+        <button onclick="filterLevel('c3')" class="bs text-xs" id="filterC3">C3</button>
+        <button onclick="filterLevel('c4')" class="bs text-xs" id="filterC4">C4</button>
+        <button onclick="filterLevel('c5')" class="bs text-xs" id="filterC5">C5</button>
+        <button onclick="filterLevel('c6')" class="bs text-xs" id="filterC6">C6</button>
+    </div>
+
+    <div id="qList"></div>
+</div>
+</div>
+
+<!-- QUIZ -->
+<div id="vQuiz" class="view pt-16 pb-12 px-4">
+<div class="max-w-3xl mx-auto">
+    <div class="flex items-center justify-between mb-3">
+        <button onclick="openExit()" class="text-sm flex items-center gap-1.5" style="color:var(--muted);background:none;border:none;cursor:pointer;"><i class="fa-solid fa-xmark"></i>Keluar</button>
+        <div class="flex items-center gap-2.5">
+            <span id="qCtr" class="text-sm font-semibold" style="color:var(--muted)"></span>
+            <span id="qTyp" class="badge" style="background:rgba(212,160,74,.12);color:var(--accent);font-size:0.7rem;"></span>
+            <span id="qLevel" class="badge" style="background:var(--bg2);color:var(--muted);font-size:0.7rem;"></span>
+        </div>
+    </div>
+    <div class="w-full h-1.5 rounded-full mb-5" style="background:var(--border)">
+        <div id="qBar" class="h-full rounded-full" style="background:var(--accent);width:0%"></div>
+    </div>
+    <div id="qArea"></div>
+    <div class="flex items-center justify-between mt-7">
+        <button id="bPrv" onclick="qPrev()" class="bs" style="visibility:hidden"><i class="fa-solid fa-chevron-left mr-1"></i>Sebelumnya</button>
+        <button id="bNxt" onclick="qNext()" class="bp">Selanjutnya <i class="fa-solid fa-chevron-right ml-1"></i></button>
+    </div>
+</div>
+</div>
+
+<!-- RESULTS -->
+<div id="vRes" class="view pt-16 pb-12 px-4">
+<div class="max-w-3xl mx-auto text-center">
+    <div class="mb-7">
+        <svg class="mx-auto mb-3" style="transform:rotate(-90deg)" width="130" height="130" viewBox="0 0 130 130">
+            <circle cx="65" cy="65" r="55" fill="none" stroke="var(--border)" stroke-width="7"/>
+            <circle id="rRing" cx="65" cy="65" r="55" fill="none" stroke="var(--accent)" stroke-width="7" stroke-linecap="round" stroke-dasharray="345.6" stroke-dashoffset="345.6"/>
+        </svg>
+        <div class="text-3xl font-bold" style="color:var(--accent)" id="rPct">0%</div>
+        <div class="text-sm mt-0.5" style="color:var(--muted)" id="rLbl">—</div>
+    </div>
+    <div class="grid grid-cols-3 gap-3 mb-7">
+        <div class="rounded-xl p-3.5" style="background:var(--card);border:1px solid var(--border)">
+            <div class="text-2xl font-bold" style="color:var(--success)" id="rOk">0</div>
+            <div class="text-xs" style="color:var(--muted)">Benar</div>
+        </div>
+        <div class="rounded-xl p-3.5" style="background:var(--card);border:1px solid var(--border)">
+            <div class="text-2xl font-bold" style="color:var(--error)" id="rNo">0</div>
+            <div class="text-xs" style="color:var(--muted)">Salah</div>
+        </div>
+        <div class="rounded-xl p-3.5" style="background:var(--card);border:1px solid var(--border)">
+            <div class="text-2xl font-bold" id="rTot">0</div>
+            <div class="text-xs" style="color:var(--muted)">Total</div>
+        </div>
+    </div>
+    <div class="flex flex-wrap justify-center gap-2.5">
+        <button onclick="location.href='index.html'" class="bs"><i class="fa-solid fa-house mr-1"></i>Beranda</button>
+        <button onclick="revWrong()" class="bp" id="bRW" style="display:none"><i class="fa-solid fa-eye mr-1"></i>Review Salah</button>
+        <button onclick="retryQ()" class="bs"><i class="fa-solid fa-rotate-left mr-1"></i>Ulangi</button>
+    </div>
+</div>
+</div>
+
+<!-- REVIEW -->
+<div id="vRev" class="view pt-16 pb-12 px-4">
+<div class="max-w-3xl mx-auto">
+    <button onclick="backRev()" class="flex items-center gap-2 text-sm mb-5" style="color:var(--muted);background:none;border:none;cursor:pointer;"><i class="fa-solid fa-arrow-left"></i>Kembali</button>
+    <div id="revA"></div>
+    <div class="flex justify-center gap-2.5 mt-7">
+        <button id="rvPr" onclick="rvNav(-1)" class="bs"><i class="fa-solid fa-chevron-left mr-1"></i>Sebelumnya</button>
+        <button id="rvNx" onclick="rvNav(1)" class="bp">Selanjutnya <i class="fa-solid fa-chevron-right ml-1"></i></button>
+    </div>
+</div>
+</div>
+
+<div id="exMod" class="modal-bg">
+    <div class="rounded-xl p-5 max-w-sm w-full" style="background:var(--card);border:1px solid var(--border)">
+        <h3 class="fd text-lg font-bold mb-1.5">Keluar dari Quiz?</h3>
+        <p class="text-sm mb-4" style="color:var(--muted)">Progress quiz ini akan hilang.</p>
+        <div class="flex gap-2.5 justify-end">
+            <button onclick="closeMod()" class="bs text-sm">Batal</button>
+            <button onclick="doExit()" class="text-sm font-bold px-4 py-2 rounded-lg border-none cursor-pointer" style="background:var(--error);color:#fff">Keluar</button>
+        </div>
+    </div>
+</div>
+
+<div id="toast" class="toast" style="display:none"></div>
+
+<script>
+// ================================================================
+// DATA SOAL ANALISIS DATA KIMIA - HOTS C2-C6
+// ================================================================
+var QS = [];
+
+// ================================================================
+// LEVEL C2 — Pemahaman Dasar (4 soal)
+// ================================================================
+
+// id:1 - Jenis data
+QS.push({
+  id: 1, topic: "analisis", type: "mcma", level: "c2",
+  q: "Pernyataan BENAR tentang jenis data dalam penelitian kimia adalah... (Pilih 3 jawaban benar)",
+  opts: [
+    "Data kuantitatif berupa angka hasil pengukuran (misalnya pH = 3,2)",
+    "Data kualitatif berupa deskripsi/karakteristik (misalnya warna larutan)",
+    "Data kuantitatif dapat dianalisis secara statistik",
+    "Data kualitatif selalu lebih akurat dari data kuantitatif",
+    "Data kuantitatif tidak dapat disajikan dalam grafik",
+    "Data kualitatif tidak diperlukan dalam penelitian kimia"
+  ],
+  ans: [0, 1, 2],
+  exp: "Data kuantitatif = angka (pH, suhu, massa) → dapat dianalisis statistik & dibuat grafik. Data kualitatif = deskripsi (warna, bau, tekstur). Keduanya penting dalam penelitian."
+});
+
+// id:2 - Statistik dasar
+QS.push({
+  id: 2, topic: "analisis", type: "single", level: "c2",
+  stim: `
+    <div class="stim">
+      <p>Data hasil pengukuran pH larutan (5 kali ulangan):</p>
+      <p style="text-align:center;font-family:monospace;font-size:1rem;">4,2 &nbsp; 4,3 &nbsp; 4,2 &nbsp; 4,1 &nbsp; 4,2</p>
+    </div>
+  `,
+  q: "Nilai mean (rata-rata), median, dan modus data tersebut berturut-turut adalah...",
+  opts: [
+    "4,2; 4,2; 4,2",
+    "4,2; 4,1; 4,2",
+    "4,0; 4,2; 4,2",
+    "4,2; 4,2; 4,1",
+    "4,1; 4,2; 4,2"
+  ],
+  ans: 0,
+  exp: "Mean = (4,2+4,3+4,2+4,1+4,2)/5 = 21,0/5 = 4,2. Median (data terurut: 4,1; 4,2; 4,2; 4,2; 4,3) = 4,2. Modus (paling sering) = 4,2."
+});
+
+// id:3 - Akurasi vs presisi
+QS.push({
+  id: 3, topic: "analisis", type: "mcma", level: "c2",
+  q: "Pernyataan BENAR tentang akurasi dan presisi adalah... (Pilih 3 jawaban benar)",
+  opts: [
+    "Akurasi = seberapa dekat hasil pengukuran dengan nilai sebenarnya",
+    "Presisi = seberapa dekat hasil pengukuran satu dengan yang lain (konsistensi)",
+    "Pengukuran dapat presisi tetapi tidak akurat (ada kesalahan sistematis)",
+    "Akurasi dan presisi selalu sama",
+    "Pengukuran akurat pasti presisi",
+    "Presisi tidak penting dalam penelitian"
+  ],
+  ans: [0, 1, 2],
+  exp: "Akurasi = kedekatan dengan nilai benar. Presisi = konsistensi (kedekatan antar hasil). Bisa presisi tapi tidak akurat (kesalahan sistematis). Tidak selalu sama."
+});
+
+// id:4 - Angka penting
+QS.push({
+  id: 4, topic: "analisis", type: "single", level: "c2",
+  q: "Jumlah angka penting pada bilangan 0,00450 adalah...",
+  opts: ["2 angka penting", "3 angka penting", "4 angka penting", "5 angka penting", "6 angka penting"],
+  ans: 1,
+  exp: "Angka penting: 0,00450 → angka nol di depan tidak signifikan. Yang signifikan: 4, 5, 0 (di belakang) = 3 angka penting."
+});
+
+// ================================================================
+// LEVEL C3 — Menganalisis (5 soal)
+// ================================================================
+
+// C3.1 - Analisis grafik
+QS.push({
+  id: 3001, topic: "analisis", type: "mcma", level: "c3",
+  stim: `
+    <div class="figure-wrap">
+      <svg width="420" height="220" viewBox="0 0 420 220">
+        <line x1="50" y1="180" x2="390" y2="180" stroke="#1e4a3f" stroke-width="2"/>
+        <line x1="50" y1="180" x2="50" y2="20" stroke="#1e4a3f" stroke-width="2"/>
+        <text x="200" y="205" fill="#8fa89e" font-size="10">Konsentrasi (M)</text>
+        <text x="10" y="100" fill="#8fa89e" font-size="10" transform="rotate(-90,10,100)">Laju (M/s)</text>
+        <line x1="50" y1="180" x2="200" y2="130" stroke="#34d399" stroke-width="2"/>
+        <line x1="200" y1="130" x2="280" y2="30" stroke="#f87171" stroke-width="2"/>
+        <circle cx="125" cy="155" r="4" fill="#34d399"/>
+        <circle cx="200" cy="130" r="4" fill="#fbbf24"/>
+        <circle cx="280" cy="30" r="4" fill="#f87171"/>
+        <text x="80" y="150" fill="#34d399" font-size="9">Kemiringan kecil</text>
+        <text x="200" y="150" fill="#fbbf24" font-size="9">Titik kritis</text>
+        <text x="250" y="50" fill="#f87171" font-size="9">Kemiringan besar</text>
+      </svg>
+      <div class="figure-caption">Grafik laju reaksi vs konsentrasi</div>
+    </div>
+  `,
+  q: "Analisis yang PALING TEPAT tentang grafik di atas adalah... (Pilih 2 jawaban benar)",
+  opts: [
+    "Pada konsentrasi rendah, laju meningkat perlahan (kemiringan kecil)",
+    "Pada konsentrasi tinggi, laju meningkat sangat cepat (kemiringan besar)",
+    "Grafik menunjukkan hubungan linier sempurna",
+    "Laju reaksi tidak dipengaruhi konsentrasi",
+    "Grafik menunjukkan orde nol"
+  ],
+  ans: [0, 1],
+  exp: "Grafik menunjukkan dua daerah: konsentrasi rendah (kemiringan kecil) dan konsentrasi tinggi (kemiringan besar). Ini bukan linier sempurna. Laju sangat dipengaruhi konsentrasi."
+});
+
+// C3.2 - Analisis outlier
+QS.push({
+  id: 3002, topic: "analisis", type: "single", level: "c3",
+  stim: `
+    <div class="table-wrap">
+      <table class="soal-table">
+        <tr><th>Ulangan</th><th>Volume NaOH (mL)</th></tr>
+        <tr><td>1</td><td>25,00</td></tr>
+        <tr><td>2</td><td>25,10</td></tr>
+        <tr><td>3</td><td>24,90</td></tr>
+        <tr><td>4</td><td>28,50</td></tr>
+        <tr><td>5</td><td>25,05</td></tr>
+      </table>
+    </div>
+  `,
+  q: "Analisis yang PALING TEPAT tentang data titrasi di atas adalah...",
+  opts: [
+    "Data ke-4 adalah outlier yang perlu diperiksa penyebabnya sebelum diputuskan",
+    "Semua data harus langsung dirata-ratakan tanpa pemeriksaan",
+    "Data ke-4 adalah data terbaik karena paling besar",
+    "Data ke-1, 2, 3, 5 harus dibuang",
+    "Data tidak dapat dianalisis"
+  ],
+  ans: 0,
+  exp: "Data ke-4 (28,50) menyimpang jauh dari data lain (~25). Ini outlier. Harus diperiksa penyebabnya (kesalahan titrasi, kontaminasi) sebelum diputuskan dibuang/dipakai."
+});
+
+// C3.3 - Analisis presisi vs akurasi
+QS.push({
+  id: 3003, topic: "analisis", type: "mcma", level: "c3",
+  stim: `
+    <div class="figure-wrap">
+      <svg width="400" height="180" viewBox="0 0 400 180">
+        <text x="40" y="25" fill="#d4a04a" font-size="10" font-weight="bold">Target: pH = 7,0</text>
+        <text x="40" y="55" fill="#8fa89e" font-size="9">Data A: 6,9; 6,8; 7,0; 6,9 (rata-rata 6,9)</text>
+        <text x="40" y="75" fill="#8fa89e" font-size="9">Data B: 7,5; 7,6; 7,4; 7,5 (rata-rata 7,5)</text>
+        <text x="40" y="95" fill="#8fa89e" font-size="9">Data C: 5,0; 9,0; 6,0; 8,0 (rata-rata 7,0)</text>
+        <text x="40" y="130" fill="#34d399" font-size="9">A: akurat & presisi</text>
+        <text x="40" y="150" fill="#f87171" font-size="9">B: presisi, tidak akurat</text>
+        <text x="40" y="170" fill="#fbbf24" font-size="9">C: akurat, tidak presisi</text>
+      </svg>
+      <div class="figure-caption">Perbandingan akurasi dan presisi data pH</div>
+    </div>
+  `,
+  q: "Analisis yang PALING TEPAT tentang ketiga data di atas adalah... (Pilih 2 jawaban benar)",
+  opts: [
+    "Data B presisi tinggi tetapi tidak akurat karena ada kesalahan sistematis",
+    "Data C akurat (rata-rata = 7,0) tetapi tidak presisi karena data tersebar",
+    "Data A tidak akurat karena rata-rata 6,9",
+    "Data B adalah data terbaik karena presisi",
+    "Semua data sama baiknya"
+  ],
+  ans: [0, 1],
+  exp: "Data B presisi (7,5;7,6;7,4;7,5 konsisten) tapi tidak akurat (target 7,0). Data C akurat (rata-rata 7,0) tapi tidak presisi (5,0;9,0;6,0;8,0 tersebar). Data A adalah terbaik (akurat & presisi)."
+});
+
+// C3.4 - Analisis korelasi vs kausalitas
+QS.push({
+  id: 3004, topic: "analisis", type: "single", level: "c3",
+  stim: `
+    <div class="stim">
+      <p>Data menunjukkan: "Penjualan es krim meningkat pada bulan Desember. Pada bulan yang sama, kasus tenggelam juga meningkat."</p>
+    </div>
+  `,
+  q: "Analisis yang PALING TEPAT tentang hubungan kedua data tersebut adalah...",
+  opts: [
+    "Korelasi tidak selalu berarti kausalitas; keduanya mungkin disebabkan faktor ketiga (musim panas)",
+    "Es krim menyebabkan orang tenggelam",
+    "Tenggelam menyebabkan orang makan es krim",
+    "Kedua data tidak berhubungan sama sekali",
+    "Korelasi pasti berarti kausalitas"
+  ],
+  ans: 0,
+  exp: "Korelasi ≠ kausalitas. Keduanya meningkat pada Desember (di belahan selatan = musim panas) karena faktor ketiga: cuaca panas. Bukan es krim yang menyebabkan tenggelam."
+});
+
+// C3.5 - Analisis grafik batang
+QS.push({
+  id: 3005, topic: "analisis", type: "mcma", level: "c3",
+  stim: `
+    <div class="figure-wrap">
+      <svg width="400" height="200" viewBox="0 0 400 200">
+        <line x1="50" y1="170" x2="380" y2="170" stroke="#1e4a3f" stroke-width="2"/>
+        <line x1="50" y1="170" x2="50" y2="20" stroke="#1e4a3f" stroke-width="2"/>
+        <text x="180" y="195" fill="#8fa89e" font-size="10">Unsur</text>
+        <text x="10" y="100" fill="#8fa89e" font-size="10" transform="rotate(-90,10,100)">Kelimpahan (%)</text>
+        <rect x="80" y="40" width="40" height="130" fill="rgba(52,211,153,0.4)" stroke="#34d399"/>
+        <text x="85" y="35" fill="#34d399" font-size="9">O: 46,6%</text>
+        <rect x="150" y="80" width="40" height="90" fill="rgba(96,165,250,0.4)" stroke="#60a5fa"/>
+        <text x="155" y="75" fill="#60a5fa" font-size="9">Si: 27,7%</text>
+        <rect x="220" y="130" width="40" height="40" fill="rgba(251,191,36,0.4)" stroke="#fbbf24"/>
+        <text x="225" y="125" fill="#fbbf24" font-size="9">Al: 8,1%</text>
+        <rect x="290" y="150" width="40" height="20" fill="rgba(167,139,250,0.4)" stroke="#a78bfa"/>
+        <text x="295" y="145" fill="#a78bfa" font-size="9">Fe: 5,0%</text>
+      </svg>
+      <div class="figure-caption">Kelimpahan unsur di kerak bumi</div>
+    </div>
+  `,
+  q: "Analisis yang PALING TEPAT tentang grafik di atas adalah... (Pilih 2 jawaban benar)",
+  opts: [
+    "Oksigen (O) adalah unsur paling melimpah di kerak bumi (46,6%)",
+    "Empat unsur teratas (O, Si, Al, Fe) menyusun sekitar 87% kerak bumi",
+    "Grafik menunjukkan bahwa besi (Fe) paling melimpah",
+    "Oksigen dan silikon jumlahnya sama",
+    "Semua unsur memiliki kelimpahan yang sama"
+  ],
+  ans: [0, 1],
+  exp: "O paling melimpah (46,6%). O + Si + Al + Fe = 46,6 + 27,7 + 8,1 + 5,0 = 87,4% kerak bumi. Fe paling sedikit di antara empat."
+});
+
+// ================================================================
+// LEVEL C4 — Mengevaluasi (5 soal)
+// ================================================================
+
+// C4.1 - Evaluasi data tidak konsisten
+QS.push({
+  id: 4001, topic: "analisis", type: "mcma", level: "c4",
+  stim: `
+    <div class="table-wrap">
+      <table class="soal-table">
+        <tr><th>Percobaan</th><th>Suhu (°C)</th><th>Waktu (s)</th><th>Keterangan</th></tr>
+        <tr><td>1</td><td>25</td><td>40</td><td>Normal</td></tr>
+        <tr><td>2</td><td>35</td><td>20</td><td>Normal</td></tr>
+        <tr><td>3</td><td>45</td><td>25</td><td>? </td></tr>
+        <tr><td>4</td><td>55</td><td>5</td><td>Normal</td></tr>
+      </table>
+    </div>
+  `,
+  q: "Evaluasi yang PALING TEPAT tentang data di atas adalah... (Pilih 2 jawaban benar)",
+  opts: [
+    "Data percobaan 3 tidak konsisten (waktu naik padahal suhu naik) dan perlu diulang",
+    "Tren data: semakin tinggi suhu, semakin singkat waktu reaksi (laju meningkat)",
+    "Data percobaan 3 adalah data terbaik karena paling lama",
+    "Semua data konsisten dan dapat langsung disimpulkan",
+    "Data percobaan 4 tidak wajar karena terlalu cepat"
+  ],
+  ans: [0, 1],
+  exp: "Tren normal: suhu naik → waktu turun. Data 3 (45°C, 25 s) tidak konsisten (seharusnya ~15 s). Perlu diulang. Data 4 (55°C, 5 s) masih wajar karena suhu tinggi → reaksi sangat cepat."
+});
+
+// C4.2 - Error analysis (BARU)
+QS.push({
+  id: 4002, topic: "analisis", type: "single", level: "c4",
+  stim: `
+    <div class="stim">
+      <p>Seorang siswa menulis:</p>
+      <blockquote style="margin-left:1rem;border-left:3px solid var(--accent);padding-left:0.8rem;font-style:italic;color:var(--muted);">
+        "Rata-rata data pH = 5,2; 5,3; 5,1; 8,5 adalah 6,0. Jadi pH larutan adalah 6,0."
+      </blockquote>
+    </div>
+  `,
+  q: "Kesalahan penalaran utama siswa tersebut terletak pada...",
+  opts: [
+    "Menghitung rata-rata dengan outlier (8,5) tanpa memeriksa penyebabnya, sehingga hasil tidak representatif",
+    "Salah menghitung rata-rata",
+    "Salah membaca data",
+    "Menggunakan pH sebagai data",
+    "Menggunakan rata-rata untuk data pH"
+  ],
+  ans: 0,
+  exp: "Kesalahan: data 8,5 adalah outlier yang menyimpang jauh (data lain ~5,2). Rata-rata tanpa memeriksa outlier menghasilkan 6,0 yang tidak representatif. Harus diperiksa penyebab 8,5 dulu."
+});
+
+// C4.3 - Evaluasi kesimpulan
+QS.push({
+  id: 4003, topic: "analisis", type: "mcma", level: "c4",
+  stim: `
+    <div class="stim">
+      <p>Seorang siswa menguji pengaruh suhu terhadap kelarutan gula. Data:</p>
+      <ul style="margin-left:1.2rem;">
+        <li>Suhu 20°C: 200 g/100 mL</li>
+        <li>Suhu 40°C: 240 g/100 mL</li>
+        <li>Suhu 60°C: 280 g/100 mL</li>
+      </ul>
+      <p>Kesimpulan siswa: "Suhu tidak berpengaruh terhadap kelarutan gula."</p>
+    </div>
+  `,
+  q: "Evaluasi yang PALING TEPAT terhadap kesimpulan siswa adalah... (Pilih 2 jawaban benar)",
+  opts: [
+    "Kesimpulan salah karena data menunjukkan kelarutan meningkat seiring kenaikan suhu",
+    "Kesimpulan seharusnya: semakin tinggi suhu, semakin besar kelarutan gula",
+    "Kesimpulan benar karena data tidak berubah",
+    "Data tidak mendukung kesimpulan apa pun",
+    "Kesimpulan benar karena suhu tidak relevan"
+  ],
+  ans: [0, 1],
+  exp: "Kesimpulan siswa SALAH. Data: 200 → 240 → 280 g/100 mL seiring suhu 20 → 40 → 60°C. Kelarutan meningkat. Kesimpulan benar: semakin tinggi suhu, semakin besar kelarutan."
+});
+
+// C4.4 - Nilai klaim (BARU)
+QS.push({
+  id: 4004, topic: "analisis", type: "single", level: "c4",
+  stim: `
+    <div class="stim">
+      <p>Dua siswa berdebat tentang pengambilan data:</p>
+      <ul style="margin-left:1.2rem;">
+        <li><strong>Siswa A:</strong> "Cukup satu kali pengukuran asalkan alatnya presisi."</li>
+        <li><strong>Siswa B:</strong> "Perlu pengukuran berulang (minimal 3 kali) untuk memastikan konsistensi dan menghitung rata-rata."</li>
+      </ul>
+    </div>
+  `,
+  q: "Penilaian yang PALING TEPAT terhadap kedua argumen adalah...",
+  opts: [
+    "Siswa B benar karena pengukuran berulang penting untuk memastikan reliabilitas dan mendeteksi outlier",
+    "Siswa A benar karena alat presisi cukup",
+    "Kedua siswa benar karena pengulangan opsional",
+    "Kedua siswa salah karena pengukuran tidak perlu diulang",
+    "Tidak dapat dinilai tanpa data kuantitatif"
+  ],
+  ans: 0,
+  exp: "Siswa B benar. Pengukuran berulang (minimal 3×) penting untuk: (1) memastikan konsistensi, (2) menghitung rata-rata yang lebih representatif, (3) mendeteksi outlier, (4) mengurangi kesalahan acak."
+});
+
+// C4.5 - Evaluasi penyajian data (BARU)
+QS.push({
+  id: 4005, topic: "analisis", type: "mcma", level: "c4",
+  stim: `
+    <div class="stim">
+      <p>Seorang siswa memiliki data: "Hubungan suhu (0, 20, 40, 60, 80, 100°C) dengan kelarutan KNO₃ (g/100 mL)."</p>
+    </div>
+  `,
+  q: "Evaluasi yang PALING TEPAT tentang penyajian data yang sesuai adalah... (Pilih 2 jawaban benar)",
+  opts: [
+    "Grafik garis (line chart) paling tepat karena menunjukkan tren kontinu",
+    "Tabel juga dapat digunakan untuk menyajikan data secara rinci",
+    "Grafik lingkaran (pie chart) paling tepat untuk data ini",
+    "Grafik batang lebih tepat dari grafik garis untuk data kontinu",
+    "Data tidak perlu disajikan dalam grafik"
+  ],
+  ans: [0, 1],
+  exp: "Untuk data kontinu (suhu vs kelarutan), grafik garis paling tepat untuk melihat tren. Tabel juga valid untuk rincian. Pie chart tidak cocok (bukan proporsi). Grafik batang kurang tepat untuk data kontinu."
+});
+
+// ================================================================
+// LEVEL C5 — Mencipta (3 soal)
+// ================================================================
+
+// C5.1 - Rancang pengolahan data
+QS.push({
+  id: 5001, topic: "analisis", type: "mcma", level: "c5",
+  stim: `
+    <div class="stim">
+      <p>Seorang siswa memperoleh data titrasi 3 kali:</p>
+      <ul style="margin-left:1.2rem;">
+        <li>Volume NaOH: 24,90 mL; 25,00 mL; 25,10 mL</li>
+      </ul>
+      <p>Konsentrasi HCl yang dititrasi 25 mL, NaOH 0,1 M.</p>
+    </div>
+  `,
+  q: "Rancangan pengolahan data yang PALING TEPAT adalah... (Pilih 3 jawaban benar)",
+  opts: [
+    "Hitung volume rata-rata NaOH = 25,00 mL",
+    "Hitung mol NaOH = 0,1 M × 0,025 L = 2,5×10⁻³ mol",
+    "Hitung [HCl] = 2,5×10⁻³ mol / 0,025 L = 0,1 M",
+    "Gunakan hanya data terkecil (24,90 mL)",
+    "Abaikan data lain karena dianggap salah",
+    "Gunakan volume terbesar (25,10 mL)"
+  ],
+  ans: [0, 1, 2],
+  exp: "Volume rata-rata = (24,90+25,00+25,10)/3 = 25,00 mL. Mol NaOH = 0,1 × 0,025 = 2,5×10⁻³ mol. [HCl] = 2,5×10⁻³/0,025 = 0,1 M. Jangan gunakan hanya satu data."
+});
+
+// C5.2 - Rancang penyajian data
+QS.push({
+  id: 5002, topic: "analisis", type: "mcma", level: "c5",
+  stim: `
+    <div class="stim">
+      <p>Seorang siswa memiliki data: "Persentase komposisi udara: N₂ 78%, O₂ 21%, Ar 0,9%, CO₂ 0,04%."</p>
+    </div>
+  `,
+  q: "Rancangan penyajian data yang PALING TEPAT adalah... (Pilih 2 jawaban benar)",
+  opts: [
+    "Grafik lingkaran (pie chart) untuk menunjukkan proporsi komposisi",
+    "Tabel untuk menunjukkan nilai persentase secara rinci",
+    "Grafik garis untuk menunjukkan tren",
+    "Grafik batang bertumpuk untuk data kontinu",
+    "Tidak perlu grafik karena datanya sedikit"
+  ],
+  ans: [0, 1],
+  exp: "Pie chart paling tepat untuk proporsi (bagian dari keseluruhan). Tabel untuk rincian. Grafik garis tidak cocok (bukan data kontinu/tren)."
+});
+
+// C5.3 - Rancang analisis statistik
+QS.push({
+  id: 5003, topic: "analisis", type: "mcma", level: "c5",
+  stim: `
+    <div class="stim">
+      <p>Anda diminta menganalisis data hasil pengukuran densitas logam (nilai referensi = 7,8 g/cm³):</p>
+      <p style="font-family:monospace;font-size:0.9rem;text-align:center;">7,9 &nbsp; 7,8 &nbsp; 7,7 &nbsp; 7,8 &nbsp; 8,5</p>
+    </div>
+  `,
+  q: "Rancangan analisis yang PALING TEPAT adalah... (Pilih 3 jawaban benar)",
+  opts: [
+    "Hitung rata-rata: (7,9+7,8+7,7+7,8+8,5)/5 = 7,94 g/cm³",
+    "Identifikasi 8,5 sebagai outlier dan periksa penyebabnya",
+    "Hitung rata-rata tanpa outlier: (7,9+7,8+7,7+7,8)/4 = 7,8 g/cm³",
+    "Langsung buang 8,5 tanpa pemeriksaan",
+    "Gunakan rata-rata semua data tanpa analisis",
+    "Abaikan nilai referensi"
+  ],
+  ans: [0, 1, 2],
+  exp: "Hitung rata-rata semua data (7,94). Identifikasi 8,5 sebagai outlier. Hitung rata-rata tanpa outlier (7,8 = nilai referensi). Bandingkan dengan nilai referensi. Jangan langsung buang tanpa periksa."
+});
+
+// ================================================================
+// LEVEL C6 — Menilai (3 soal)
+// ================================================================
+
+// C6.1 - Nilai klaim korelasi
+QS.push({
+  id: 6001, topic: "analisis", type: "mcma", level: "c6",
+  stim: `
+    <div class="stim">
+      <p>Sebuah artikel menyatakan: "Data menunjukkan korelasi antara konsumsi cokelat dan jumlah pemenang Nobel per negara. Jadi, makan cokelat meningkatkan kecerdasan."</p>
+    </div>
+  `,
+  q: "Penilaian yang PALING TEPAT tentang klaim tersebut adalah... (Pilih 2 jawaban benar)",
+  opts: [
+    "Klaim tidak valid karena korelasi tidak membuktikan kausalitas",
+    "Ada faktor ketiga yang mungkin berperan (kesejahteraan ekonomi, pendidikan)",
+    "Klaim valid karena ada korelasi statistik",
+    "Korelasi selalu berarti sebab-akibat",
+    "Cokelat terbukti meningkatkan kecerdasan"
+  ],
+  ans: [0, 1],
+  exp: "Korelasi ≠ kausalitas. Klaim 'cokelat meningkatkan kecerdasan' tidak valid. Faktor ketiga (kesejahteraan, pendidikan) lebih mungkin menjelaskan korelasi. Klaim kausal perlu uji eksperimental."
+});
+
+// C6.2 - Nilai kesimpulan ilmiah
+QS.push({
+  id: 6002, topic: "analisis", type: "mcma", level: "c6",
+  stim: `
+    <div class="stim">
+      <p>Seorang siswa melakukan uji pH air minuman kemasan:</p>
+      <ul style="margin-left:1.2rem;">
+        <li>Sampel A: pH 6,8</li>
+        <li>Sampel B: pH 7,2</li>
+        <li>Sampel C: pH 6,9</li>
+      </ul>
+      <p>Kesimpulan siswa: "Semua sampel bersifat netral (pH = 7)."</p>
+    </div>
+  `,
+  q: "Penilaian yang PALING TEPAT tentang kesimpulan siswa adalah... (Pilih 2 jawaban benar)",
+  opts: [
+    "Kesimpulan terlalu generalisasi karena pH 6,8-7,2 berada di sekitar netral tapi tidak tepat 7",
+    "Kesimpulan seharusnya: sampel A dan C sedikit asam, sampel B sedikit basa",
+    "Kesimpulan benar karena semua mendekati 7",
+    "Kesimpulan salah karena pH tidak dapat diukur",
+    "Kesimpulan benar karena air selalu netral"
+  ],
+  ans: [0, 1],
+  exp: "Kesimpulan terlalu generalisasi. pH 6,8 & 6,9 = sedikit asam (< 7). pH 7,2 = sedikit basa (> 7). Tidak tepat 7. Kesimpulan harus mempertimbangkan perbedaan halus."
+});
+
+// C6.3 - Nilai klaim validitas data (BARU)
+QS.push({
+  id: 6003, topic: "analisis", type: "single", level: "c6",
+  stim: `
+    <div class="stim">
+      <p>Tiga siswa berdebat tentang validitas data:</p>
+      <ul style="margin-left:1.2rem;">
+        <li><strong>Siswa A:</strong> "Data valid jika dihasilkan dari alat yang mahal."</li>
+        <li><strong>Siswa B:</strong> "Data valid jika diperoleh dengan prosedur yang benar, dikalibrasi, dan diulang."</li>
+        <li><strong>Siswa C:</strong> "Data valid jika hasilnya sesuai hipotesis."</li>
+      </ul>
+    </div>
+  `,
+  q: "Penilaian yang PALING TEPAT terhadap ketiga argumen adalah...",
+  opts: [
+    "Siswa B benar karena validitas data ditentukan oleh prosedur, kalibrasi, dan replikasi",
+    "Siswa A benar karena alat mahal selalu akurat",
+    "Siswa C benar karena data harus sesuai hipotesis",
+    "Ketiga siswa benar",
+    "Ketiga siswa salah"
+  ],
+  ans: 0,
+  exp: "Siswa B benar. Validitas data ditentukan oleh: prosedur yang benar, kalibrasi alat, replikasi. Alat mahal tidak menjamin akurasi. Data yang hanya 'sesuai hipotesis' = confirmation bias, tidak valid."
+});
+
+// ================================================================
+// STATE MANAGEMENT
+// ================================================================
+var S = {
+  view: "home", qids: [], qi: 0, ans: {}, mode: "topic",
+  ri: 0, rqs: [], wrong: [], done: {}, scores: {}, filter: "all"
+};
+
+function load() {
+  try {
+    var d = JSON.parse(localStorage.getItem("tka_kim_analisis"));
+    if (d) {
+      S.done = {};
+      (d.done || []).forEach(function(x) { S.done[x] = true; });
+      S.wrong = d.wrong || [];
+      S.scores = d.scores || {};
+    }
+  } catch(e) {}
+}
+function save() {
+  try {
+    localStorage.setItem("tka_kim_analisis", JSON.stringify({
+      done: Object.keys(S.done), wrong: S.wrong, scores: S.scores
+    }));
+  } catch(e) {}
+}
+load();
+
+function go(v) {
+  var names = {home:"vHome", quiz:"vQuiz", res:"vRes", rev:"vRev"};
+  document.querySelectorAll(".view").forEach(function(el) { el.classList.remove("active"); });
+  var el = document.getElementById(names[v]);
+  if (el) el.classList.add("active");
+  S.view = v;
+  window.scrollTo(0, 0);
+  if (v === "home") renderHome();
+}
+
+function renderHome() {
+  document.getElementById("bWR").style.display = S.wrong.length > 0 ? "flex" : "none";
+  updateNS();
+  renderList();
+}
+
+function updateNS() {
+  var tc = 0, cc = 0;
+  for (var k in S.scores) { tc += S.scores[k].t; cc += S.scores[k].c; }
+  document.getElementById("nst").textContent = tc > 0 ? cc + "/" + tc : "0/0";
+}
+
+function getLevelBadge(level) {
+  var labels = {c2:"C2", c3:"C3", c4:"C4", c5:"C5", c6:"C6"};
+  var colors = {c2:"#34d399", c3:"#fbbf24", c4:"#f97316", c5:"#ef4444", c6:"#8b5cf6"};
+  var bgColors = {
+    c2:"rgba(52,211,153,0.15)", c3:"rgba(251,191,36,0.15)",
+    c4:"rgba(249,115,22,0.15)", c5:"rgba(239,68,68,0.15)",
+    c6:"rgba(139,92,246,0.15)"
+  };
+  return '<span class="badge" style="background:' + bgColors[level] + ';color:' + colors[level] + ';font-size:0.65rem;">' + labels[level] + '</span>';
+}
+
+function renderList() {
+  var list = document.getElementById("qList");
+  list.innerHTML = "";
+  var filtered = QS.filter(function(q) {
+    if (S.filter === "all") return true;
+    return q.level === S.filter;
+  });
+  filtered.forEach(function(q, i) {
+    var answered = S.done[q.id];
+    var wasWrong = S.wrong.indexOf(q.id) >= 0;
+    var tl = q.type === "mcma" ? "MCMA" : "Pilihan Ganda";
+    var levelLabel = q.level ? getLevelBadge(q.level) : "";
+
+    var d = document.createElement("div");
+    d.className = "glow-card";
+    d.style.cursor = "pointer";
+    d.onclick = function() { singleQ(q.id); };
+    d.innerHTML =
+      '<div class="w-9 h-9 rounded-lg flex items-center justify-center text-sm font-bold flex-shrink-0" style="background:' +
+        (answered ? (wasWrong ? 'rgba(248,113,113,.12);color:var(--error)' : 'rgba(52,211,153,.12);color:var(--success)') : 'var(--bg2);color:var(--muted)') +
+      '">' + (answered ? (wasWrong ? '<i class="fa-solid fa-xmark"></i>' : '<i class="fa-solid fa-check"></i>') : (i + 1)) + '</div>' +
+      '<div class="flex-1 min-w-0">' +
+        '<div class="text-sm font-semibold mb-0.5 truncate" style="color:var(--text)">' + plain(q.q).substring(0, 75) + (q.q.length > 75 ? '...' : '') + '</div>' +
+        '<div class="flex items-center gap-2 flex-wrap">' +
+          '<span class="badge" style="background:var(--bg2);color:var(--muted);font-size:.68rem">' + tl + '</span>' +
+          levelLabel +
+        '</div>' +
+      '</div>' +
+      '<i class="fa-solid fa-chevron-right text-xs" style="color:var(--border)"></i>';
+    list.appendChild(d);
+  });
+}
+
+function filterLevel(level) {
+  S.filter = level;
+  document.querySelectorAll('[id^="filter"]').forEach(function(el) {
+    el.style.background = "transparent";
+  });
+  var btn = document.getElementById("filter" + level.toUpperCase());
+  if (btn) btn.style.background = "rgba(212,160,74,.15)";
+  renderList();
+}
+
+function plain(html) {
+  var d = document.createElement("div");
+  d.innerHTML = html;
+  return d.textContent || "";
+}
+
+function startQuiz() {
+  S.qids = QS.map(function(q) { return q.id; });
+  S.ans = {}; S.qi = 0; S.mode = "topic";
+  go("quiz"); renderQ();
+}
+function startRandom() {
+  var sh = QS.slice().sort(function() { return Math.random() - 0.5; }).slice(0, 10);
+  S.qids = sh.map(function(q) { return q.id; });
+  S.ans = {}; S.qi = 0; S.mode = "random";
+  go("quiz"); renderQ();
+}
+function startWrong() {
+  var wq = QS.filter(function(q) { return S.wrong.indexOf(q.id) >= 0; });
+  if (wq.length === 0) return;
+  S.qids = wq.map(function(q) { return q.id; });
+  S.ans = {}; S.qi = 0; S.mode = "wrong";
+  go("quiz"); renderQ();
+}
+function singleQ(qid) {
+  S.qids = [qid]; S.ans = {}; S.qi = 0; S.mode = "single";
+  go("quiz"); renderQ();
+}
+
+function renderQ() {
+  var qid = S.qids[S.qi];
+  var q = QS.find(function(x) { return x.id === qid; });
+  if (!q) return;
+  var total = S.qids.length;
+  var idx = S.qi + 1;
+  var pct = Math.round(idx / total * 100);
+
+  document.getElementById("qCtr").textContent = idx + " / " + total;
+  document.getElementById("qBar").style.width = pct + "%";
+  var tl = {single: "Pilihan Ganda", mcma: "MCMA"};
+  document.getElementById("qTyp").textContent = tl[q.type] || q.type;
+  var levelLabels = {c2:"C2 - Pemahaman", c3:"C3 - Menganalisis", c4:"C4 - Mengevaluasi", c5:"C5 - Mencipta", c6:"C6 - Menilai"};
+  document.getElementById("qLevel").textContent = q.level ? levelLabels[q.level] : "";
+  document.getElementById("bPrv").style.visibility = S.qi > 0 ? "visible" : "hidden";
+  var isLast = S.qi === total - 1;
+  document.getElementById("bNxt").innerHTML = isLast ? "Selesai <i class='fa-solid fa-check ml-1'></i>" : "Selanjutnya <i class='fa-solid fa-chevron-right ml-1'></i>";
+
+  var h = "";
+  if (q.stim) h += '<div class="stim">' + q.stim + '</div>';
+  h += '<h3 class="font-bold text-base mb-4 leading-relaxed" style="color:var(--text)">' + q.q + '</h3>';
+
+  if (q.type === "single") {
+    var letters = "ABCDE";
+    h += '<div class="space-y-2.5">';
+    q.opts.forEach(function(opt, i) {
+      var sel = S.ans[qid] === i;
+      h += '<button class="ob' + (sel ? ' sel' : '') + '" onclick="selS(' + qid + ',' + i + ')">' +
+        '<span class="w-7 h-7 min-w-[1.75rem] rounded-full border-2 flex items-center justify-center text-xs font-bold flex-shrink-0" style="border-color:' + (sel ? 'var(--accent)' : 'var(--border)') + ';color:' + (sel ? 'var(--accent)' : 'var(--muted)') + '">' + letters[i] + '</span>' +
+        '<span class="text-sm">' + opt + '</span></button>';
+    });
+    h += '</div>';
+  } else if (q.type === "mcma") {
+    var ua = S.ans[qid] || [];
+    h += '<div class="space-y-2.5">';
+    q.opts.forEach(function(opt, i) {
+      var sel = ua.indexOf(i) >= 0;
+      h += '<button class="ob' + (sel ? ' sel' : '') + '" onclick="togM(' + qid + ',' + i + ')">' +
+        '<div class="ck">' + (sel ? '<i class="fa-solid fa-check text-xs" style="color:#0b1a17"></i>' : '') + '</div>' +
+        '<span class="text-sm">' + opt + '</span></button>';
+    });
+    h += '</div>';
+    h += '<p class="text-xs mt-2.5" style="color:var(--muted)"><i class="fa-solid fa-circle-info mr-1"></i>Pilih SEMUA jawaban yang benar</p>';
+  }
+  document.getElementById("qArea").innerHTML = h;
+}
+
+function selS(qid, i) { S.ans[qid] = i; renderQ(); }
+function togM(qid, i) {
+  if (!S.ans[qid]) S.ans[qid] = [];
+  var arr = S.ans[qid];
+  var idx = arr.indexOf(i);
+  if (idx >= 0) arr.splice(idx, 1); else arr.push(i);
+  renderQ();
+}
+
+function qNext() {
+  if (S.qi === S.qids.length - 1) { finishQ(); return; }
+  S.qi++; renderQ(); window.scrollTo(0, 0);
+}
+function qPrev() {
+  if (S.qi > 0) { S.qi--; renderQ(); window.scrollTo(0, 0); }
+}
+
+function finishQ() {
+  var correct = 0, wrong = 0;
+  var ts = {};
+  S.qids.forEach(function(qid) {
+    var q = QS.find(function(x) { return x.id === qid; });
+    if (!q) return;
+    var ua = S.ans[qid];
+    var ok = false;
+    if (q.type === "single") ok = ua === q.ans;
+    else if (q.type === "mcma") {
+      var u = (ua || []).slice().sort().join(",");
+      var c = q.ans.slice().sort().join(",");
+      ok = u === c;
+    }
+    S.done[qid] = true;
+    if (ok) correct++; else { wrong++; S.wrong.push(qid); }
+    if (!ts[q.topic]) ts[q.topic] = {c:0, t:0};
+    ts[q.topic].t++;
+    if (ok) ts[q.topic].c++;
+  });
+  S.wrong = uniq(S.wrong);
+  for (var k in ts) {
+    if (!S.scores[k]) S.scores[k] = {c:0, t:0};
+    S.scores[k].c += ts[k].c;
+    S.scores[k].t += ts[k].t;
+  }
+  save();
+
+  var total = correct + wrong;
+  var pct = total > 0 ? Math.round(correct / total * 100) : 0;
+  document.getElementById("rPct").textContent = pct + "%";
+  document.getElementById("rOk").textContent = correct;
+  document.getElementById("rNo").textContent = wrong;
+  document.getElementById("rTot").textContent = total;
+
+  var circ = 2 * Math.PI * 55;
+  var ring = document.getElementById("rRing");
+  ring.style.strokeDasharray = circ;
+  ring.style.strokeDashoffset = circ - (circ * pct / 100);
+  ring.style.stroke = pct >= 70 ? "var(--success)" : pct >= 40 ? "var(--accent)" : "var(--error)";
+
+  var lbl = pct >= 90 ? "Luar Biasa!" : pct >= 70 ? "Bagus Sekali!" : pct >= 50 ? "Cukup Baik" : "Perlu Belajar Lagi";
+  document.getElementById("rLbl").textContent = lbl;
+  document.getElementById("bRW").style.display = wrong > 0 ? "inline-flex" : "none";
+  go("res");
+}
+
+function uniq(arr) {
+  var seen = {}, out = [];
+  arr.forEach(function(x) { if (!seen[x]) { seen[x] = true; out.push(x); } });
+  return out;
+}
+
+function retryQ() {
+  if (S.mode === "topic") startQuiz();
+  else if (S.mode === "random") startRandom();
+  else if (S.mode === "wrong") startWrong();
+  else if (S.mode === "single") singleQ(S.qids[0]);
+}
+
+function revWrong() {
+  var wqs = S.qids.filter(function(qid) { return S.wrong.indexOf(qid) >= 0; });
+  if (wqs.length === 0) { toast("Tidak ada jawaban salah", "var(--success)"); return; }
+  S.rqs = wqs.map(function(qid) { return QS.find(function(x) { return x.id === qid; }); }).filter(Boolean);
+  S.ri = 0;
+  go("rev"); renderRev();
+}
+
+function renderRev() {
+  var q = S.rqs[S.ri];
+  if (!q) return;
+  var total = S.rqs.length;
+  document.getElementById("rvPr").style.visibility = S.ri > 0 ? "visible" : "hidden";
+  document.getElementById("rvNx").innerHTML = S.ri === total - 1 ? "Kembali <i class='fa-solid fa-check ml-1'></i>" : "Selanjutnya <i class='fa-solid fa-chevron-right ml-1'></i>";
+
+  var ua = S.ans[q.id];
+  var ok = false;
+  if (q.type === "single") ok = ua === q.ans;
+  else if (q.type === "mcma") {
+    var u = (ua || []).slice().sort().join(",");
+    ok = u === q.ans.slice().sort().join(",");
+  }
+
+  var letters = "ABCDE";
+  var h = '<div class="text-xs mb-2 font-semibold" style="color:var(--muted)">Soal ' + (S.ri + 1) + " / " + total + '</div>';
+  if (q.stim) h += '<div class="stim">' + q.stim + '</div>';
+  h += '<h3 class="font-bold text-sm mb-4 leading-relaxed">' + q.q + '</h3>';
+  h += '<div class="space-y-2.5">';
+
+  if (q.type === "single") {
+    q.opts.forEach(function(opt, i) {
+      var cls = "off";
+      if (i === q.ans) cls += " ok";
+      else if (ua === i && i !== q.ans) cls += " no";
+      h += '<button class="ob ' + cls + '">' +
+        '<span class="w-7 h-7 min-w-[1.75rem] rounded-full border-2 flex items-center justify-center text-xs font-bold flex-shrink-0" style="border-color:' + (i === q.ans ? "var(--success)" : ua === i ? "var(--error)" : "var(--border)") + ';color:' + (i === q.ans ? "var(--success)" : ua === i ? "var(--error)" : "var(--muted)") + '">' + letters[i] + '</span>' +
+        '<span class="text-sm">' + opt + '</span>' +
+        (i === q.ans ? '<i class="fa-solid fa-circle-check ml-auto" style="color:var(--success)"></i>' : '') +
+        (ua === i && i !== q.ans ? '<i class="fa-solid fa-circle-xmark ml-auto" style="color:var(--error)"></i>' : '') +
+      '</button>';
+    });
+  } else if (q.type === "mcma") {
+    q.opts.forEach(function(opt, i) {
+      var isUA = (ua || []).indexOf(i) >= 0;
+      var isCA = q.ans.indexOf(i) >= 0;
+      var cls = "off";
+      if (isCA) cls += " ok";
+      else if (isUA && !isCA) cls += " no";
+      h += '<button class="ob ' + cls + '">' +
+        '<div class="ck">' + (isCA ? '<i class="fa-solid fa-check text-xs" style="color:#0b1a17"></i>' : isUA ? '<i class="fa-solid fa-xmark text-xs" style="color:#fff"></i>' : '') + '</div>' +
+        '<span class="text-sm">' + opt + '</span></button>';
+    });
+  }
+  h += '</div>';
+  h += '<div class="expbox ' + (ok ? 'good' : 'bad') + '">' +
+    '<div class="flex items-center gap-2 mb-1.5 font-bold text-sm">' +
+      '<i class="fa-solid ' + (ok ? 'fa-circle-check' : 'fa-circle-xmark') + '" style="color:' + (ok ? 'var(--success)' : 'var(--error)') + '"></i>' +
+      (ok ? 'Jawaban Benar' : 'Jawaban Salah') +
+    '</div>' +
+    '<p style="color:var(--text);line-height:1.6;font-size:0.9rem;">' + q.exp + '</p>' +
+  '</div>';
+
+  document.getElementById("revA").innerHTML = h;
+  window.scrollTo(0, 0);
+}
+
+function rvNav(dir) {
+  if (dir === 1 && S.ri === S.rqs.length - 1) { backRev(); return; }
+  S.ri = Math.max(0, Math.min(S.rqs.length - 1, S.ri + dir));
+  renderRev();
+}
+function backRev() {
+  if (S.mode === "single") go("home");
+  else go("res");
+}
+
+function openExit() { document.getElementById("exMod").classList.add("open"); }
+function closeMod() { document.getElementById("exMod").classList.remove("open"); }
+function doExit() { closeMod(); go("home"); }
+
+function resetAll() {
+  S.done = {}; S.wrong = []; S.scores = {};
+  save(); renderHome(); toast("Progress berhasil direset", "var(--success)");
+}
+function toast(msg, bg) {
+  var t = document.getElementById("toast");
+  t.style.display = "block";
+  t.style.background = bg || "var(--card)";
+  t.style.color = "#fff";
+  t.textContent = msg;
+  setTimeout(function() { t.style.display = "none"; }, 2200);
+}
+
+renderHome();
+console.log("Analisis Data Kimia - HOTS C2-C6 loaded: " + QS.length + " soal");
+</script>
+</body>
+</html>

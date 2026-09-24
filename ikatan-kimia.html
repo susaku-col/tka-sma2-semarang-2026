@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ikatan Kimia — TKA Kimia SMA Negeri 2 Semarang</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Sans+3:ital,wght@0,300;0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+    :root {
+        --bg: #0b1a17; --bg2: #132a24; --card: #1a3a32; --card2: #1e4a3f;
+        --text: #e8f0ec; --muted: #8aa8a0; --border: #2a4a42; --accent: #d4a04a;
+        --success: #34d399; --error: #f87171; --glow: rgba(212, 160, 74, 0.15);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+        font-family: 'Source Sans 3', sans-serif;
+        background: var(--bg); color: var(--text);
+        min-height: 100vh; padding-top: 52px;
+    }
+    .fd { font-family: 'Playfair Display', serif; }
+    .bg-noise {
+        position: fixed; top:0; left:0; right:0; bottom:0;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+        pointer-events: none; z-index: 0;
+    }
+    .hg {
+        position: absolute; width:300px; height:300px;
+        border-radius: 50%; filter: blur(100px);
+        opacity: 0.15; pointer-events: none;
+    }
+    .badge {
+        display: inline-flex; align-items: center; gap: 6px;
+        padding: 4px 14px; border-radius: 100px;
+        font-size: 0.75rem; font-weight: 600;
+        background: rgba(212,160,74,0.12); color: var(--accent);
+    }
+    .glow-card {
+        background: var(--card); border: 1px solid var(--border);
+        border-radius: 12px; padding: 16px 18px; cursor: pointer;
+        transition: all 0.25s ease; display: flex;
+        align-items: center; gap: 12px;
+        text-decoration: none; color: inherit;
+    }
+    .glow-card:hover {
+        border-color: var(--accent); background: var(--card2);
+        box-shadow: 0 0 20px var(--glow);
+    }
+    .bp {
+        background: var(--accent); color: #0b1a17; border: none;
+        padding: 8px 18px; border-radius: 30px; font-weight: 700;
+        font-size: 0.85rem; cursor: pointer; transition: all 0.25s ease;
+        display: inline-flex; align-items: center; gap: 6px;
+    }
+    .bp:hover { background: #e8b84a; transform: scale(1.02); }
+    .bs {
+        background: transparent; color: var(--text);
+        border: 1px solid var(--border); padding: 8px 18px;
+        border-radius: 30px; font-weight: 600; font-size: 0.85rem;
+        cursor: pointer; transition: all 0.25s ease;
+        display: inline-flex; align-items: center; gap: 6px;
+    }
+    .bs:hover { border-color: var(--accent); background: var(--card2); }
+    .view { display: none; }
+    .view.active { display: block; }
+    .stim {
+        background: var(--bg2); padding: 12px 16px;
+        border-radius: 8px; border-left: 3px solid var(--accent);
+        margin-bottom: 12px; font-size: 0.9rem;
+        line-height: 1.6; color: var(--muted);
+    }
+    .table-wrap {
+        overflow-x: auto; margin: 8px 0;
+        border-radius: 8px; border: 1px solid var(--border);
+    }
+    table.soal-table {
+        width: 100%; border-collapse: collapse;
+        font-size: 0.8rem; background: var(--bg2);
+    }
+    table.soal-table th {
+        background: var(--card); color: var(--accent);
+        font-weight: 600; padding: 6px 10px;
+        border: 1px solid var(--border); text-align: center;
+    }
+    table.soal-table td {
+        padding: 6px 10px; border: 1px solid var(--border);
+        text-align: center; color: var(--text);
+    }
+    table.soal-table tr:hover { background: rgba(212,160,74,0.05); }
+    .figure-wrap {
+        display: flex; flex-direction: column; align-items: center;
+        margin: 8px 0; padding: 10px; background: var(--bg2);
+        border-radius: 8px; border: 1px solid var(--border);
+    }
+    .figure-wrap svg { max-width: 100%; height: auto; }
+    .figure-caption {
+        font-size: 0.7rem; color: var(--muted);
+        margin-top: 4px; text-align: center;
+    }
+    .chem-eq {
+        display: block; text-align: center;
+        padding: 0.5rem 0.75rem;
+        font-family: "Times New Roman", serif;
+        font-size: 1rem; background: var(--bg2);
+        border-radius: 0.5rem; border: 1px solid var(--border);
+        margin: 0.5rem 0; color: var(--text);
+    }
+    .lewis-structure {
+        font-family: "Courier New", monospace;
+        font-size: 1rem; line-height: 1.8;
+        background: var(--bg2); padding: 0.75rem;
+        border-radius: 0.5rem; border: 1px solid var(--border);
+        text-align: center; color: var(--text);
+        margin: 0.5rem 0; white-space: pre;
+    }
+    .bond-type {
+        display: inline-block; padding: 0.15rem 0.6rem;
+        border-radius: 999px; font-size: 0.6rem; font-weight: 600;
+    }
+    .bond-type.ionic { background: rgba(52,211,153,0.2); color: #34d399; }
+    .bond-type.covalent { background: rgba(96,165,250,0.2); color: #60a5fa; }
+    .bond-type.metallic { background: rgba(251,191,36,0.2); color: #fbbf24; }
+    .bond-type.hydrogen { background: rgba(167,139,250,0.2); color: #a78bfa; }
+    .space-y-2\.5 > * + * { margin-top: 8px; }
+    .ob {
+        display: flex; align-items: center; gap: 10px;
+        width: 100%; padding: 8px 14px; border-radius: 8px;
+        border: 1px solid var(--border); background: var(--bg2);
+        color: var(--text); cursor: pointer;
+        transition: all 0.2s ease; font-size: 0.9rem; text-align: left;
+    }
+    .ob:hover { border-color: var(--muted); }
+    .ob.sel { border-color: var(--accent); background: rgba(212,160,74,0.1); }
+    .ob .ck {
+        width: 20px; height: 20px; min-width: 20px;
+        border-radius: 4px; border: 2px solid var(--border);
+        display: flex; align-items: center; justify-content: center;
+        font-size: 0.7rem; background: var(--bg);
+    }
+    .ob.sel .ck { border-color: var(--accent); background: var(--accent); }
+    .ob.ok .ck { border-color: var(--success); background: var(--success); }
+    .ob.no .ck { border-color: var(--error); background: var(--error); }
+    .modal-bg {
+        display: none; position: fixed; inset: 0;
+        background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
+        z-index: 50; justify-content: center; align-items: center;
+        padding: 20px;
+    }
+    .modal-bg.open { display: flex; }
+    .toast {
+        position: fixed; bottom: 30px; left: 50%;
+        transform: translateX(-50%); padding: 12px 28px;
+        border-radius: 12px; font-weight: 600; z-index: 100;
+        background: var(--card); border: 1px solid var(--border);
+        color: var(--text); max-width: 90%; text-align: center;
+    }
+    .hots-badge {
+        display: inline-block; padding: 0.15rem 0.5rem;
+        border-radius: 999px; font-size: 0.6rem;
+        font-weight: 700; margin-left: 0.5rem;
+    }
+    .hots-c2 { background: rgba(52,211,153,0.2); color: #34d399; }
+    .hots-c3 { background: rgba(251,191,36,0.2); color: #fbbf24; }
+    .hots-c4 { background: rgba(249,115,22,0.2); color: #f97316; }
+    .hots-c5 { background: rgba(239,68,68,0.2); color: #ef4444; }
+    .hots-c6 { background: rgba(139,92,246,0.2); color: #8b5cf6; }
+    .expbox {
+        margin-top: 14px; padding: 14px 18px;
+        border-radius: 8px; font-size: 0.9rem; line-height: 1.7;
+    }
+    .expbox.good {
+        background: rgba(52,211,153,0.06);
+        border-left: 4px solid var(--success);
+    }
+    .expbox.bad {
+        background: rgba(248,113,113,0.06);
+        border-left: 4px solid var(--error);
+    }
+    @media (max-width: 640px) {
+        .ob { font-size: 0.8rem; padding: 6px 12px; }
+        .bp, .bs { font-size: 0.75rem; padding: 6px 14px; }
+        .glow-card { padding: 12px 14px; }
+        .bond-type { font-size: 0.5rem; padding: 0.1rem 0.4rem; }
+    }
+</style>
+</head>
+<body>
+<div class="bg-noise"></div>
+
+<nav class="fixed top-0 left-0 right-0 z-40 backdrop-blur-md border-b" style="background:rgba(11,26,23,.88);border-color:var(--border)">
+<div class="max-w-5xl mx-auto px-4 flex items-center justify-between" style="height:52px">
+<button onclick="location.href='index.html'" class="flex items-center gap-2 text-sm font-bold tracking-wide" style="color:var(--accent);background:none;border:none;cursor:pointer;">
+<i class="fa-solid fa-arrow-left"></i><span class="hidden sm:inline">Kembali</span>
+</button>
+<div class="flex items-center gap-3">
+<span class="hidden sm:flex items-center gap-1.5 text-xs" style="color:var(--muted)">
+<i class="fa-solid fa-trophy" style="color:var(--accent)"></i><span id="nst">0/0</span>
+</span>
+<button onclick="location.href='index.html'" class="text-sm px-2.5 py-1 rounded" style="color:var(--muted);background:none;border:none;cursor:pointer;">
+<i class="fa-solid fa-house"></i>
+</button>
+</div>
+</div>
+</nav>
+
+<!-- HOME -->
+<div id="vHome" class="view active pt-16 pb-12 px-4">
+<div class="max-w-4xl mx-auto">
+    <div class="relative rounded-2xl overflow-hidden mb-8 p-7 md:p-10" style="background:linear-gradient(135deg,var(--card),var(--card2))">
+        <div class="hg" style="background:var(--accent);top:-180px;right:-80px"></div>
+        <div class="hg" style="background:#34d399;bottom:-180px;left:-80px"></div>
+        <div class="relative z-10">
+            <div class="badge mb-3"><i class="fa-solid fa-link"></i> Ikatan Kimia</div>
+            <h1 class="fd text-3xl md:text-4xl font-black mb-2 leading-tight">Ikatan <span style="color:var(--accent)">Kimia</span></h1>
+            <p class="text-sm md:text-base max-w-lg" style="color:var(--muted);line-height:1.65">Latihan soal HOTS level C2-C6 tentang ikatan ion, kovalen, logam, dan gaya antarmolekul.</p>
+            <div class="flex flex-wrap gap-2 mt-4">
+                <span class="badge hots-badge hots-c2">C2 - Pemahaman</span>
+                <span class="badge hots-badge hots-c3">C3 - Menganalisis</span>
+                <span class="badge hots-badge hots-c4">C4 - Mengevaluasi</span>
+                <span class="badge hots-badge hots-c5">C5 - Mencipta</span>
+                <span class="badge hots-badge hots-c6">C6 - Menilai</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="flex flex-wrap gap-2 mb-4">
+        <span class="bond-type ionic"><i class="fa-solid fa-bolt"></i> Ionik</span>
+        <span class="bond-type covalent"><i class="fa-solid fa-share-nodes"></i> Kovalen</span>
+        <span class="bond-type metallic"><i class="fa-solid fa-cube"></i> Logam</span>
+        <span class="bond-type hydrogen"><i class="fa-solid fa-droplet"></i> Hidrogen</span>
+    </div>
+
+    <div class="flex flex-wrap gap-2.5 mb-6">
+        <button onclick="startQuiz()" class="bp"><i class="fa-solid fa-play"></i> Mulai Quiz Semua Soal</button>
+        <button onclick="startRandom()" class="bs"><i class="fa-solid fa-shuffle"></i> Quiz Acak 10 Soal</button>
+        <button onclick="startWrong()" class="bs" id="bWR" style="display:none"><i class="fa-solid fa-rotate-left"></i> Ulangi Salah</button>
+        <button onclick="resetAll()" class="bs"><i class="fa-solid fa-trash-can"></i> Reset</button>
+    </div>
+
+    <div class="flex flex-wrap gap-2 mb-4">
+        <button onclick="filterLevel('all')" class="bs text-xs" id="filterAll" style="background:rgba(212,160,74,.15)">Semua</button>
+        <button onclick="filterLevel('c2')" class="bs text-xs" id="filterC2">C2</button>
+        <button onclick="filterLevel('c3')" class="bs text-xs" id="filterC3">C3</button>
+        <button onclick="filterLevel('c4')" class="bs text-xs" id="filterC4">C4</button>
+        <button onclick="filterLevel('c5')" class="bs text-xs" id="filterC5">C5</button>
+        <button onclick="filterLevel('c6')" class="bs text-xs" id="filterC6">C6</button>
+    </div>
+
+    <div id="qList"></div>
+</div>
+</div>
+
+<!-- QUIZ -->
+<div id="vQuiz" class="view pt-16 pb-12 px-4">
+<div class="max-w-3xl mx-auto">
+    <div class="flex items-center justify-between mb-3">
+        <button onclick="openExit()" class="text-sm flex items-center gap-1.5" style="color:var(--muted);background:none;border:none;cursor:pointer;"><i class="fa-solid fa-xmark"></i>Keluar</button>
+        <div class="flex items-center gap-2.5">
+            <span id="qCtr" class="text-sm font-semibold" style="color:var(--muted)"></span>
+            <span id="qTyp" class="badge" style="background:rgba(212,160,74,.12);color:var(--accent);font-size:0.7rem;"></span>
+            <span id="qLevel" class="badge" style="background:var(--bg2);color:var(--muted);font-size:0.7rem;"></span>
+        </div>
+    </div>
+    <div class="w-full h-1.5 rounded-full mb-5" style="background:var(--border)">
+        <div id="qBar" class="h-full rounded-full" style="background:var(--accent);width:0%"></div>
+    </div>
+    <div id="qArea"></div>
+    <div class="flex items-center justify-between mt-7">
+        <button id="bPrv" onclick="qPrev()" class="bs" style="visibility:hidden"><i class="fa-solid fa-chevron-left mr-1"></i>Sebelumnya</button>
+        <button id="bNxt" onclick="qNext()" class="bp">Selanjutnya <i class="fa-solid fa-chevron-right ml-1"></i></button>
+    </div>
+</div>
+</div>
+
+<!-- RESULTS -->
+<div id="vRes" class="view pt-16 pb-12 px-4">
+<div class="max-w-3xl mx-auto text-center">
+    <div class="mb-7">
+        <svg class="mx-auto mb-3" style="transform:rotate(-90deg)" width="130" height="130" viewBox="0 0 130 130">
+            <circle cx="65" cy="65" r="55" fill="none" stroke="var(--border)" stroke-width="7"/>
+            <circle id="rRing" cx="65" cy="65" r="55" fill="none" stroke="var(--accent)" stroke-width="7" stroke-linecap="round" stroke-dasharray="345.6" stroke-dashoffset="345.6"/>
+        </svg>
+        <div class="text-3xl font-bold" style="color:var(--accent)" id="rPct">0%</div>
+        <div class="text-sm mt-0.5" style="color:var(--muted)" id="rLbl">—</div>
+    </div>
+    <div class="grid grid-cols-3 gap-3 mb-7">
+        <div class="rounded-xl p-3.5" style="background:var(--card);border:1px solid var(--border)">
+            <div class="text-2xl font-bold" style="color:var(--success)" id="rOk">0</div>
+            <div class="text-xs" style="color:var(--muted)">Benar</div>
+        </div>
+        <div class="rounded-xl p-3.5" style="background:var(--card);border:1px solid var(--border)">
+            <div class="text-2xl font-bold" style="color:var(--error)" id="rNo">0</div>
+            <div class="text-xs" style="color:var(--muted)">Salah</div>
+        </div>
+        <div class="rounded-xl p-3.5" style="background:var(--card);border:1px solid var(--border)">
+            <div class="text-2xl font-bold" id="rTot">0</div>
+            <div class="text-xs" style="color:var(--muted)">Total</div>
+        </div>
+    </div>
+    <div class="flex flex-wrap justify-center gap-2.5">
+        <button onclick="location.href='index.html'" class="bs"><i class="fa-solid fa-house mr-1"></i>Beranda</button>
+        <button onclick="revWrong()" class="bp" id="bRW" style="display:none"><i class="fa-solid fa-eye mr-1"></i>Review Salah</button>
+        <button onclick="retryQ()" class="bs"><i class="fa-solid fa-rotate-left mr-1"></i>Ulangi</button>
+    </div>
+</div>
+</div>
+
+<!-- REVIEW -->
+<div id="vRev" class="view pt-16 pb-12 px-4">
+<div class="max-w-3xl mx-auto">
+    <button onclick="backRev()" class="flex items-center gap-2 text-sm mb-5" style="color:var(--muted);background:none;border:none;cursor:pointer;"><i class="fa-solid fa-arrow-left"></i>Kembali</button>
+    <div id="revA"></div>
+    <div class="flex justify-center gap-2.5 mt-7">
+        <button id="rvPr" onclick="rvNav(-1)" class="bs"><i class="fa-solid fa-chevron-left mr-1"></i>Sebelumnya</button>
+        <button id="rvNx" onclick="rvNav(1)" class="bp">Selanjutnya <i class="fa-solid fa-chevron-right ml-1"></i></button>
+    </div>
+</div>
+</div>
+
+<div id="exMod" class="modal-bg">
+    <div class="rounded-xl p-5 max-w-sm w-full" style="background:var(--card);border:1px solid var(--border)">
+        <h3 class="fd text-lg font-bold mb-1.5">Keluar dari Quiz?</h3>
+        <p class="text-sm mb-4" style="color:var(--muted)">Progress quiz ini akan hilang.</p>
+        <div class="flex gap-2.5 justify-end">
+            <button onclick="closeMod()" class="bs text-sm">Batal</button>
+            <button onclick="doExit()" class="text-sm font-bold px-4 py-2 rounded-lg border-none cursor-pointer" style="background:var(--error);color:#fff">Keluar</button>
+        </div>
+    </div>
+</div>
+
+<div id="toast" class="toast" style="display:none"></div>
+
+<script>
+// ================================================================
+// DATA SOAL IKATAN KIMIA - HOTS C2-C6 (DIREVISI)
+// ================================================================
+var QS = [];
+
+// ================================================================
+// LEVEL C2 — Pemahaman Dasar (4 soal)
+// ================================================================
+
+// id:3 — DIPERBAIKI: kunci 4 → 2 (hanya 2 yang benar-benar benar)
+QS.push({
+  id: 3, topic: "ikatan", type: "mcma", level: "c2",
+  q: "Perhatikan pernyataan terkait ikatan kimia! Pernyataan yang PALING TEPAT adalah... (Pilih 2 jawaban)",
+  opts: [
+    "Ikatan ion terjadi karena transfer elektron dari logam ke nonlogam",
+    "Ikatan kimia hanya terjadi antara atom nonlogam",
+    "Ikatan kovalen terbentuk dari penggunaan bersama pasangan elektron",
+    "Semua ikatan kimia bersifat lemah dan mudah diputus",
+    "Ikatan logam melibatkan delokalisasi elektron dalam struktur padat"
+  ],
+  ans: [0, 4],
+  exp: "Ikatan ion: transfer elektron dari logam ke nonlogam. Ikatan logam: delokalisasi elektron (lautan elektron). Pernyataan 'hanya nonlogam' salah karena ikatan bisa logam-logam. Ikatan kovalen benar tapi bukan yang paling tepat di antara keduanya karena hanya berlaku untuk nonlogam-nonlogam."
+});
+
+// id:2001 — DIPERBAIKI: konsep MgBr₂ (bukan bentuk molekul, tapi jenis ikatan)
+QS.push({
+  id: 2001, topic: "ikatan", type: "single", level: "c2",
+  stim: `
+    <div style="margin-bottom:0.5rem;">
+      <strong>Dua buah unsur dengan notasi ₁₂A dan ₃₅B.</strong>
+    </div>
+  `,
+  q: "Jika unsur A dan B berikatan, jenis ikatan dan rumus senyawa yang terbentuk adalah...",
+  opts: [
+    "Ikatan kovalen, AB₂",
+    "Ikatan ion, AB₂",
+    "Ikatan kovalen, A₂B",
+    "Ikatan ion, A₂B",
+    "Ikatan logam, AB"
+  ],
+  ans: 1,
+  exp: "₁₂A (Mg) = golongan IIA → melepas 2 elektron → Mg²⁺. ₃₅B (Br) = golongan VIIA → menerima 1 elektron → Br⁻. Ikatan yang terbentuk adalah ikatan ion dengan rumus MgBr₂ (AB₂)."
+});
+
+// id:2002 — DIPERBAIKI: distraktor lebih kuat
+QS.push({
+  id: 2002, topic: "ikatan", type: "single", level: "c2",
+  stim: `
+    <div class="table-wrap">
+      <table class="soal-table">
+        <tr><th>Senyawa</th><th>Titik Leleh (°C)</th><th>Daya Hantar Listrik (Lelehan)</th></tr>
+        <tr><td>P</td><td>-115</td><td>Tidak menghantarkan</td></tr>
+        <tr><td>Q</td><td>810</td><td>Menghantarkan</td></tr>
+      </table>
+    </div>
+  `,
+  q: "Berdasarkan data tersebut, jenis ikatan yang terdapat pada senyawa P dan Q berturut-turut adalah...",
+  opts: [
+    "Ion dan kovalen nonpolar",
+    "Kovalen polar dan kovalen nonpolar",
+    "Kovalen polar dan ion",
+    "Kovalen nonpolar dan ion",
+    "Hidrogen dan ion"
+  ],
+  ans: 3,
+  exp: "Senyawa P: titik leleh rendah, tidak menghantarkan → kovalen nonpolar (misalnya CH₄). Senyawa Q: titik leleh tinggi, menghantarkan → ion (misalnya NaCl)."
+});
+
+// id:2004 — DIPERBAIKI: dari C1 jadi C2 dengan analisis
+QS.push({
+  id: 2004, topic: "ikatan", type: "single", level: "c2",
+  q: "Berikut ini yang BUKAN ciri senyawa dengan ikatan logam adalah...",
+  opts: [
+    "Titik leleh tinggi",
+    "Dapat ditempa dan dibentuk",
+    "Konduktor listrik yang baik",
+    "Tidak larut dalam air",
+    "Menghasilkan ion dalam larutan"
+  ],
+  ans: 4,
+  exp: "Ikatan logam: titik leleh tinggi, dapat ditempa, konduktor, tidak larut dalam air. Ion hanya terbentuk pada senyawa ion, bukan logam murni."
+});
+
+// ================================================================
+// LEVEL C3 — Menganalisis (5 soal)
+// ================================================================
+
+// C3.1 (id:3001) — DIPERBAIKI: rumus senyawa ditambahkan ke opsi
+QS.push({
+  id: 3001, topic: "ikatan", type: "mcma", level: "c3",
+  stim: `
+    <div class="stim">
+      <p>Dua unsur memiliki konfigurasi elektron:</p>
+      <p><strong>X:</strong> 1s² 2s² 2p⁶ 3s² 3p⁶ 4s²<br>
+      <strong>Y:</strong> 1s² 2s² 2p⁶ 3s² 3p⁵</p>
+    </div>
+  `,
+  q: "Pernyataan yang BENAR tentang ikatan yang terbentuk antara X dan Y adalah... (Pilih 3 jawaban benar)",
+  opts: [
+    "X melepaskan 2 elektron membentuk ion X²⁺",
+    "Y menerima 1 elektron membentuk ion Y⁻",
+    "Rumus senyawa yang terbentuk adalah XY₂",
+    "Ikatan yang terbentuk adalah ikatan kovalen polar",
+    "Ikatan yang terbentuk adalah ikatan ion"
+  ],
+  ans: [0, 1, 4],
+  exp: "X (Ca) golongan IIA → melepas 2 elektron → Ca²⁺. Y (Cl) golongan VIIA → menerima 1 elektron → Cl⁻. Rumus: CaCl₂ (XY₂). Ikatan: ion (bukan kovalen)."
+});
+
+// C3.2 (id:3002) — DIPERBAIKI: dari C2 jadi C3 dengan multi-analisis
+QS.push({
+  id: 3002, topic: "ikatan", type: "mcma", level: "c3",
+  stim: `
+    <div class="stim">
+      <p>Dua unsur memiliki konfigurasi elektron:</p>
+      <p><strong>X:</strong> 1s² 2s² 2p⁶ 3s² 3p³<br>
+      <strong>Y:</strong> 1s² 2s² 2p⁵</p>
+    </div>
+  `,
+  q: "Jika X dan Y membentuk senyawa XY₃, analisis yang PALING TEPAT adalah... (Pilih 2 jawaban benar)",
+  opts: [
+    "Bentuk molekulnya adalah piramida segitiga (AX₃E)",
+    "Senyawa XY₃ bersifat polar karena memiliki PEB",
+    "Bentuk molekulnya adalah segitiga datar (AX₃)",
+    "Senyawa XY₃ bersifat nonpolar karena simetris",
+    "Atom pusat X tidak memiliki pasangan elektron bebas"
+  ],
+  ans: [0, 1],
+  exp: "X (P) = 5 elektron valensi, Y (F) = 7. XY₃ = PF₃: 3 ikatan + 1 PEB → AX₃E → piramida segitiga → polar. Opsi C salah (bukan AX₃). Opsi D salah (tidak simetris). Opsi E salah (X punya 1 PEB)."
+});
+
+// C3.3 (id:3003) — tetap, sudah bagus
+QS.push({
+  id: 3003, topic: "ikatan", type: "mcma", level: "c3",
+  stim: `
+    <div class="stim">
+      <p>Perhatikan reaksi pembentukan senyawa adisi NH₃ dan BF₃:</p>
+    </div>
+    <div class="chem-eq">NH₃ + BF₃ → H₃N-BF₃</div>
+    <div style="font-size:0.85rem;color:var(--muted);margin-top:0.5rem;">
+      <i class="fa-solid fa-info-circle"></i> N=7, B=5, H=1, F=9
+    </div>
+  `,
+  q: "Pernyataan yang BENAR tentang ikatan dalam H₃N-BF₃ adalah... (Pilih 2 jawaban benar)",
+  opts: [
+    "Ikatan N-B adalah ikatan kovalen koordinasi",
+    "Pasangan elektron ikatan N-B berasal dari atom N",
+    "Pasangan elektron ikatan N-B berasal dari atom B",
+    "NH₃ bertindak sebagai asam Lewis",
+    "BF₃ bertindak sebagai basa Lewis"
+  ],
+  ans: [0, 1],
+  exp: "NH₃ memiliki PEB pada atom N (basa Lewis), BF₃ memiliki orbital kosong (asam Lewis). Ikatan N-B adalah kovalen koordinasi dengan pasangan elektron dari N."
+});
+
+// C3.4 (id:3004) — tetap, sudah bagus
+QS.push({
+  id: 3004, topic: "ikatan", type: "mcma", level: "c3",
+  stim: `
+    <div class="table-wrap">
+      <table class="soal-table">
+        <tr><th>Senyawa</th><th>Mr</th><th>Titik Didih (°C)</th></tr>
+        <tr><td>CH₄</td><td>16</td><td>-161,5</td></tr>
+        <tr><td>NH₃</td><td>17</td><td>-33,3</td></tr>
+        <tr><td>H₂O</td><td>18</td><td>100,0</td></tr>
+        <tr><td>HF</td><td>20</td><td>19,5</td></tr>
+        <tr><td>HCl</td><td>36,5</td><td>-85,0</td></tr>
+      </table>
+    </div>
+  `,
+  q: "Pernyataan yang BENAR tentang gaya antarmolekul pada senyawa-senyawa tersebut adalah... (Pilih 2 jawaban benar)",
+  opts: [
+    "H₂O memiliki ikatan hidrogen yang kuat",
+    "HF memiliki titik didih lebih tinggi dari HCl karena adanya ikatan hidrogen",
+    "CH₄ memiliki gaya London paling kuat karena Mr terkecil",
+    "NH₃ tidak memiliki ikatan hidrogen",
+    "HCl memiliki titik didih lebih tinggi dari HF karena Mr lebih besar"
+  ],
+  ans: [0, 1],
+  exp: "H₂O dan HF memiliki ikatan hidrogen (H terikat pada F, O). Ini menyebabkan titik didihnya jauh lebih tinggi dari prediksi berdasarkan Mr. HCl hanya dipol-dipol."
+});
+
+// C3.5 (BARU) — Analisis struktur Lewis
+QS.push({
+  id: 3005, topic: "ikatan", type: "mcma", level: "c3",
+  stim: `
+    <div class="stim">
+      <p>Perhatikan struktur Lewis molekul H₂SO₄ berikut:</p>
+    </div>
+    <div class="lewis-structure">
+        O
+        ||
+    HO — S — OH
+        ||
+        O
+    </div>
+    <div style="font-size:0.85rem;color:var(--muted);margin-top:0.5rem;">
+      <i class="fa-solid fa-info-circle"></i> H=1, O=8, S=16
+    </div>
+  `,
+  q: "Analisis yang PALING TEPAT tentang ikatan pada H₂SO₄ adalah... (Pilih 2 jawaban benar)",
+  opts: [
+    "Terdapat 2 ikatan kovalen rangkap S=O",
+    "Terdapat 4 ikatan kovalen tunggal S-O",
+    "Semua ikatan S-O adalah kovalen koordinasi",
+    "Tidak ada ikatan kovalen koordinasi dalam H₂SO₄",
+    "Atom S melanggar aturan oktet (memiliki 12 elektron)"
+  ],
+  ans: [0, 4],
+  exp: "H₂SO₄: S memiliki 6 elektron valensi, membentuk 2 ikatan rangkap S=O dan 2 ikatan tunggal S-O (total 6 ikatan = 12 elektron di sekitar S) → melanggar oktet (oktet diperluas). Beberapa ikatan S=O dapat dianggap koordinasi, tapi yang paling tepat: 2 ikatan rangkap S=O."
+});
+
+// ================================================================
+// LEVEL C4 — Mengevaluasi (5 soal)
+// ================================================================
+
+// C4.1 (id:4001) — tetap, sudah bagus
+QS.push({
+  id: 4001, topic: "ikatan", type: "mcma", level: "c4",
+  stim: `
+    <div class="table-wrap">
+      <table class="soal-table">
+        <tr><th>Zat</th><th>Titik Leleh (°C)</th><th>Kelarutan dalam Air</th><th>Konduktivitas Listrik</th></tr>
+        <tr><td>X</td><td>-115</td><td>Larut</td><td>Menghantarkan</td></tr>
+        <tr><td>Y</td><td>-94</td><td>Tidak larut</td><td>Tidak menghantarkan</td></tr>
+      </table>
+    </div>
+  `,
+  q: "Berdasarkan data tersebut, dapat disimpulkan bahwa... (Pilih 2 jawaban benar)",
+  opts: [
+    "Zat X adalah senyawa kovalen polar",
+    "Zat Y adalah senyawa kovalen nonpolar",
+    "Zat X adalah senyawa ionik",
+    "Zat Y adalah senyawa ionik",
+    "Zat X dan Y memiliki ikatan yang sama"
+  ],
+  ans: [0, 1],
+  exp: "Zat X: titik leleh rendah, larut dalam air, menghantarkan → kovalen polar. Zat Y: titik leleh rendah, tidak larut, tidak menghantarkan → kovalen nonpolar."
+});
+
+// C4.2 (id:4002) — DIPERBAIKI: data lebih konsisten
+QS.push({
+  id: 4002, topic: "ikatan", type: "mcma", level: "c4",
+  stim: `
+    <div class="table-wrap">
+      <table class="soal-table">
+        <tr><th>Logam</th><th>Struktur Kristal</th><th>Konduktivitas Relatif (%)</th></tr>
+        <tr><td>Cu</td><td>FCC</td><td>100</td></tr>
+        <tr><td>Ag</td><td>FCC</td><td>106</td></tr>
+        <tr><td>Au</td><td>FCC</td><td>76</td></tr>
+        <tr><td>Al</td><td>FCC</td><td>61</td></tr>
+        <tr><td>Fe</td><td>BCC</td><td>17</td></tr>
+      </table>
+    </div>
+    <div style="font-size:0.85rem;color:var(--muted);margin-top:0.5rem;">
+      <i class="fa-solid fa-info-circle"></i> Konduktivitas relatif terhadap Cu = 100%.
+    </div>
+  `,
+  q: "Pernyataan yang PALING TEPAT tentang ikatan logam berdasarkan data di atas adalah... (Pilih 2 jawaban benar)",
+  opts: [
+    "Logam dengan struktur FCC cenderung memiliki konduktivitas lebih tinggi dari BCC",
+    "Ag memiliki konduktivitas tertinggi karena struktur elektronnya paling efisien",
+    "Al memiliki konduktivitas tertinggi karena memiliki 3 elektron valensi",
+    "Fe memiliki konduktivitas tertinggi karena struktur BCC lebih rapat",
+    "Konduktivitas logam tidak dipengaruhi struktur kristal"
+  ],
+  ans: [0, 1],
+  exp: "Logam FCC (Cu, Ag, Au, Al) memiliki konduktivitas lebih tinggi dari BCC (Fe). Ag tertinggi (106%) karena konfigurasi elektron 5s¹ yang efisien. Al punya 3 elektron valensi tapi konduktivitas lebih rendah dari Cu. Fe BCC paling rendah."
+});
+
+// C4.3 (id:4003) — DIPERBAIKI: opsi tidak lagi berpasangan
+QS.push({
+  id: 4003, topic: "ikatan", type: "mcma", level: "c4",
+  stim: `
+    <div class="stim">
+      <p>Diberikan lima senyawa: BeH₂, CH₄, H₂O, HF, dan H₂S.</p>
+    </div>
+  `,
+  q: "Senyawa yang antarmolekulnya HANYA terdapat gaya London adalah... (Pilih 2 jawaban benar)",
+  opts: [
+    "BeH₂",
+    "CH₄",
+    "H₂O",
+    "HF",
+    "H₂S"
+  ],
+  ans: [0, 1],
+  exp: "BeH₂ (linear, simetris) dan CH₄ (tetrahedral, simetris) adalah molekul nonpolar → hanya gaya London. H₂O dan HF memiliki ikatan hidrogen. H₂S memiliki gaya dipol-dipol."
+});
+
+// C4.4 (BARU) — Error analysis
+QS.push({
+  id: 4004, topic: "ikatan", type: "single", level: "c4",
+  stim: `
+    <div class="stim">
+      <p>Seorang siswa menulis:</p>
+      <blockquote style="margin-left:1rem;border-left:3px solid var(--accent);padding-left:0.8rem;font-style:italic;color:var(--muted);">
+        "NaCl memiliki titik leleh 801°C, sedangkan HCl hanya -85°C. 
+        Ini karena NaCl memiliki ikatan kovalen yang lebih kuat dari HCl."
+      </blockquote>
+    </div>
+  `,
+  q: "Kesalahan penalaran utama siswa tersebut terletak pada...",
+  opts: [
+    "Menyebut NaCl memiliki ikatan kovalen, padahal NaCl memiliki ikatan ion",
+    "Menyebut titik leleh NaCl 801°C, padahal seharusnya lebih rendah",
+    "Menyebut HCl memiliki titik leleh -85°C, padahal seharusnya lebih tinggi",
+    "Menyebut NaCl dan HCl sama-sama memiliki ikatan kovalen",
+    "Menyebut titik leleh tidak berhubungan dengan jenis ikatan"
+  ],
+  ans: 0,
+  exp: "Kesalahan utama: NaCl adalah senyawa ION (Na⁺ dan Cl⁻), bukan kovalen. Ikatan ion jauh lebih kuat dari ikatan kovalen antarmolekul HCl, sehingga titik leleh NaCl sangat tinggi."
+});
+
+// C4.5 (BARU) — Nilai klaim
+QS.push({
+  id: 4005, topic: "ikatan", type: "single", level: "c4",
+  stim: `
+    <div class="stim">
+      <p>Dua siswa berdebat tentang mengapa air (H₂O) memiliki titik didih 100°C sedangkan H₂S hanya -60°C, padahal Mr H₂S lebih besar:</p>
+      <ul style="margin-left:1.2rem;margin-top:0.4rem;">
+        <li><strong>Siswa A:</strong> "Karena H₂O memiliki ikatan hidrogen, sedangkan H₂S hanya gaya London/dipol."</li>
+        <li><strong>Siswa B:</strong> "Karena H₂O lebih polar dari H₂S, sehingga gaya antarmolekulnya lebih kuat."</li>
+      </ul>
+    </div>
+  `,
+  q: "Penilaian yang PALING TEPAT terhadap kedua argumen adalah...",
+  opts: [
+    "Siswa A lebih tepat karena menyebut jenis gaya spesifik (ikatan hidrogen) yang jauh lebih kuat dari dipol biasa",
+    "Siswa B lebih tepat karena polaritas adalah satu-satunya faktor",
+    "Kedua siswa sama-sama benar dan lengkap",
+    "Kedua siswa salah karena titik didih tidak dipengaruhi gaya antarmolekul",
+    "Tidak dapat dinilai tanpa data kuantitatif"
+  ],
+  ans: 0,
+  exp: "Siswa A lebih tepat: H₂O memiliki ikatan hidrogen (ikatan antarmolekul terkuat), sedangkan H₂S hanya dipol-dipol/gaya London. Siswa B hanya menyebut polaritas tanpa spesifik. Ikatan hidrogen ~10× lebih kuat dari dipol-dipol."
+});
+
+// ================================================================
+// LEVEL C5 — Mencipta (3 soal)
+// ================================================================
+
+// C5.1 (id:5001) — tetap, sudah bagus
+QS.push({
+  id: 5001, topic: "ikatan", type: "mcma", level: "c5",
+  stim: `
+    <div class="stim">
+      <p>Data kation dan anion:</p>
+    </div>
+    <div class="table-wrap">
+      <table class="soal-table">
+        <tr><th>Kation</th><th>Muatan</th><th>Jari-jari (pm)</th><th>Anion</th><th>Muatan</th><th>Jari-jari (pm)</th></tr>
+        <tr><td>Li⁺</td><td>+1</td><td>76</td><td>F⁻</td><td>-1</td><td>133</td></tr>
+        <tr><td>Na⁺</td><td>+1</td><td>102</td><td>Cl⁻</td><td>-1</td><td>181</td></tr>
+        <tr><td>Mg²⁺</td><td>+2</td><td>72</td><td>O²⁻</td><td>-2</td><td>140</td></tr>
+        <tr><td>Al³⁺</td><td>+3</td><td>53</td><td>N³⁻</td><td>-3</td><td>171</td></tr>
+      </table>
+    </div>
+  `,
+  q: "Kombinasi kation dan anion yang menghasilkan ikatan ionik dengan titik leleh PALING TINGGI adalah... (Pilih 2 pasangan yang tepat)",
+  opts: [
+    "Li⁺ dan F⁻",
+    "Mg²⁺ dan O²⁻",
+    "Al³⁺ dan N³⁻",
+    "Na⁺ dan Cl⁻",
+    "Al³⁺ dan F⁻"
+  ],
+  ans: [2, 4],
+  exp: "Titik leleh senyawa ionik tinggi jika muatan ion besar dan jari-jari ion kecil (energi kisi besar). Al³⁺ (muatan +3, jari-jari kecil) dengan N³⁻ (muatan -3) atau F⁻ (jari-jari kecil) menghasilkan energi kisi terbesar."
+});
+
+// C5.2 (id:5002) — DIPERBAIKI: dari C1 jadi C5 dengan aplikasi
+QS.push({
+  id: 5002, topic: "ikatan", type: "mcma", level: "c5",
+  stim: `
+    <div class="stim">
+      <p>Seorang insinyur diminta merancang bahan isolator listrik untuk kabel tegangan tinggi. 
+      Kriteria: tidak menghantarkan listrik, titik leleh tinggi, tidak mudah larut dalam air.</p>
+    </div>
+    <div class="table-wrap">
+      <table class="soal-table">
+        <tr><th>Bahan</th><th>Jenis Ikatan</th><th>Titik Leleh</th><th>Konduktivitas</th><th>Kelarutan Air</th></tr>
+        <tr><td>P</td><td>Ion</td><td>Tinggi</td><td>Padat: tidak</td><td>Larut</td></tr>
+        <tr><td>Q</td><td>Kovalen raksasa</td><td>Sangat tinggi</td><td>Tidak</td><td>Tidak larut</td></tr>
+        <tr><td>R</td><td>Logam</td><td>Tinggi</td><td>Menghantarkan</td><td>Tidak larut</td></tr>
+        <tr><td>S</td><td>Kovalen sederhana</td><td>Rendah</td><td>Tidak</td><td>Tidak larut</td></tr>
+      </table>
+    </div>
+  `,
+  q: "Bahan yang PALING TEPAT untuk isolator kabel tegangan tinggi adalah... (Pilih 2 alasan benar)",
+  opts: [
+    "Bahan Q karena memiliki ikatan kovalen raksasa yang kuat dan tidak menghantarkan listrik",
+    "Bahan S karena tidak menghantarkan listrik dan tidak larut air",
+    "Bahan P karena tidak menghantarkan listrik dalam bentuk padat",
+    "Bahan R karena titik lelehnya tinggi dan kuat",
+    "Bahan Q lebih baik dari S karena titik lelehnya lebih tinggi"
+  ],
+  ans: [0, 4],
+  exp: "Isolator ideal: tidak menghantarkan listrik + titik leleh tinggi + tidak larut air. Bahan Q (kovalen raksasa seperti SiO₂) paling tepat. Bahan P (ion) tidak cocok karena larut air. Bahan R (logam) menghantarkan listrik. Bahan S (kovalen sederhana) titik lelehnya rendah."
+});
+
+// C5.3 (BARU) — Rancang senyawa dengan ikatan hidrogen
+QS.push({
+  id: 5003, topic: "ikatan", type: "mcma", level: "c5",
+  stim: `
+    <div class="stim">
+      <p>Seorang peneliti ingin merancang senyawa organik yang dapat membentuk ikatan hidrogen antarmolekul kuat.</p>
+      <p style="margin-top:0.4rem;">Syarat ikatan hidrogen: atom H terikat pada atom sangat elektronegatif (F, O, N).</p>
+    </div>
+  `,
+  q: "Rancangan senyawa yang PALING TEPAT untuk membentuk ikatan hidrogen kuat adalah... (Pilih 2 jawaban benar)",
+  opts: [
+    "Senyawa dengan gugus -OH (alkohol) karena O sangat elektronegatif",
+    "Senyawa dengan gugus -NH₂ (amina) karena N sangat elektronegatif",
+    "Senyawa dengan gugus -CH₃ karena C dapat membentuk ikatan hidrogen",
+    "Senyawa dengan gugus -SH karena S sangat elektronegatif",
+    "Senyawa dengan gugus -Cl karena Cl sangat elektronegatif"
+  ],
+  ans: [0, 1],
+  exp: "Ikatan hidrogen kuat hanya terjadi jika H terikat pada F, O, atau N. Gugus -OH dan -NH₂ memenuhi syarat. -CH₃ tidak (C tidak cukup elektronegatif). -SH lemah (S kurang elektronegatif). -Cl tidak membentuk ikatan hidrogen."
+});
+
+// ================================================================
+// LEVEL C6 — Menilai (3 soal)
+// ================================================================
+
+// C6.1 (id:6001) — DIPERBAIKI: dari MCMA 2 kunci jadi single choice
+QS.push({
+  id: 6001, topic: "ikatan", type: "single", level: "c6",
+  stim: `
+    <div class="stim">
+      <p>Seorang siswa menulis ringkasan tentang ikatan kimia:</p>
+      <ol style="margin-left:1.2rem;">
+        <li>Ikatan ion terbentuk antara logam dan nonlogam.</li>
+        <li>Ikatan kovalen terbentuk antara nonlogam dan nonlogam.</li>
+        <li>Ikatan logam melibatkan delokalisasi elektron.</li>
+        <li>Semua ikatan kovalen bersifat polar.</li>
+        <li>Ikatan hidrogen adalah ikatan intramolekul.</li>
+      </ol>
+    </div>
+  `,
+  q: "Penilaian yang PALING TEPAT terhadap ringkasan siswa tersebut adalah...",
+  opts: [
+    "Hanya pernyataan 1 dan 3 yang benar",
+    "Pernyataan 1, 2, dan 3 benar; pernyataan 4 dan 5 salah",
+    "Pernyataan 1, 3, dan 5 benar; pernyataan 2 dan 4 salah",
+    "Hanya pernyataan 2 dan 4 yang benar",
+    "Semua pernyataan benar"
+  ],
+  ans: 1,
+  exp: "Pernyataan 1 BENAR: ion = logam + nonlogam. Pernyataan 2 BENAR: kovalen = nonlogam + nonlogam. Pernyataan 3 BENAR: logam = delokalisasi elektron. Pernyataan 4 SALAH: kovalen bisa nonpolar (CH₄). Pernyataan 5 SALAH: ikatan hidrogen adalah ANTAR molekul, bukan intramolekul."
+});
+
+// C6.2 (id:6002) — tetap, sudah bagus
+QS.push({
+  id: 6002, topic: "ikatan", type: "mcma", level: "c6",
+  stim: `
+    <div class="stim">
+      <p>Perhatikan data kelarutan:</p>
+      <p>Air = molekul kovalen polar<br>
+      Gula (sukrosa) = molekul kovalen polar<br>
+      Garam (NaCl) = senyawa ionik<br>
+      Minyak = molekul kovalen nonpolar</p>
+    </div>
+  `,
+  q: "Pernyataan yang PALING TEPAT tentang kelarutan berdasarkan jenis ikatan adalah... (Pilih 2 jawaban benar)",
+  opts: [
+    "Garam (NaCl) larut dalam air karena ikatan ioniknya terurai menjadi ion-ion",
+    "Minyak tidak larut dalam air karena minyak dan air memiliki polaritas berbeda",
+    "Gula larut dalam air karena gula dan air sama-sama memiliki ikatan ionik",
+    "Minyak larut dalam air karena minyak memiliki ikatan kovalen polar",
+    "Semua zat dengan ikatan kovalen tidak larut dalam air"
+  ],
+  ans: [0, 1],
+  exp: "NaCl (ionik) larut dalam air karena terurai menjadi ion Na⁺ dan Cl⁻ yang berinteraksi dengan molekul air polar. Minyak (nonpolar) tidak larut dalam air (polar) karena 'like dissolves like'. Gula larut karena sama-sama polar."
+});
+
+// C6.3 (BARU) — Nilai klaim tentang titik didih
+QS.push({
+  id: 6003, topic: "ikatan", type: "single", level: "c6",
+  stim: `
+    <div class="stim">
+      <p>Tiga siswa berdebat tentang mengapa intan (C) memiliki titik leleh 3550°C, sedangkan NaCl hanya 801°C:</p>
+      <ul style="margin-left:1.2rem;">
+        <li><strong>Siswa A:</strong> "Karena intan memiliki ikatan kovalen raksasa di seluruh kristalnya."</li>
+        <li><strong>Siswa B:</strong> "Karena intan lebih padat dari NaCl."</li>
+        <li><strong>Siswa C:</strong> "Karena intan memiliki ikatan ion yang lebih kuat."</li>
+      </ul>
+    </div>
+  `,
+  q: "Penilaian yang PALING TEPAT terhadap ketiga argumen adalah...",
+  opts: [
+    "Siswa A benar karena intan memiliki jaringan ikatan kovalen 3D yang sangat kuat",
+    "Siswa B benar karena kepadatan menentukan titik leleh",
+    "Siswa C benar karena intan memiliki ikatan ion",
+    "Ketiga siswa benar",
+    "Ketiga siswa salah"
+  ],
+  ans: 0,
+  exp: "Intan memiliki struktur kovalen raksasa 3D: setiap atom C terikat kovalen dengan 4 atom C lainnya, membentuk jaringan yang sangat kuat. Ini memerlukan energi sangat besar untuk meleleh. NaCl hanya ikatan ion (lebih lemah dari kovalen raksasa). Siswa C salah (intan bukan ion)."
+});
+
+// ================================================================
+// STATE MANAGEMENT
+// ================================================================
+var S = {
+  view: "home", qids: [], qi: 0, ans: {}, mode: "topic",
+  ri: 0, rqs: [], wrong: [], done: {}, scores: {}, filter: "all"
+};
+
+function load() {
+  try {
+    var d = JSON.parse(localStorage.getItem("tka_kim_ikatan"));
+    if (d) {
+      S.done = {};
+      (d.done || []).forEach(function(x) { S.done[x] = true; });
+      S.wrong = d.wrong || [];
+      S.scores = d.scores || {};
+    }
+  } catch(e) {}
+}
+function save() {
+  try {
+    localStorage.setItem("tka_kim_ikatan", JSON.stringify({
+      done: Object.keys(S.done), wrong: S.wrong, scores: S.scores
+    }));
+  } catch(e) {}
+}
+load();
+
+function go(v) {
+  var names = {home:"vHome", quiz:"vQuiz", res:"vRes", rev:"vRev"};
+  document.querySelectorAll(".view").forEach(function(el) { el.classList.remove("active"); });
+  var el = document.getElementById(names[v]);
+  if (el) el.classList.add("active");
+  S.view = v;
+  window.scrollTo(0, 0);
+  if (v === "home") renderHome();
+}
+
+function renderHome() {
+  document.getElementById("bWR").style.display = S.wrong.length > 0 ? "flex" : "none";
+  updateNS();
+  renderList();
+}
+
+function updateNS() {
+  var tc = 0, cc = 0;
+  for (var k in S.scores) { tc += S.scores[k].t; cc += S.scores[k].c; }
+  document.getElementById("nst").textContent = tc > 0 ? cc + "/" + tc : "0/0";
+}
+
+function getLevelBadge(level) {
+  var labels = {c2:"C2", c3:"C3", c4:"C4", c5:"C5", c6:"C6"};
+  var colors = {c2:"#34d399", c3:"#fbbf24", c4:"#f97316", c5:"#ef4444", c6:"#8b5cf6"};
+  var bgColors = {
+    c2:"rgba(52,211,153,0.15)", c3:"rgba(251,191,36,0.15)",
+    c4:"rgba(249,115,22,0.15)", c5:"rgba(239,68,68,0.15)",
+    c6:"rgba(139,92,246,0.15)"
+  };
+  return '<span class="badge" style="background:' + bgColors[level] + ';color:' + colors[level] + ';font-size:0.65rem;">' + labels[level] + '</span>';
+}
+
+function renderList() {
+  var list = document.getElementById("qList");
+  list.innerHTML = "";
+  var filtered = QS.filter(function(q) {
+    if (S.filter === "all") return true;
+    return q.level === S.filter;
+  });
+  filtered.forEach(function(q, i) {
+    var answered = S.done[q.id];
+    var wasWrong = S.wrong.indexOf(q.id) >= 0;
+    var tl = q.type === "mcma" ? "MCMA" : "Pilihan Ganda";
+    var levelLabel = q.level ? getLevelBadge(q.level) : "";
+
+    var d = document.createElement("div");
+    d.className = "glow-card";
+    d.style.cursor = "pointer";
+    d.onclick = function() { singleQ(q.id); };
+    d.innerHTML =
+      '<div class="w-9 h-9 rounded-lg flex items-center justify-center text-sm font-bold flex-shrink-0" style="background:' +
+        (answered ? (wasWrong ? 'rgba(248,113,113,.12);color:var(--error)' : 'rgba(52,211,153,.12);color:var(--success)') : 'var(--bg2);color:var(--muted)') +
+      '">' + (answered ? (wasWrong ? '<i class="fa-solid fa-xmark"></i>' : '<i class="fa-solid fa-check"></i>') : (i + 1)) + '</div>' +
+      '<div class="flex-1 min-w-0">' +
+        '<div class="text-sm font-semibold mb-0.5 truncate" style="color:var(--text)">' + plain(q.q).substring(0, 75) + (q.q.length > 75 ? '...' : '') + '</div>' +
+        '<div class="flex items-center gap-2 flex-wrap">' +
+          '<span class="badge" style="background:var(--bg2);color:var(--muted);font-size:.68rem">' + tl + '</span>' +
+          levelLabel +
+        '</div>' +
+      '</div>' +
+      '<i class="fa-solid fa-chevron-right text-xs" style="color:var(--border)"></i>';
+    list.appendChild(d);
+  });
+}
+
+function filterLevel(level) {
+  S.filter = level;
+  document.querySelectorAll('[id^="filter"]').forEach(function(el) {
+    el.style.background = "transparent";
+  });
+  var btn = document.getElementById("filter" + level.toUpperCase());
+  if (btn) btn.style.background = "rgba(212,160,74,.15)";
+  renderList();
+}
+
+function plain(html) {
+  var d = document.createElement("div");
+  d.innerHTML = html;
+  return d.textContent || "";
+}
+
+function startQuiz() {
+  S.qids = QS.map(function(q) { return q.id; });
+  S.ans = {}; S.qi = 0; S.mode = "topic";
+  go("quiz"); renderQ();
+}
+function startRandom() {
+  var sh = QS.slice().sort(function() { return Math.random() - 0.5; }).slice(0, 10);
+  S.qids = sh.map(function(q) { return q.id; });
+  S.ans = {}; S.qi = 0; S.mode = "random";
+  go("quiz"); renderQ();
+}
+function startWrong() {
+  var wq = QS.filter(function(q) { return S.wrong.indexOf(q.id) >= 0; });
+  if (wq.length === 0) return;
+  S.qids = wq.map(function(q) { return q.id; });
+  S.ans = {}; S.qi = 0; S.mode = "wrong";
+  go("quiz"); renderQ();
+}
+function singleQ(qid) {
+  S.qids = [qid]; S.ans = {}; S.qi = 0; S.mode = "single";
+  go("quiz"); renderQ();
+}
+
+function renderQ() {
+  var qid = S.qids[S.qi];
+  var q = QS.find(function(x) { return x.id === qid; });
+  if (!q) return;
+  var total = S.qids.length;
+  var idx = S.qi + 1;
+  var pct = Math.round(idx / total * 100);
+
+  document.getElementById("qCtr").textContent = idx + " / " + total;
+  document.getElementById("qBar").style.width = pct + "%";
+  var tl = {single: "Pilihan Ganda", mcma: "MCMA"};
+  document.getElementById("qTyp").textContent = tl[q.type] || q.type;
+  var levelLabels = {c2:"C2 - Pemahaman", c3:"C3 - Menganalisis", c4:"C4 - Mengevaluasi", c5:"C5 - Mencipta", c6:"C6 - Menilai"};
+  document.getElementById("qLevel").textContent = q.level ? levelLabels[q.level] : "";
+  document.getElementById("bPrv").style.visibility = S.qi > 0 ? "visible" : "hidden";
+  var isLast = S.qi === total - 1;
+  document.getElementById("bNxt").innerHTML = isLast ? "Selesai <i class='fa-solid fa-check ml-1'></i>" : "Selanjutnya <i class='fa-solid fa-chevron-right ml-1'></i>";
+
+  var h = "";
+  if (q.stim) h += '<div class="stim">' + q.stim + '</div>';
+  h += '<h3 class="font-bold text-base mb-4 leading-relaxed" style="color:var(--text)">' + q.q + '</h3>';
+
+  if (q.type === "single") {
+    var letters = "ABCDE";
+    h += '<div class="space-y-2.5">';
+    q.opts.forEach(function(opt, i) {
+      var sel = S.ans[qid] === i;
+      h += '<button class="ob' + (sel ? ' sel' : '') + '" onclick="selS(' + qid + ',' + i + ')">' +
+        '<span class="w-7 h-7 min-w-[1.75rem] rounded-full border-2 flex items-center justify-center text-xs font-bold flex-shrink-0" style="border-color:' + (sel ? 'var(--accent)' : 'var(--border)') + ';color:' + (sel ? 'var(--accent)' : 'var(--muted)') + '">' + letters[i] + '</span>' +
+        '<span class="text-sm">' + opt + '</span></button>';
+    });
+    h += '</div>';
+  } else if (q.type === "mcma") {
+    var ua = S.ans[qid] || [];
+    h += '<div class="space-y-2.5">';
+    q.opts.forEach(function(opt, i) {
+      var sel = ua.indexOf(i) >= 0;
+      h += '<button class="ob' + (sel ? ' sel' : '') + '" onclick="togM(' + qid + ',' + i + ')">' +
+        '<div class="ck">' + (sel ? '<i class="fa-solid fa-check text-xs" style="color:#0b1a17"></i>' : '') + '</div>' +
+        '<span class="text-sm">' + opt + '</span></button>';
+    });
+    h += '</div>';
+    h += '<p class="text-xs mt-2.5" style="color:var(--muted)"><i class="fa-solid fa-circle-info mr-1"></i>Pilih SEMUA jawaban yang benar</p>';
+  }
+  document.getElementById("qArea").innerHTML = h;
+}
+
+function selS(qid, i) { S.ans[qid] = i; renderQ(); }
+function togM(qid, i) {
+  if (!S.ans[qid]) S.ans[qid] = [];
+  var arr = S.ans[qid];
+  var idx = arr.indexOf(i);
+  if (idx >= 0) arr.splice(idx, 1); else arr.push(i);
+  renderQ();
+}
+
+function qNext() {
+  if (S.qi === S.qids.length - 1) { finishQ(); return; }
+  S.qi++; renderQ(); window.scrollTo(0, 0);
+}
+function qPrev() {
+  if (S.qi > 0) { S.qi--; renderQ(); window.scrollTo(0, 0); }
+}
+
+function finishQ() {
+  var correct = 0, wrong = 0;
+  var ts = {};
+  S.qids.forEach(function(qid) {
+    var q = QS.find(function(x) { return x.id === qid; });
+    if (!q) return;
+    var ua = S.ans[qid];
+    var ok = false;
+    if (q.type === "single") ok = ua === q.ans;
+    else if (q.type === "mcma") {
+      var u = (ua || []).slice().sort().join(",");
+      var c = q.ans.slice().sort().join(",");
+      ok = u === c;
+    }
+    S.done[qid] = true;
+    if (ok) correct++; else { wrong++; S.wrong.push(qid); }
+    if (!ts[q.topic]) ts[q.topic] = {c:0, t:0};
+    ts[q.topic].t++;
+    if (ok) ts[q.topic].c++;
+  });
+  S.wrong = uniq(S.wrong);
+  for (var k in ts) {
+    if (!S.scores[k]) S.scores[k] = {c:0, t:0};
+    S.scores[k].c += ts[k].c;
+    S.scores[k].t += ts[k].t;
+  }
+  save();
+
+  var total = correct + wrong;
+  var pct = total > 0 ? Math.round(correct / total * 100) : 0;
+  document.getElementById("rPct").textContent = pct + "%";
+  document.getElementById("rOk").textContent = correct;
+  document.getElementById("rNo").textContent = wrong;
+  document.getElementById("rTot").textContent = total;
+
+  var circ = 2 * Math.PI * 55;
+  var ring = document.getElementById("rRing");
+  ring.style.strokeDasharray = circ;
+  ring.style.strokeDashoffset = circ - (circ * pct / 100);
+  ring.style.stroke = pct >= 70 ? "var(--success)" : pct >= 40 ? "var(--accent)" : "var(--error)";
+
+  var lbl = pct >= 90 ? "Luar Biasa!" : pct >= 70 ? "Bagus Sekali!" : pct >= 50 ? "Cukup Baik" : "Perlu Belajar Lagi";
+  document.getElementById("rLbl").textContent = lbl;
+  document.getElementById("bRW").style.display = wrong > 0 ? "inline-flex" : "none";
+  go("res");
+}
+
+function uniq(arr) {
+  var seen = {}, out = [];
+  arr.forEach(function(x) { if (!seen[x]) { seen[x] = true; out.push(x); } });
+  return out;
+}
+
+function retryQ() {
+  if (S.mode === "topic") startQuiz();
+  else if (S.mode === "random") startRandom();
+  else if (S.mode === "wrong") startWrong();
+  else if (S.mode === "single") singleQ(S.qids[0]);
+}
+
+function revWrong() {
+  var wqs = S.qids.filter(function(qid) { return S.wrong.indexOf(qid) >= 0; });
+  if (wqs.length === 0) { toast("Tidak ada jawaban salah", "var(--success)"); return; }
+  S.rqs = wqs.map(function(qid) { return QS.find(function(x) { return x.id === qid; }); }).filter(Boolean);
+  S.ri = 0;
+  go("rev"); renderRev();
+}
+
+function renderRev() {
+  var q = S.rqs[S.ri];
+  if (!q) return;
+  var total = S.rqs.length;
+  document.getElementById("rvPr").style.visibility = S.ri > 0 ? "visible" : "hidden";
+  document.getElementById("rvNx").innerHTML = S.ri === total - 1 ? "Kembali <i class='fa-solid fa-check ml-1'></i>" : "Selanjutnya <i class='fa-solid fa-chevron-right ml-1'></i>";
+
+  var ua = S.ans[q.id];
+  var ok = false;
+  if (q.type === "single") ok = ua === q.ans;
+  else if (q.type === "mcma") {
+    var u = (ua || []).slice().sort().join(",");
+    ok = u === q.ans.slice().sort().join(",");
+  }
+
+  var letters = "ABCDE";
+  var h = '<div class="text-xs mb-2 font-semibold" style="color:var(--muted)">Soal ' + (S.ri + 1) + " / " + total + '</div>';
+  if (q.stim) h += '<div class="stim">' + q.stim + '</div>';
+  h += '<h3 class="font-bold text-sm mb-4 leading-relaxed">' + q.q + '</h3>';
+  h += '<div class="space-y-2.5">';
+
+  if (q.type === "single") {
+    q.opts.forEach(function(opt, i) {
+      var cls = "off";
+      if (i === q.ans) cls += " ok";
+      else if (ua === i && i !== q.ans) cls += " no";
+      h += '<button class="ob ' + cls + '">' +
+        '<span class="w-7 h-7 min-w-[1.75rem] rounded-full border-2 flex items-center justify-center text-xs font-bold flex-shrink-0" style="border-color:' + (i === q.ans ? "var(--success)" : ua === i ? "var(--error)" : "var(--border)") + ';color:' + (i === q.ans ? "var(--success)" : ua === i ? "var(--error)" : "var(--muted)") + '">' + letters[i] + '</span>' +
+        '<span class="text-sm">' + opt + '</span>' +
+        (i === q.ans ? '<i class="fa-solid fa-circle-check ml-auto" style="color:var(--success)"></i>' : '') +
+        (ua === i && i !== q.ans ? '<i class="fa-solid fa-circle-xmark ml-auto" style="color:var(--error)"></i>' : '') +
+      '</button>';
+    });
+  } else if (q.type === "mcma") {
+    q.opts.forEach(function(opt, i) {
+      var isUA = (ua || []).indexOf(i) >= 0;
+      var isCA = q.ans.indexOf(i) >= 0;
+      var cls = "off";
+      if (isCA) cls += " ok";
+      else if (isUA && !isCA) cls += " no";
+      h += '<button class="ob ' + cls + '">' +
+        '<div class="ck">' + (isCA ? '<i class="fa-solid fa-check text-xs" style="color:#0b1a17"></i>' : isUA ? '<i class="fa-solid fa-xmark text-xs" style="color:#fff"></i>' : '') + '</div>' +
+        '<span class="text-sm">' + opt + '</span></button>';
+    });
+  }
+  h += '</div>';
+  h += '<div class="expbox ' + (ok ? 'good' : 'bad') + '">' +
+    '<div class="flex items-center gap-2 mb-1.5 font-bold text-sm">' +
+      '<i class="fa-solid ' + (ok ? 'fa-circle-check' : 'fa-circle-xmark') + '" style="color:' + (ok ? 'var(--success)' : 'var(--error)') + '"></i>' +
+      (ok ? 'Jawaban Benar' : 'Jawaban Salah') +
+    '</div>' +
+    '<p style="color:var(--text);line-height:1.6;font-size:0.9rem;">' + q.exp + '</p>' +
+  '</div>';
+
+  document.getElementById("revA").innerHTML = h;
+  window.scrollTo(0, 0);
+}
+
+function rvNav(dir) {
+  if (dir === 1 && S.ri === S.rqs.length - 1) { backRev(); return; }
+  S.ri = Math.max(0, Math.min(S.rqs.length - 1, S.ri + dir));
+  renderRev();
+}
+function backRev() {
+  if (S.mode === "single") go("home");
+  else go("res");
+}
+
+function openExit() { document.getElementById("exMod").classList.add("open"); }
+function closeMod() { document.getElementById("exMod").classList.remove("open"); }
+function doExit() { closeMod(); go("home"); }
+
+function resetAll() {
+  S.done = {}; S.wrong = []; S.scores = {};
+  save(); renderHome(); toast("Progress berhasil direset", "var(--success)");
+}
+function toast(msg, bg) {
+  var t = document.getElementById("toast");
+  t.style.display = "block";
+  t.style.background = bg || "var(--card)";
+  t.style.color = "#fff";
+  t.textContent = msg;
+  setTimeout(function() { t.style.display = "none"; }, 2200);
+}
+
+renderHome();
+console.log("Ikatan Kimia - HOTS C2-C6 loaded: " + QS.length + " soal");
+</script>
+</body>
+</html>

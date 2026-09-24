@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TKA Kimia — Persiapan TKA Kimia 2026</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Sans+3:ital,wght@0,300;0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+    :root {
+        --bg: #0b1a17;
+        --card: #132a24;
+        --card2: #1a3a32;
+        --text: #e8f0ec;
+        --muted: #8aa8a0;
+        --border: #2a4a42;
+        --accent: #d4a04a;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+        font-family: 'Source Sans 3', sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        min-height: 100vh;
+    }
+
+    .fd { font-family: 'Playfair Display', serif; }
+
+    .bg-noise {
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+        pointer-events: none;
+        z-index: 0;
+    }
+
+    .hg {
+        position: absolute;
+        width: 300px;
+        height: 300px;
+        border-radius: 50%;
+        filter: blur(100px);
+        opacity: 0.15;
+        pointer-events: none;
+    }
+
+    .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 14px;
+        border-radius: 100px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        background: rgba(212, 160, 74, 0.12);
+        color: var(--accent);
+    }
+
+    .glow-card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 18px 20px;
+        cursor: pointer;
+        transition: all 0.25s ease;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .glow-card:hover {
+        border-color: var(--accent);
+        transform: translateY(-3px);
+        box-shadow: 0 8px 30px rgba(212, 160, 74, 0.15);
+        background: var(--card2);
+    }
+
+    .glow-card:active { transform: scale(0.97); }
+
+    .glow-card .ti {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        font-size: 1.1rem;
+        background: rgba(212, 160, 74, 0.10);
+        color: var(--accent);
+    }
+
+    .glow-card:hover .ti {
+        background: rgba(212, 160, 74, 0.20);
+        transform: scale(1.05);
+    }
+
+    .glow-card h3 {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: var(--text);
+        transition: color 0.3s ease;
+    }
+
+    .glow-card:hover h3 { color: var(--accent); }
+
+    .glow-card .arrow {
+        margin-left: auto;
+        color: var(--muted);
+        font-size: 0.85rem;
+        opacity: 0.4;
+        transition: all 0.3s ease;
+    }
+
+    .glow-card:hover .arrow {
+        color: var(--accent);
+        opacity: 1;
+        transform: translateX(4px);
+    }
+
+    .glow-card .ti.green { background: rgba(52, 211, 153, 0.12); color: #34d399; }
+    .glow-card .ti.blue { background: rgba(96, 165, 250, 0.12); color: #60a5fa; }
+    .glow-card .ti.purple { background: rgba(167, 139, 250, 0.12); color: #a78bfa; }
+    .glow-card .ti.red { background: rgba(248, 113, 113, 0.12); color: #f87171; }
+    .glow-card .ti.yellow { background: rgba(251, 191, 36, 0.12); color: #fbbf24; }
+    .glow-card .ti.orange { background: rgba(251, 146, 60, 0.12); color: #fb923c; }
+    .glow-card .ti.teal { background: rgba(45, 212, 191, 0.12); color: #2dd4bf; }
+    .glow-card .ti.indigo { background: rgba(129, 140, 248, 0.12); color: #818cf8; }
+    .glow-card .ti.pink { background: rgba(244, 114, 182, 0.12); color: #f472b6; }
+    .glow-card .ti.rose { background: rgba(251, 113, 133, 0.12); color: #fb7185; }
+
+    .glow-card:hover .ti.green { background: rgba(52, 211, 153, 0.22); }
+    .glow-card:hover .ti.blue { background: rgba(96, 165, 250, 0.22); }
+    .glow-card:hover .ti.purple { background: rgba(167, 139, 250, 0.22); }
+    .glow-card:hover .ti.red { background: rgba(248, 113, 113, 0.22); }
+    .glow-card:hover .ti.yellow { background: rgba(251, 191, 36, 0.22); }
+    .glow-card:hover .ti.orange { background: rgba(251, 146, 60, 0.22); }
+    .glow-card:hover .ti.teal { background: rgba(45, 212, 191, 0.22); }
+    .glow-card:hover .ti.indigo { background: rgba(129, 140, 248, 0.22); }
+    .glow-card:hover .ti.pink { background: rgba(244, 114, 182, 0.22); }
+    .glow-card:hover .ti.rose { background: rgba(251, 113, 133, 0.22); }
+
+    @media (max-width: 640px) {
+        .glow-card { padding: 14px 16px; }
+        .glow-card .ti { width: 34px; height: 34px; font-size: 0.95rem; }
+        .glow-card h3 { font-size: 0.85rem; }
+    }
+</style>
+</head>
+<body>
+<div class="bg-noise"></div>
+
+<!-- NAV -->
+<nav class="fixed top-0 left-0 right-0 z-40 backdrop-blur-md border-b" style="background:rgba(11,26,23,0.92);border-color:var(--border)">
+<div class="max-w-5xl mx-auto px-4 flex items-center justify-between" style="height:52px">
+<div class="flex items-center gap-2 text-sm font-bold tracking-wide" style="color:var(--accent)">
+<i class="fa-solid fa-flask-vial"></i>
+<span class="hidden sm:inline">TKA KIMIA</span>
+</div>
+<div class="text-xs" style="color:var(--muted)">
+<i class="fa-regular fa-circle-check"></i> 19 Topik
+</div>
+</div>
+</nav>
+
+<!-- HOME -->
+<div class="pt-20 pb-12 px-4">
+<div class="max-w-5xl mx-auto">
+
+    <!-- HERO -->
+    <div class="relative rounded-2xl overflow-hidden mb-8 p-7 md:p-10" style="background:linear-gradient(135deg,var(--card),var(--card2))">
+        <div class="hg" style="background:var(--accent);top:-180px;right:-80px"></div>
+        <div class="hg" style="background:#34d399;bottom:-180px;left:-80px"></div>
+        <div class="relative z-10">
+            <div class="badge mb-3">
+                <i class="fa-solid fa-graduation-cap"></i> Persiapan TKA Kimia 2026
+            </div>
+            <h1 class="fd text-3xl md:text-4xl font-black mb-2 leading-tight">
+                Master TKA  Kimia <span style="color:var(--accent)">SMA Negeri 2 Semarang</span>
+            </h1>
+            <p class="text-sm md:text-base max-w-lg" style="color:var(--muted);line-height:1.65">
+                Pilih topik di bawah ini untuk mulai berlatih soal TKA Kimia dengan level HOTS C3-C6.
+            </p>
+            <div class="flex flex-wrap gap-3 mt-4">
+                <span class="text-xs px-3 py-1 rounded-full" style="background:rgba(52,211,153,0.12);color:#34d399">
+                    <i class="fa-regular fa-clock"></i> Update 2026
+                </span>
+                <span class="text-xs px-3 py-1 rounded-full" style="background:rgba(212,160,74,0.12);color:var(--accent)">
+                    <i class="fa-regular fa-star"></i> HOTS C3-C6
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- GRID TOPIK -->
+    <h2 class="fd text-lg font-bold mb-4 flex items-center gap-2">
+        <i class="fa-solid fa-grid-2" style="color:var(--accent)"></i>
+        Pilih Topik
+    </h2>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
+        <!-- Semua link menggunakan tag <a> langsung ke file -->
+        <a href="struktur-atom.html" class="glow-card">
+            <div class="ti purple"><i class="fa-solid fa-atom"></i></div>
+            <h3>Struktur Atom & Ikatan</h3>
+            <span class="arrow"><i class="fa-solid fa-chevron-right"></i></span>
+        </a>
+
+        <a href="koloid.html" class="glow-card">
+            <div class="ti blue"><i class="fa-solid fa-droplet"></i></div>
+            <h3>Sistem Koloid</h3>
+            <span class="arrow"><i class="fa-solid fa-chevron-right"></i></span>
+        </a>
+
+        <a href="bentuk-molekul.html" class="glow-card">
+            <div class="ti purple"><i class="fa-solid fa-shapes"></i></div>
+            <h3>Bentuk Molekul</h3>
+            <span class="arrow"><i class="fa-solid fa-chevron-right"></i></span>
+        </a>
+
+        <a href="redoks.html" class="glow-card">
+            <div class="ti red"><i class="fa-solid fa-right-left"></i></div>
+            <h3>Reaksi Redoks</h3>
+            <span class="arrow"><i class="fa-solid fa-chevron-right"></i></span>
+        </a>
+
+        <a href="elektrokimia.html" class="glow-card">
+            <div class="ti yellow"><i class="fa-solid fa-bolt"></i></div>
+            <h3>Elektrokimia</h3>
+            <span class="arrow"><i class="fa-solid fa-chevron-right"></i></span>
+        </a>
+
+        <a href="asam-basa.html" class="glow-card">
+            <div class="ti orange"><i class="fa-solid fa-flask"></i></div>
+            <h3>Asam-Basa</h3>
+            <span class="arrow"><i class="fa-solid fa-chevron-right"></i></span>
+        </a>
+
+        <a href="buffer.html" class="glow-card">
+            <div class="ti teal"><i class="fa-solid fa-shield-halved"></i></div>
+            <h3>Larutan Penyangga</h3>
+            <span class="arrow"><i class="fa-solid fa-chevron-right"></i></span>
+        </a>
+
+        <a href="kesetimbangan.html" class="glow-card">
+            <div class="ti indigo"><i class="fa-solid fa-scale-balanced"></i></div>
+            <h3>Kesetimbangan Kimia</h3>
+            <span class="arrow"><i class="fa-solid fa-chevron-right"></i></span>
+        </a>
+
+        <a href="laju-reaksi.html" class="glow-card">
+            <div class="ti pink"><i class="fa-solid fa-gauge-high"></i></div>
+            <h3>Laju Reaksi</h3>
+            <span class="arrow"><i class="fa-solid fa-chevron-right"></i></span>
+        </a>
+
+        <a href="termokimia.html" class="glow-card">
+            <div class="ti rose"><i class="fa-solid fa-fire"></i></div>
+            <h3>Termokimia & Kelarutan</h3>
+            <span class="arrow"><i class="fa-solid fa-chevron-right"></i></span>
+        </a>
+
+        <a href="hidrokarbon.html" class="glow-card">
+            <div class="ti green"><i class="fa-solid fa-oil-can"></i></div>
+            <h3>Hidrokarbon</h3>
+            <span class="arrow"><i class="fa-solid fa-chevron-right"></i></span>
+        </a>
+
+        <a href="stoikiometri.html" class="glow-card">
+            <div class="ti blue"><i class="fa-solid fa-calculator"></i></div>
+            <h3>Stoikiometri</h3>
+            <span class="arrow"><i class="fa-solid fa-chevron-right"></i></span>
+        </a>
+
+        <a href="ikatan-kimia.html" class="glow-card">
+            <div class="ti purple"><i class="fa-solid fa-link"></i></div>
+            <h3>Ikatan Kimia</h3>
+            <span class="arrow"><i class="fa-solid fa-chevron-right"></i></span>
+        </a>
+
+        <a href="titrasi.html" class="glow-card">
+            <div class="ti pink"><i class="fa-solid fa-vial"></i></div>
+            <h3>Titrasi</h3>
+            <span class="arrow"><i class="fa-solid fa-chevron-right"></i></span>
+        </a>
+
+        <a href="koligatif.html" class="glow-card">
+            <div class="ti orange"><i class="fa-solid fa-temperature-low"></i></div>
+            <h3>Sifat Koligatif</h3>
+            <span class="arrow"><i class="fa-solid fa-chevron-right"></i></span>
+        </a>
+
+        <a href="ksp.html" class="glow-card">
+            <div class="ti teal"><i class="fa-solid fa-cube"></i></div>
+            <h3>Kelarutan & Ksp</h3>
+            <span class="arrow"><i class="fa-solid fa-chevron-right"></i></span>
+        </a>
+        
+        <a href="biomolekul.html" class="glow-card">
+            <div class="ti teal"><i class="fa-solid fa-dna"></i></div>
+            <h3>Biomolekul</h3>
+            <span class="arrow"><i class="fa-solid fa-chevron-right"></i></span>
+        </a>
+
+        <a href="hidrolisis-garam.html" class="glow-card">
+            <div class="ti blue"><i class="fa-solid fa-water"></i></div>
+            <h3>Hidrolisis Garam</h3>
+            <span class="arrow"><i class="fa-solid fa-chevron-right"></i></span>
+        </a>
+
+        <a href="gugus-fungsi.html" class="glow-card">
+            <div class="ti purple"><i class="fa-solid fa-link"></i></div>
+            <h3>Gugus Fungsi</h3>
+            <span class="arrow"><i class="fa-solid fa-chevron-right"></i></span>
+        </a>
+         
+        <a href="tryout.html" class="glow-card">
+            <div class="ti yellow"><i class="fa-solid fa-star"></i></div>
+            <h3>Tryout1 TKA</h3>
+            <span class="arrow"><i class="fa-solid fa-chevron-right"></i></span>
+        </a>
+
+        <a href="tryout.html" class="glow-card">
+            <div class="ti yellow"><i class="fa-solid fa-star"></i></div>
+            <h3>Tryout2 TKA</h3>
+            <span class="arrow"><i class="fa-solid fa-chevron-right"></i></span>
+        </a>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="mt-10 pt-6 border-t text-center text-xs" style="border-color:var(--border);color:var(--muted)">
+        <p>
+            <i class="fa-regular fa-copyright"></i> 2026 TKA Kimia — Persiapan TKA 
+            <span class="hidden sm:inline-block mx-2">•</span>
+            <span class="block sm:inline">Dikembangkan oleh MGMP Kimia SMA Negeri 2 Semarang</span>
+        </p>
+    </div>
+
+</div>
+</div>
+</body>
+</html>

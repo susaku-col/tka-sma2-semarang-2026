@@ -1,0 +1,1414 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Titrasi — TKA Kimia SMA Negeri 2 Semarang </title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Sans+3:ital,wght@0,300;0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+    /* ============================================================ */
+    /* VARIABEL GLOBAL */
+    /* ============================================================ */
+    :root {
+        --bg: #0b1a17;
+        --bg2: #132a24;
+        --card: #1a3a32;
+        --card2: #1e4a3f;
+        --text: #e8f0ec;
+        --muted: #8aa8a0;
+        --border: #2a4a42;
+        --accent: #d4a04a;
+        --success: #34d399;
+        --error: #f87171;
+        --glow: rgba(212, 160, 74, 0.15);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+        font-family: 'Source Sans 3', sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        min-height: 100vh;
+        padding-top: 52px;
+    }
+
+    .fd { font-family: 'Playfair Display', serif; }
+
+    /* ============================================================ */
+    /* BACKGROUND NOISE */
+    /* ============================================================ */
+    .bg-noise {
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+        pointer-events: none;
+        z-index: 0;
+    }
+
+    .hg {
+        position: absolute;
+        width: 300px;
+        height: 300px;
+        border-radius: 50%;
+        filter: blur(100px);
+        opacity: 0.15;
+        pointer-events: none;
+    }
+
+    /* ============================================================ */
+    /* BADGE */
+    /* ============================================================ */
+    .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 14px;
+        border-radius: 100px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        background: rgba(212, 160, 74, 0.12);
+        color: var(--accent);
+    }
+
+    /* ============================================================ */
+    /* GLOW CARD */
+    /* ============================================================ */
+    .glow-card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 16px 18px;
+        cursor: pointer;
+        transition: all 0.25s ease;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .glow-card:hover {
+        border-color: var(--accent);
+        background: var(--card2);
+        box-shadow: 0 0 20px var(--glow);
+    }
+
+    /* ============================================================ */
+    /* BUTTONS */
+    /* ============================================================ */
+    .bp {
+        background: var(--accent);
+        color: #0b1a17;
+        border: none;
+        padding: 8px 18px;
+        border-radius: 30px;
+        font-weight: 700;
+        font-size: 0.85rem;
+        cursor: pointer;
+        transition: all 0.25s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+    .bp:hover { background: #e8b84a; transform: scale(1.02); }
+
+    .bs {
+        background: transparent;
+        color: var(--text);
+        border: 1px solid var(--border);
+        padding: 8px 18px;
+        border-radius: 30px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        cursor: pointer;
+        transition: all 0.25s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+    .bs:hover { border-color: var(--accent); background: var(--card2); }
+
+    /* ============================================================ */
+    /* VIEWS */
+    /* ============================================================ */
+    .view { display: none; }
+    .view.active { display: block; }
+
+    /* ============================================================ */
+    /* SOAL CARD */
+    /* ============================================================ */
+    .soal-card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 18px 20px;
+        margin-bottom: 14px;
+        transition: all 0.25s;
+    }
+    .soal-card:hover { border-color: var(--accent); }
+
+    /* ============================================================ */
+    /* STIMULUS */
+    /* ============================================================ */
+    .stim {
+        background: var(--bg2);
+        padding: 12px 16px;
+        border-radius: 8px;
+        border-left: 3px solid var(--accent);
+        margin-bottom: 12px;
+        font-size: 0.9rem;
+        line-height: 1.6;
+        color: var(--muted);
+    }
+
+    /* ============================================================ */
+    /* TABLE */
+    /* ============================================================ */
+    .table-wrap {
+        overflow-x: auto;
+        margin: 8px 0;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+    }
+    table.soal-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.8rem;
+        background: var(--bg2);
+    }
+    table.soal-table th {
+        background: var(--card);
+        color: var(--accent);
+        font-weight: 600;
+        padding: 6px 10px;
+        border: 1px solid var(--border);
+        text-align: center;
+    }
+    table.soal-table td {
+        padding: 6px 10px;
+        border: 1px solid var(--border);
+        text-align: center;
+        color: var(--text);
+    }
+    table.soal-table tr:hover { background: rgba(212, 160, 74, 0.05); }
+
+    /* ============================================================ */
+    /* FIGURE */
+    /* ============================================================ */
+    .figure-wrap {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: 8px 0;
+        padding: 10px;
+        background: var(--bg2);
+        border-radius: 8px;
+        border: 1px solid var(--border);
+    }
+    .figure-wrap svg { max-width: 100%; height: auto; }
+    .figure-caption {
+        font-size: 0.7rem;
+        color: var(--muted);
+        margin-top: 4px;
+        text-align: center;
+    }
+
+    /* ============================================================ */
+    /* CHEMICAL EQUATION */
+    /* ============================================================ */
+    .chem-eq {
+        display: block;
+        text-align: center;
+        padding: 0.5rem 0.75rem;
+        font-family: "Times New Roman", serif;
+        font-size: 1rem;
+        background: var(--bg2);
+        border-radius: 0.5rem;
+        border: 1px solid var(--border);
+        margin: 0.5rem 0;
+        color: var(--text);
+    }
+    .chem-eq sub { font-size: 0.7em; vertical-align: sub; }
+    .chem-eq sup { font-size: 0.7em; vertical-align: super; }
+    .chem-eq .arrow { color: var(--accent); margin: 0 0.3rem; }
+
+    /* ============================================================ */
+    /* OPTIONS */
+    /* ============================================================ */
+    .space-y-2\.5 > * + * { margin-top: 8px; }
+
+    .ob {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        width: 100%;
+        padding: 8px 14px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: var(--bg2);
+        color: var(--text);
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-size: 0.9rem;
+        text-align: left;
+    }
+    .ob:hover { border-color: var(--muted); }
+    .ob.sel { border-color: var(--accent); background: rgba(212, 160, 74, 0.1); }
+    .ob .ck {
+        width: 20px;
+        height: 20px;
+        min-width: 20px;
+        border-radius: 4px;
+        border: 2px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.7rem;
+        background: var(--bg);
+    }
+    .ob.sel .ck { border-color: var(--accent); background: var(--accent); }
+    .ob.ok .ck { border-color: var(--success); background: var(--success); }
+    .ob.no .ck { border-color: var(--error); background: var(--error); }
+
+    /* ============================================================ */
+    /* JAWABAN */
+    /* ============================================================ */
+    .jawaban {
+        display: none;
+        margin-top: 12px;
+        padding: 14px 18px;
+        background: rgba(52, 211, 153, 0.06);
+        border-left: 4px solid var(--success);
+        border-radius: 8px;
+        font-size: 0.9rem;
+        line-height: 1.7;
+        color: #c8e6d9;
+    }
+    .jawaban.show { display: block; }
+
+    .btn-jawab {
+        background: transparent;
+        border: 1px solid var(--accent);
+        color: var(--accent);
+        padding: 4px 16px;
+        border-radius: 30px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.25s ease;
+        margin-top: 8px;
+    }
+    .btn-jawab:hover { background: var(--accent); color: var(--bg); }
+
+    /* ============================================================ */
+    /* MODAL */
+    /* ============================================================ */
+    .modal-bg {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.6);
+        backdrop-filter: blur(4px);
+        z-index: 50;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+    }
+    .modal-bg.open { display: flex; }
+
+    .toast {
+        position: fixed;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        padding: 12px 28px;
+        border-radius: 12px;
+        font-weight: 600;
+        z-index: 100;
+        background: var(--card);
+        border: 1px solid var(--border);
+        color: var(--text);
+        max-width: 90%;
+        text-align: center;
+    }
+
+    /* ============================================================ */
+    /* LEVEL BADGE */
+    /* ============================================================ */
+    .level-badge {
+        display: inline-block;
+        padding: 2px 12px;
+        border-radius: 100px;
+        font-size: 0.6rem;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        margin-right: 6px;
+    }
+    .level-badge.c2 { background: #34d399; color: #0b1a17; }
+    .level-badge.c3 { background: #fbbf24; color: #0b1a17; }
+    .level-badge.c4 { background: #f97316; color: #0b1a17; }
+    .level-badge.c5 { background: #ef4444; color: #fff; }
+    .level-badge.c6 { background: #8b5cf6; color: #fff; }
+
+    /* ============================================================ */
+    /* HOTS BADGE KHUSUS HALAMAN INI */
+    /* ============================================================ */
+    .hots-badge {
+        display: inline-block;
+        padding: 0.15rem 0.5rem;
+        border-radius: 999px;
+        font-size: 0.6rem;
+        font-weight: 700;
+        margin-left: 0.5rem;
+    }
+    .hots-c2 { background: rgba(52,211,153,0.2); color: #34d399; }
+    .hots-c3 { background: rgba(251,191,36,0.2); color: #fbbf24; }
+    .hots-c4 { background: rgba(249,115,22,0.2); color: #f97316; }
+    .hots-c5 { background: rgba(239,68,68,0.2); color: #ef4444; }
+    .hots-c6 { background: rgba(139,92,246,0.2); color: #8b5cf6; }
+
+    /* ============================================================ */
+    /* INDICATOR BOX */
+    /* ============================================================ */
+    .indicator-box {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.3rem 0.6rem;
+        border-radius: 4px;
+        background: var(--bg2);
+        border: 1px solid var(--border);
+    }
+    .indicator-color {
+        width: 20px;
+        height: 20px;
+        border-radius: 4px;
+        border: 1px solid var(--border);
+    }
+
+    /* ============================================================ */
+    /* EXP BOX (REVIEW) */
+    /* ============================================================ */
+    .expbox {
+        margin-top: 14px;
+        padding: 14px 18px;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        line-height: 1.7;
+    }
+    .expbox.good {
+        background: rgba(52, 211, 153, 0.06);
+        border-left: 4px solid var(--success);
+    }
+    .expbox.bad {
+        background: rgba(248, 113, 113, 0.06);
+        border-left: 4px solid var(--error);
+    }
+
+    /* ============================================================ */
+    /* RESPONSIVE */
+    /* ============================================================ */
+    @media (max-width: 640px) {
+        .soal-card { padding: 14px 16px; }
+        .ob { font-size: 0.8rem; padding: 6px 12px; }
+        .bp, .bs { font-size: 0.75rem; padding: 6px 14px; }
+        .glow-card { padding: 12px 14px; }
+        .glow-card h3 { font-size: 0.8rem; }
+    }
+</style>
+</head>
+<body>
+<div class="bg-noise"></div>
+
+<!-- ============================================================ -->
+<!-- NAVIGASI -->
+<!-- ============================================================ -->
+<nav class="fixed top-0 left-0 right-0 z-40 backdrop-blur-md border-b" style="background:rgba(11,26,23,.88);border-color:var(--border)">
+<div class="max-w-5xl mx-auto px-4 h-13 flex items-center justify-between" style="height:52px">
+<button onclick="location.href='index.html'" class="flex items-center gap-2 text-sm font-bold tracking-wide" style="color:var(--accent);background:none;border:none;cursor:pointer;">
+<i class="fa-solid fa-arrow-left"></i><span class="hidden sm:inline">Kembali</span>
+</button>
+<div class="flex items-center gap-3">
+<span id="ns" class="hidden sm:flex items-center gap-1.5 text-xs" style="color:var(--muted)">
+<i class="fa-solid fa-trophy" style="color:var(--accent)"></i><span id="nst">0/0</span>
+</span>
+<button onclick="location.href='index.html'" class="text-sm px-2.5 py-1 rounded" style="color:var(--muted);background:none;border:none;cursor:pointer;" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--muted)'">
+<i class="fa-solid fa-house"></i>
+</button>
+</div>
+</div>
+</nav>
+
+<!-- ============================================================ -->
+<!-- HOME -->
+<!-- ============================================================ -->
+<div id="vHome" class="view active pt-16 pb-12 px-4">
+<div class="max-w-4xl mx-auto">
+
+    <!-- HERO -->
+    <div class="relative rounded-2xl overflow-hidden mb-8 p-7 md:p-10" style="background:linear-gradient(135deg,var(--card),var(--card2))">
+        <div class="hg" style="background:var(--accent);top:-180px;right:-80px"></div>
+        <div class="hg" style="background:#34d399;bottom:-180px;left:-80px"></div>
+        <div class="relative z-10">
+            <div class="badge mb-3"><i class="fa-solid fa-vial"></i> Titrasi</div>
+            <h1 class="fd text-3xl md:text-4xl font-black mb-2 leading-tight">Titrasi <span style="color:var(--accent)">Asam-Basa</span></h1>
+            <p class="text-sm md:text-base max-w-lg" style="color:var(--muted);line-height:1.65">Latihan soal HOTS level C2-C6 tentang titrasi asam-basa, kurva titrasi, indikator, dan perhitungan konsentrasi.</p>
+            <div class="flex flex-wrap gap-2 mt-4">
+                <span class="badge hots-badge hots-c2">C2 - Pemahaman</span>
+                <span class="badge hots-badge hots-c3">C3 - Menganalisis</span>
+                <span class="badge hots-badge hots-c4">C4 - Mengevaluasi</span>
+                <span class="badge hots-badge hots-c5">C5 - Mencipta</span>
+                <span class="badge hots-badge hots-c6">C6 - Menilai</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- BUTTONS -->
+    <div class="flex flex-wrap gap-2.5 mb-6">
+        <button onclick="startQuiz()" class="bp"><i class="fa-solid fa-play"></i> Mulai Quiz Semua Soal</button>
+        <button onclick="startRandom()" class="bs"><i class="fa-solid fa-shuffle"></i> Quiz Acak 10 Soal</button>
+        <button onclick="startWrong()" class="bs" id="bWR" style="display:none"><i class="fa-solid fa-rotate-left"></i> Ulangi Salah</button>
+        <button onclick="resetAll()" class="bs"><i class="fa-solid fa-trash-can"></i> Reset</button>
+    </div>
+
+    <!-- FILTER LEVEL -->
+    <div class="flex flex-wrap gap-2 mb-4">
+        <button onclick="filterLevel('all')" class="bs text-xs" id="filterAll" style="background:rgba(212,160,74,.15)">Semua</button>
+        <button onclick="filterLevel('c2')" class="bs text-xs" id="filterC2">C2</button>
+        <button onclick="filterLevel('c3')" class="bs text-xs" id="filterC3">C3</button>
+        <button onclick="filterLevel('c4')" class="bs text-xs" id="filterC4">C4</button>
+        <button onclick="filterLevel('c5')" class="bs text-xs" id="filterC5">C5</button>
+        <button onclick="filterLevel('c6')" class="bs text-xs" id="filterC6">C6</button>
+    </div>
+
+    <!-- DAFTAR SOAL -->
+    <div id="qList"></div>
+
+</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- QUIZ -->
+<!-- ============================================================ -->
+<div id="vQuiz" class="view pt-16 pb-12 px-4">
+<div class="max-w-3xl mx-auto">
+    <div class="flex items-center justify-between mb-3">
+        <button onclick="openExit()" class="text-sm flex items-center gap-1.5" style="color:var(--muted);background:none;border:none;cursor:pointer;" onmouseover="this.style.color='var(--error)'" onmouseout="this.style.color='var(--muted)'"><i class="fa-solid fa-xmark"></i>Keluar</button>
+        <div class="flex items-center gap-2.5">
+            <span id="qCtr" class="text-sm font-semibold" style="color:var(--muted)"></span>
+            <span id="qTyp" class="badge" style="background:rgba(212,160,74,.12);color:var(--accent);font-size:0.7rem;"></span>
+            <span id="qLevel" class="badge" style="background:var(--bg2);color:var(--muted);font-size:0.7rem;"></span>
+        </div>
+    </div>
+    <div class="w-full h-1.5 rounded-full mb-5" style="background:var(--border)">
+        <div id="qBar" class="h-full rounded-full transition-all duration-400" style="background:var(--accent);width:0%"></div>
+    </div>
+    <div id="qArea"></div>
+    <div class="flex items-center justify-between mt-7">
+        <button id="bPrv" onclick="qPrev()" class="bs" style="visibility:hidden"><i class="fa-solid fa-chevron-left mr-1"></i>Sebelumnya</button>
+        <button id="bNxt" onclick="qNext()" class="bp">Selanjutnya <i class="fa-solid fa-chevron-right ml-1"></i></button>
+    </div>
+</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- RESULTS -->
+<!-- ============================================================ -->
+<div id="vRes" class="view pt-16 pb-12 px-4">
+<div class="max-w-3xl mx-auto text-center">
+    <div class="mb-7">
+        <svg class="mx-auto mb-3" style="transform:rotate(-90deg)" width="130" height="130" viewBox="0 0 130 130">
+            <circle cx="65" cy="65" r="55" fill="none" stroke="var(--border)" stroke-width="7"/>
+            <circle id="rRing" cx="65" cy="65" r="55" fill="none" stroke="var(--accent)" stroke-width="7" stroke-linecap="round" stroke-dasharray="345.6" stroke-dashoffset="345.6"/>
+        </svg>
+        <div class="text-3xl font-bold" style="color:var(--accent)" id="rPct">0%</div>
+        <div class="text-sm mt-0.5" style="color:var(--muted)" id="rLbl">—</div>
+    </div>
+    <div class="grid grid-cols-3 gap-3 mb-7">
+        <div class="rounded-xl p-3.5" style="background:var(--card);border:1px solid var(--border)">
+            <div class="text-2xl font-bold" style="color:var(--success)" id="rOk">0</div>
+            <div class="text-xs" style="color:var(--muted)">Benar</div>
+        </div>
+        <div class="rounded-xl p-3.5" style="background:var(--card);border:1px solid var(--border)">
+            <div class="text-2xl font-bold" style="color:var(--error)" id="rNo">0</div>
+            <div class="text-xs" style="color:var(--muted)">Salah</div>
+        </div>
+        <div class="rounded-xl p-3.5" style="background:var(--card);border:1px solid var(--border)">
+            <div class="text-2xl font-bold" id="rTot">0</div>
+            <div class="text-xs" style="color:var(--muted)">Total</div>
+        </div>
+    </div>
+    <div class="flex flex-wrap justify-center gap-2.5">
+        <button onclick="location.href='index.html'" class="bs"><i class="fa-solid fa-house mr-1"></i>Beranda</button>
+        <button onclick="revWrong()" class="bp" id="bRW" style="display:none"><i class="fa-solid fa-eye mr-1"></i>Review Salah</button>
+        <button onclick="retryQ()" class="bs"><i class="fa-solid fa-rotate-left mr-1"></i>Ulangi</button>
+    </div>
+</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- REVIEW -->
+<!-- ============================================================ -->
+<div id="vRev" class="view pt-16 pb-12 px-4">
+<div class="max-w-3xl mx-auto">
+    <button onclick="backRev()" class="flex items-center gap-2 text-sm mb-5" style="color:var(--muted);background:none;border:none;cursor:pointer;"><i class="fa-solid fa-arrow-left"></i>Kembali</button>
+    <div id="revA"></div>
+    <div class="flex justify-center gap-2.5 mt-7">
+        <button id="rvPr" onclick="rvNav(-1)" class="bs"><i class="fa-solid fa-chevron-left mr-1"></i>Sebelumnya</button>
+        <button id="rvNx" onclick="rvNav(1)" class="bp">Selanjutnya <i class="fa-solid fa-chevron-right ml-1"></i></button>
+    </div>
+</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- EXIT MODAL -->
+<!-- ============================================================ -->
+<div id="exMod" class="modal-bg">
+    <div class="rounded-xl p-5 max-w-sm w-full" style="background:var(--card);border:1px solid var(--border)">
+        <h3 class="fd text-lg font-bold mb-1.5">Keluar dari Quiz?</h3>
+        <p class="text-sm mb-4" style="color:var(--muted)">Progress quiz ini akan hilang.</p>
+        <div class="flex gap-2.5 justify-end">
+            <button onclick="closeMod()" class="bs text-sm">Batal</button>
+            <button onclick="doExit()" class="text-sm font-bold px-4 py-2 rounded-lg border-none cursor-pointer" style="background:var(--error);color:#fff">Keluar</button>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- TOAST -->
+<!-- ============================================================ -->
+<div id="toast" class="toast" style="display:none"></div>
+
+<!-- ============================================================ -->
+<!-- JAVASCRIPT -->
+<!-- ============================================================ -->
+<script>
+// ================================================================
+// DATA SOAL TITRASI - HOTS C2 - C6
+// ================================================================
+var QS = [];
+
+// ================================================================
+// SOAL DASAR (C1-C2)
+// ================================================================
+
+// Soal 28: pH campuran HCl dan NaOH
+QS.push({
+  id: 28,
+  topic: "titrasi",
+  type: "single",
+  level: "c2",
+  q: "100 mL HCl 0,1 M + 100 mL NaOH 0,1 M. pH campuran yang terbentuk:",
+  opts: ["pH = 1", "pH = 7", "pH = 13", "pH < 7", "pH > 7"],
+  ans: 1,
+  exp: "mol HCl = mol NaOH = 0,01 mol. Titrasi tepat → garam netral NaCl → pH = 7."
+});
+
+// Soal 1005: pH campuran HCl dan NaOH
+QS.push({
+  id: 1005,
+  topic: "titrasi",
+  type: "single",
+  level: "c2",
+  stim: `
+    <div style="margin-bottom:0.5rem;">
+      <strong>Sebanyak 100 mL larutan HCl 0,1 M direaksikan dengan 100 mL larutan NaOH 0,1 M.</strong>
+    </div>
+  `,
+  q: "Pilihlah pernyataan yang benar mengenai pH campuran yang terbentuk!",
+  opts: ["pH larutan adalah 1.", "pH larutan adalah 7.", "pH larutan adalah 13.", "pH larutan kurang dari 7.", "pH larutan lebih dari 7."],
+  ans: 1,
+  exp: "mol HCl = mol NaOH = 0,01 mol. Titrasi tepat → garam netral NaCl → pH = 7."
+});
+
+// SOAL TITRASI DASAR 1 - Titrasi HCl dengan NaOH
+QS.push({
+  id: 2001,
+  topic: "titrasi",
+  type: "single",
+  level: "c2",
+  stim: `
+    <div style="margin-bottom:0.5rem;">
+      <strong>Seorang mahasiswa melakukan titrasi 25,00 mL larutan HCl yang tidak diketahui konsentrasinya dengan larutan standar NaOH 0,10 M.</strong>
+    </div>
+    <div style="background:var(--bg2);border-radius:0.5rem;padding:0.75rem;margin-bottom:0.5rem;border:1px solid var(--border);">
+      <p style="font-size:0.9rem;color:var(--text);">
+        Volume NaOH yang dibutuhkan untuk mencapai titik akhir titrasi adalah 20,00 mL.
+      </p>
+    </div>
+  `,
+  q: "Konsentrasi larutan HCl tersebut adalah...",
+  opts: ["0,04 M", "0,08 M", "0,10 M", "0,12 M", "0,20 M"],
+  ans: 1,
+  exp: "M₁V₁ = M₂V₂ → M_HCl × 25 = 0,10 × 20 → M_HCl = 2/25 = 0,08 M."
+});
+
+// SOAL TITRASI DASAR 2 - Kurva titrasi
+QS.push({
+  id: 2002,
+  topic: "titrasi",
+  type: "single",
+  level: "c2",
+  stim: `
+    <div style="margin-bottom:0.5rem;">
+      <strong>Perhatikan kurva titrasi berikut!</strong>
+    </div>
+    <div class="figure-wrap">
+      <svg width="400" height="200" viewBox="0 0 400 200">
+        <line x1="40" y1="170" x2="370" y2="170" stroke="#1e4a3f" stroke-width="2"/>
+        <line x1="40" y1="170" x2="40" y2="20" stroke="#1e4a3f" stroke-width="2"/>
+        <text x="180" y="190" fill="#8fa89e" font-size="10">Volume NaOH (mL)</text>
+        <text x="10" y="100" fill="#8fa89e" font-size="10" transform="rotate(-90,10,100)">pH</text>
+        <path d="M 40 165 Q 80 160 120 155 Q 160 145 200 130 Q 220 110 230 65 Q 235 45 240 30 Q 260 25 340 25" stroke="#d4a04a" stroke-width="2.5" fill="none"/>
+        <circle cx="230" cy="65" r="5" fill="#f87171"/>
+        <text x="220" y="55" fill="#f87171" font-size="9">Titik Ekuivalen</text>
+        <text x="215" y="75" fill="#8fa89e" font-size="9">pH = 7</text>
+        <text x="100" y="140" fill="#34d399" font-size="9">Daerah sebelum TE</text>
+        <text x="270" y="40" fill="#60a5fa" font-size="9">Daerah setelah TE</text>
+      </svg>
+      <div class="figure-caption">Kurva titrasi asam kuat dengan basa kuat</div>
+    </div>
+  `,
+  q: "Berdasarkan kurva titrasi di atas, titrasi yang terjadi adalah...",
+  opts: ["Asam kuat dengan basa kuat", "Asam kuat dengan basa lemah", "Asam lemah dengan basa kuat", "Asam lemah dengan basa lemah", "Basa kuat dengan asam kuat"],
+  ans: 0,
+  exp: "Kurva titrasi asam kuat-basa kuat memiliki titik ekuivalen pada pH = 7 dan perubahan pH yang tajam di sekitar titik ekuivalen."
+});
+
+// SOAL TITRASI DASAR 3 - Indikator
+QS.push({
+  id: 2003,
+  topic: "titrasi",
+  type: "single",
+  level: "c2",
+  stim: `
+    <div style="margin-bottom:0.5rem;">
+      <strong>Data beberapa indikator dan trayek pH:</strong>
+    </div>
+    <div class="table-wrap">
+      <table class="soal-table">
+        <tr><th>Indikator</th><th>Trayek pH</th><th>Perubahan Warna</th></tr>
+        <tr><td>Metil jingga</td><td>3,1 - 4,4</td><td>Merah - Kuning</td></tr>
+        <tr><td>Metil merah</td><td>4,2 - 6,3</td><td>Merah - Kuning</td></tr>
+        <tr><td>Bromtimol biru</td><td>6,0 - 7,6</td><td>Kuning - Biru</td></tr>
+        <tr><td>Fenolftalein</td><td>8,3 - 10,0</td><td>Tak berwarna - Merah</td></tr>
+      </table>
+    </div>
+  `,
+  q: "Untuk titrasi asam lemah CH₃COOH dengan basa kuat NaOH, indikator yang paling sesuai adalah...",
+  opts: ["Metil jingga", "Metil merah", "Bromtimol biru", "Fenolftalein", "Semua indikator bisa digunakan"],
+  ans: 3,
+  exp: "Titrasi asam lemah dengan basa kuat memiliki titik ekuivalen pada pH > 7 (sekitar 8-9). Fenolftalein memiliki trayek pH 8,3-10,0 yang sesuai untuk mendeteksi titik ekuivalen."
+});
+
+// ================================================================
+// LEVEL C3 - Menganalisis
+// ================================================================
+
+// SOAL C3.1 - Menganalisis kurva titrasi
+QS.push({
+  id: 3001,
+  topic: "titrasi",
+  type: "single",
+  level: "c3",
+  stim: `
+    <div class="figure-wrap">
+      <svg width="450" height="220" viewBox="0 0 450 220">
+        <line x1="40" y1="190" x2="420" y2="190" stroke="#1e4a3f" stroke-width="2"/>
+        <line x1="40" y1="190" x2="40" y2="20" stroke="#1e4a3f" stroke-width="2"/>
+        <text x="200" y="210" fill="#8fa89e" font-size="10">Volume Titran (mL)</text>
+        <text x="10" y="110" fill="#8fa89e" font-size="10" transform="rotate(-90,10,110)">pH</text>
+        <path d="M 40 175 Q 80 170 120 165 Q 160 155 200 135 Q 220 110 230 60 Q 235 35 240 25 Q 260 20 340 20" stroke="#34d399" stroke-width="2.5" fill="none"/>
+        <text x="180" y="30" fill="#34d399" font-size="10">Kurva 1</text>
+        <path d="M 40 165 Q 80 155 120 140 Q 160 120 200 90 Q 220 75 230 50 Q 240 30 250 25 Q 280 20 340 20" stroke="#f87171" stroke-width="2.5" fill="none" stroke-dasharray="6"/>
+        <text x="320" y="40" fill="#f87171" font-size="10">Kurva 2</text>
+        <line x1="40" y1="110" x2="420" y2="110" stroke="#1e4a3f" stroke-width="1" stroke-dasharray="4"/>
+        <text x="425" y="114" fill="#8fa89e" font-size="8">pH 7</text>
+      </svg>
+      <div class="figure-caption">Kurva titrasi berbagai jenis asam-basa</div>
+    </div>
+  `,
+  q: "Berdasarkan kurva titrasi di atas, pernyataan yang PALING TEPAT adalah...",
+  opts: [
+    "Kurva 1 adalah titrasi asam kuat dengan basa kuat",
+    "Kurva 2 adalah titrasi asam lemah dengan basa kuat",
+    "Kurva 1 adalah titrasi asam lemah dengan basa kuat",
+    "Kurva 2 adalah titrasi asam kuat dengan basa kuat",
+    "Kedua kurva adalah titrasi asam kuat dengan basa kuat"
+  ],
+  ans: 2,
+  exp: "Kurva 1 memiliki titik awal pH rendah (asam kuat) dan titik ekuivalen pH = 7 (asam kuat-basa kuat). Kurva 2 memiliki titik awal pH lebih tinggi (asam lemah) dan titik ekuivalen pH > 7 (asam lemah-basa kuat)."
+});
+
+// SOAL C3.2 - Menganalisis data titrasi
+QS.push({
+  id: 3002,
+  topic: "titrasi",
+  type: "single",
+  level: "c3",
+  stim: `
+    <div class="table-wrap">
+      <table class="soal-table">
+        <tr><th>Percobaan</th><th>Volume Ca(OH)₂ (mL)</th><th>Volume HCN (mL)</th></tr>
+        <tr><td>1</td><td>10</td><td>19</td></tr>
+        <tr><td>2</td><td>10</td><td>20</td></tr>
+        <tr><td>3</td><td>10</td><td>21</td></tr>
+      </table>
+    </div>
+    <div style="font-size:0.85rem;color:var(--muted);margin-top:0.5rem;">
+      <i class="fa-solid fa-info-circle"></i> Mr HCN = 27
+    </div>
+  `,
+  q: "Massa HCN yang bereaksi dengan larutan Ca(OH)₂ adalah...",
+  opts: ["0,054 gram", "2,70 gram", "6,40 gram", "8,10 gram", "27,00 gram"],
+  ans: 0,
+  exp: "Volume rata-rata HCN = (19+20+21)/3 = 20 mL. mol HCN = 0,1 × 0,02 = 0,002 mol. Reaksi: Ca(OH)₂ + 2HCN → Ca(CN)₂ + 2H₂O. mol HCN = 0,002 mol. massa HCN = 0,002 × 27 = 0,054 gram."
+});
+
+// SOAL C3.3 - Menganalisis titik ekivalen
+QS.push({
+  id: 3003,
+  topic: "titrasi",
+  type: "single",
+  level: "c3",
+  stim: `
+    <div class="figure-wrap">
+      <svg width="400" height="200" viewBox="0 0 400 200">
+        <line x1="40" y1="170" x2="370" y2="170" stroke="#1e4a3f" stroke-width="2"/>
+        <line x1="40" y1="170" x2="40" y2="20" stroke="#1e4a3f" stroke-width="2"/>
+        <text x="180" y="190" fill="#8fa89e" font-size="10">Volume Titran (mL)</text>
+        <text x="10" y="100" fill="#8fa89e" font-size="10" transform="rotate(-90,10,100)">pH</text>
+        <path d="M 40 175 Q 80 170 120 165 Q 160 158 200 140 Q 220 120 230 60 Q 235 30 250 25 Q 280 20 340 20" stroke="#d4a04a" stroke-width="2.5" fill="none"/>
+        <circle cx="230" cy="60" r="5" fill="#f87171"/>
+        <text x="225" y="50" fill="#f87171" font-size="9">Titik Ekuivalen</text>
+        <text x="100" y="150" fill="#34d399" font-size="9">Daerah Penyangga</text>
+        <text x="100" y="30" fill="#d4a04a" font-size="10" font-weight="bold">X</text>
+        <text x="230" y="30" fill="#d4a04a" font-size="10" font-weight="bold">Y</text>
+        <text x="320" y="30" fill="#d4a04a" font-size="10" font-weight="bold">Z</text>
+      </svg>
+      <div class="figure-caption">Kurva titrasi asam-basa</div>
+    </div>
+  `,
+  q: "Daerah kurva yang merupakan larutan penyangga adalah...",
+  opts: ["X", "Y", "Z", "Semua daerah", "Tidak ada daerah penyangga"],
+  ans: 0,
+  exp: "Daerah X (sebelum titik ekuivalen) adalah daerah larutan penyangga karena terdapat campuran asam lemah dan basa konjugasinya (atau basa lemah dan asam konjugasinya)."
+});
+
+// SOAL C3.4 - Menganalisis pemilihan indikator
+QS.push({
+  id: 3004,
+  topic: "titrasi",
+  type: "mcma",
+  level: "c3",
+  stim: `
+    <div class="table-wrap">
+      <table class="soal-table">
+        <tr><th>Indikator</th><th>Trayek pH</th><th>Larutan (1)</th><th>Larutan (2)</th></tr>
+        <tr><td>Metil merah</td><td>4,2 - 6,3</td><td>Jingga</td><td>Kuning</td></tr>
+        <tr><td>Metil jingga</td><td>3,1 - 4,4</td><td>Kuning</td><td>Kuning</td></tr>
+        <tr><td>Bromtimol biru</td><td>6,0 - 7,6</td><td>Kuning</td><td>Biru</td></tr>
+        <tr><td>Fenolftalein</td><td>8,3 - 10</td><td>Tak berwarna</td><td>Tak berwarna</td></tr>
+      </table>
+    </div>
+  `,
+  q: "Nilai pH dari larutan (1) dan larutan (2) berturut-turut adalah... (Pilih 2 jawaban yang tepat)",
+  opts: [
+    "4,4 < pH < 6,0 untuk larutan (1)",
+    "6,3 < pH < 8,3 untuk larutan (2)",
+    "pH < 4,4 untuk larutan (1)",
+    "7,6 < pH < 8,3 untuk larutan (2)",
+    "pH = 7 untuk larutan (2)"
+  ],
+  ans: [0, 3],
+  exp: "Larutan (1): Metil jingga kuning (pH > 4,4), Metil merah jingga (4,2 < pH < 6,3), BTB kuning (pH < 6,0), Fenolftalein tak berwarna (pH < 8,3). Jadi 4,4 < pH < 6,0. Larutan (2): Metil merah kuning (pH > 6,3), BTB biru (pH > 7,6), Fenolftalein tak berwarna (pH < 8,3). Jadi 7,6 < pH < 8,3."
+});
+
+// ================================================================
+// LEVEL C4 - Mengevaluasi
+// ================================================================
+
+// SOAL C4.1 - Mengevaluasi kesalahan indikator
+QS.push({
+  id: 4001,
+  topic: "titrasi",
+  type: "single",
+  level: "c4",
+  stim: `
+    <div style="background:var(--bg2);border-radius:0.5rem;padding:0.75rem;margin-bottom:0.5rem;border:1px solid var(--border);">
+      <p style="font-size:0.9rem;color:var(--text);">
+        Volume NaOH yang dibutuhkan untuk mencapai titik akhir titrasi adalah 20,00 mL, dan mahasiswa tersebut menggunakan indikator yang tidak sesuai.
+      </p>
+    </div>
+  `,
+  q: "Bagaimana pengaruh kesalahan indikator tersebut terhadap hasil perhitungan konsentrasi H₂SO₄?",
+  opts: [
+    "Hasil perhitungan akan lebih rendah dari seharusnya.",
+    "Hasil perhitungan akan lebih tinggi dari seharusnya.",
+    "Hasil perhitungan akan sama dengan seharusnya.",
+    "Hasil perhitungan tidak dapat ditentukan karena indikatornya salah.",
+    "Hasil perhitungan akan nol karena tidak terjadi perubahan warna"
+  ],
+  ans: 0,
+  exp: "Jika indikator tidak sesuai, titik akhir titrasi mungkin tercapai sebelum atau setelah titik ekuivalen. Jika indikator berubah warna terlalu cepat, volume NaOH yang terukur lebih kecil, sehingga konsentrasi H₂SO₄ yang dihitung lebih rendah."
+});
+
+// SOAL C4.2 - Mengevaluasi pH pada titik ekivalen
+QS.push({
+  id: 4002,
+  topic: "titrasi",
+  type: "mcma",
+  level: "c4",
+  stim: `
+    <div style="background:var(--bg2);border-radius:0.5rem;padding:0.75rem;margin-bottom:0.5rem;border:1px solid var(--border);">
+      <ol style="color:var(--text);font-size:0.9rem;list-style-type:decimal;padding-left:1.5rem;">
+        <li>HCl dengan NaOH</li>
+        <li>CH₃COOH dengan NaOH</li>
+        <li>HCl dengan NH₃</li>
+        <li>CH₃COOH dengan NH₃</li>
+      </ol>
+    </div>
+  `,
+  q: "Pasangan titrasi yang memiliki titik ekuivalen pada pH = 7 adalah... (Pilih 2 jawaban benar)",
+  opts: ["(1)", "(2)", "(3)", "(4)", "Tidak ada yang pH = 7"],
+  ans: [0],
+  exp: "Titrasi asam kuat dengan basa kuat (HCl + NaOH) memiliki titik ekuivalen pada pH = 7. Titrasi asam lemah + basa kuat (CH₃COOH + NaOH) pH > 7. Titrasi asam kuat + basa lemah (HCl + NH₃) pH < 7. Titrasi asam lemah + basa lemah pH tergantung Ka dan Kb."
+});
+
+// SOAL C4.3 - Mengevaluasi kurva titrasi
+QS.push({
+  id: 4003,
+  topic: "titrasi",
+  type: "mcma",
+  level: "c4",
+  stim: `
+    <div class="figure-wrap">
+      <svg width="450" height="220" viewBox="0 0 450 220">
+        <line x1="40" y1="190" x2="420" y2="190" stroke="#1e4a3f" stroke-width="2"/>
+        <line x1="40" y1="190" x2="40" y2="20" stroke="#1e4a3f" stroke-width="2"/>
+        <text x="200" y="210" fill="#8fa89e" font-size="10">Volume Titran (mL)</text>
+        <text x="10" y="110" fill="#8fa89e" font-size="10" transform="rotate(-90,10,110)">pH</text>
+        <path d="M 40 175 Q 80 170 120 165 Q 160 158 200 140 Q 220 120 230 60 Q 235 30 250 25 Q 280 20 340 20" stroke="#d4a04a" stroke-width="2.5" fill="none"/>
+        <text x="100" y="150" fill="#34d399" font-size="10" font-weight="bold">I</text>
+        <rect x="85" y="135" width="30" height="20" fill="rgba(52,211,153,0.1)" stroke="#34d399" stroke-width="1"/>
+        <text x="230" y="45" fill="#f87171" font-size="10" font-weight="bold">II</text>
+        <rect x="220" y="30" width="20" height="20" fill="rgba(248,113,113,0.1)" stroke="#f87171" stroke-width="1"/>
+        <text x="300" y="30" fill="#60a5fa" font-size="10" font-weight="bold">III</text>
+        <rect x="290" y="15" width="20" height="20" fill="rgba(96,165,250,0.1)" stroke="#60a5fa" stroke-width="1"/>
+      </svg>
+      <div class="figure-caption">Kurva titrasi asam lemah dengan basa kuat</div>
+    </div>
+  `,
+  q: "Berdasarkan kurva titrasi di atas, pernyataan yang BENAR adalah... (Pilih 2 jawaban benar)",
+  opts: [
+    "Daerah I adalah daerah larutan penyangga",
+    "Daerah II adalah daerah titik ekuivalen",
+    "Daerah III adalah daerah setelah titik ekuivalen",
+    "Daerah I adalah daerah asam kuat",
+    "Daerah II adalah daerah larutan penyangga"
+  ],
+  ans: [0, 2],
+  exp: "Daerah I (sebelum titik ekuivalen) adalah daerah larutan penyangga (terdapat asam lemah dan basa konjugasinya). Daerah II adalah daerah lonjakan pH (titik ekuivalen). Daerah III adalah daerah setelah titik ekuivalen (terdapat basa kuat berlebih)."
+});
+
+// ================================================================
+// LEVEL C5 - Mencipta
+// ================================================================
+
+// SOAL C5.1 - Merancang prosedur titrasi
+QS.push({
+  id: 5001,
+  topic: "titrasi",
+  type: "mcma",
+  level: "c5",
+  stim: `
+    <div style="background:var(--bg2);border-radius:0.5rem;padding:0.75rem;margin-bottom:0.5rem;border:1px solid var(--border);">
+      <p style="font-size:0.9rem;color:var(--text);">
+        Data yang tersedia:<br>
+        - Sampel cuka 10 mL<br>
+        - Larutan NaOH 0,1 M<br>
+        - Indikator fenolftalein<br>
+        - Ka CH₃COOH = 1,8×10⁻⁵
+      </p>
+    </div>
+  `,
+  q: "Langkah-langkah yang PALING TEPAT untuk menentukan kadar asam asetat dalam cuka adalah... (Pilih 2 jawaban benar)",
+  opts: [
+    "Encerkan sampel cuka dengan aquades sebelum dititrasi",
+    "Tambahkan indikator fenolftalein ke dalam sampel cuka",
+    "Titrasi dilakukan dengan larutan NaOH 0,1 M sampai warna menjadi merah muda",
+    "Gunakan indikator metil merah untuk hasil yang lebih akurat",
+    "Titrasi dilakukan sampai pH = 7 (netral)"
+  ],
+  ans: [1, 2],
+  exp: "Titrasi asam lemah dengan basa kuat menggunakan indikator fenolftalein (trayek pH 8,3-10,0). Titik akhir titrasi ditandai dengan perubahan warna menjadi merah muda (basa). Metil merah tidak cocok karena trayek pH-nya di bawah titik ekuivalen."
+});
+
+// SOAL C5.2 - Menganalisis aplikasi titrasi
+QS.push({
+  id: 5002,
+  topic: "titrasi",
+  type: "mcma",
+  level: "c5",
+  stim: `
+    <div style="background:var(--bg2);border-radius:0.5rem;padding:0.75rem;margin-bottom:0.5rem;border:1px solid var(--border);">
+      <p style="font-size:0.9rem;color:var(--text);">
+        Sampel tanah diekstrak dengan air, kemudian filtratnya dititrasi dengan larutan NaOH standar.
+      </p>
+    </div>
+  `,
+  q: "Berdasarkan informasi di atas, pernyataan yang BENAR adalah... (Pilih 2 jawaban benar)",
+  opts: [
+    "Titrasi digunakan untuk menentukan konsentrasi ion H⁺ dalam tanah",
+    "Semakin banyak volume NaOH yang digunakan, semakin asam tanah tersebut",
+    "Tanah yang subur biasanya memiliki pH netral (pH = 7)",
+    "Indikator fenolftalein tidak cocok untuk titrasi ini",
+    "Titrasi tanah hanya dapat dilakukan di laboratorium dengan peralatan khusus"
+  ],
+  ans: [0, 1],
+  exp: "Titrasi tanah bertujuan untuk menentukan kadar keasaman (ion H⁺) dalam tanah. Semakin banyak NaOH yang dibutuhkan, semakin asam tanah tersebut (konsentrasi H⁺ lebih tinggi)."
+});
+
+// ================================================================
+// LEVEL C6 - Menilai
+// ================================================================
+
+// SOAL C6.1 - Menilai validitas pernyataan
+QS.push({
+  id: 6001,
+  topic: "titrasi",
+  type: "mcma",
+  level: "c6",
+  stim: `
+    <div style="background:var(--bg2);border-radius:0.5rem;padding:0.75rem;margin-bottom:0.5rem;border:1px solid var(--border);">
+      <ol style="color:var(--text);font-size:0.9rem;list-style-type:decimal;padding-left:1.5rem;">
+        <li>Titik ekuivalen adalah titik saat indikator berubah warna</li>
+        <li>Titik akhir titrasi adalah saat mol asam dan mol basa tepat bereaksi</li>
+        <li>Titran adalah larutan yang konsentrasinya sudah diketahui</li>
+        <li>Analit adalah larutan yang akan ditentukan konsentrasinya</li>
+        <li>Indikator harus berubah warna pada pH yang sama dengan titik ekuivalen</li>
+      </ol>
+    </div>
+  `,
+  q: "Pernyataan yang PALING TEPAT tentang titrasi adalah... (Pilih 2 jawaban benar)",
+  opts: [
+    "Pernyataan 1 benar: titik ekuivalen adalah titik saat indikator berubah warna",
+    "Pernyataan 2 benar: titik akhir titrasi adalah saat mol asam dan basa tepat bereaksi",
+    "Pernyataan 3 benar: titran adalah larutan yang konsentrasinya sudah diketahui",
+    "Pernyataan 4 benar: analit adalah larutan yang akan ditentukan konsentrasinya",
+    "Pernyataan 5 benar: indikator harus berubah warna pada pH yang sama dengan titik ekuivalen"
+  ],
+  ans: [2, 3],
+  exp: "Pernyataan 3 dan 4 benar: titran adalah larutan standar (konsentrasi diketahui), analit adalah larutan sampel (konsentrasi dicari). Pernyataan 1 salah: titik akhir adalah saat indikator berubah warna, bukan titik ekuivalen. Pernyataan 2 salah: titik ekuivalen adalah saat mol asam dan basa tepat bereaksi. Pernyataan 5 salah: indikator idealnya berubah warna mendekati titik ekuivalen, tidak harus sama persis."
+});
+
+// SOAL C6.2 - Menilai aplikasi titrasi
+QS.push({
+  id: 6002,
+  topic: "titrasi",
+  type: "mcma",
+  level: "c6",
+  stim: `
+    <div style="background:var(--bg2);border-radius:0.5rem;padding:0.75rem;margin-bottom:0.5rem;border:1px solid var(--border);">
+      <p style="font-size:0.9rem;color:var(--text);">
+        NH₃ adalah basa lemah (Kb = 1,8×10⁻⁵).<br>
+        HCl adalah asam kuat.
+      </p>
+    </div>
+  `,
+  q: "Pernyataan yang PALING TEPAT tentang titrasi NH₃ dengan HCl adalah... (Pilih 2 jawaban benar)",
+  opts: [
+    "Sebelum titik ekuivalen, larutan bersifat penyangga (buffer)",
+    "Pada titik ekuivalen, pH larutan adalah 7",
+    "Pada titik ekuivalen, terbentuk garam NH₄Cl yang terhidrolisis asam",
+    "Indikator yang sesuai adalah fenolftalein",
+    "Setelah titik ekuivalen, larutan bersifat basa"
+  ],
+  ans: [0, 2],
+  exp: "Titrasi basa lemah (NH₃) dengan asam kuat (HCl): Sebelum titik ekuivalen terbentuk buffer (NH₃ + NH₄Cl). Pada titik ekuivalen, pH < 7 karena terbentuk NH₄Cl (hidrolisis asam). Indikator yang sesuai adalah metil merah (bukan fenolftalein). Setelah titik ekuivalen larutan bersifat asam (HCl berlebih)."
+});
+
+// ================================================================
+// STATE MANAGEMENT
+// ================================================================
+var S = {
+  view: "home",
+  qids: [],
+  qi: 0,
+  ans: {},
+  mode: "topic",
+  ri: 0,
+  rqs: [],
+  wrong: [],
+  done: {},
+  scores: {},
+  filter: "all"
+};
+
+function load() {
+  try {
+    var d = JSON.parse(localStorage.getItem("tka_kim_titrasi"));
+    if (d) {
+      S.done = {};
+      (d.done || []).forEach(function(x) { S.done[x] = true; });
+      S.wrong = d.wrong || [];
+      S.scores = d.scores || {};
+    }
+  } catch(e) {}
+}
+function save() {
+  try {
+    localStorage.setItem("tka_kim_titrasi", JSON.stringify({
+      done: Object.keys(S.done),
+      wrong: S.wrong,
+      scores: S.scores
+    }));
+  } catch(e) {}
+}
+load();
+
+function goHome() { location.href = 'index.html'; }
+
+function go(v) {
+  var names = {home:"vHome", quiz:"vQuiz", res:"vRes", rev:"vRev", browse:"vBrowse"};
+  document.querySelectorAll(".view").forEach(function(el) { el.classList.remove("active"); });
+  var el = document.getElementById(names[v]);
+  if (el) el.classList.add("active");
+  S.view = v;
+  window.scrollTo(0, 0);
+  if (v === "home") renderHome();
+}
+
+function renderHome() {
+  document.getElementById("bWR").style.display = S.wrong.length > 0 ? "flex" : "none";
+  updateNS();
+  renderList();
+}
+
+function updateNS() {
+  var tc = 0, cc = 0;
+  for (var k in S.scores) { tc += S.scores[k].t; cc += S.scores[k].c; }
+  document.getElementById("nst").textContent = tc > 0 ? cc + "/" + tc : "0/0";
+}
+
+function getLevelBadge(level) {
+  var labels = {c2:"C2", c3:"C3", c4:"C4", c5:"C5", c6:"C6"};
+  var colors = {c2:"#34d399", c3:"#fbbf24", c4:"#f97316", c5:"#ef4444", c6:"#8b5cf6"};
+  var bgColors = {
+    c2:"rgba(52,211,153,0.15)",
+    c3:"rgba(251,191,36,0.15)",
+    c4:"rgba(249,115,22,0.15)",
+    c5:"rgba(239,68,68,0.15)",
+    c6:"rgba(139,92,246,0.15)"
+  };
+  return '<span class="badge" style="background:' + bgColors[level] + ';color:' + colors[level] + ';font-size:0.65rem;">' + labels[level] + '</span>';
+}
+
+function renderList() {
+  var list = document.getElementById("qList");
+  list.innerHTML = "";
+  var filtered = QS.filter(function(q) {
+    if (S.filter === "all") return true;
+    return q.level === S.filter;
+  });
+  filtered.forEach(function(q, i) {
+    var answered = S.done[q.id];
+    var wasWrong = S.wrong.indexOf(q.id) >= 0;
+    var tl = q.type === "mcma" ? "MCMA" : "Pilihan Ganda";
+    var levelLabel = q.level ? getLevelBadge(q.level) : "";
+
+    var d = document.createElement("div");
+    d.className = "glow-card";
+    d.style.cursor = "pointer";
+    d.onclick = function() { singleQ(q.id); };
+    d.innerHTML =
+      '<div class="w-9 h-9 rounded-lg flex items-center justify-center text-sm font-bold flex-shrink-0" style="background:' +
+        (answered ? (wasWrong ? 'rgba(248,113,113,.12);color:var(--error)' : 'rgba(52,211,153,.12);color:var(--success)') : 'var(--bg2);color:var(--muted)') +
+      '">' + (answered ? (wasWrong ? '<i class="fa-solid fa-xmark"></i>' : '<i class="fa-solid fa-check"></i>') : (i + 1)) + '</div>' +
+      '<div class="flex-1 min-w-0">' +
+        '<div class="text-sm font-semibold mb-0.5 truncate" style="color:var(--text)">' + plain(q.q).substring(0, 75) + (q.q.length > 75 ? '...' : '') + '</div>' +
+        '<div class="flex items-center gap-2 flex-wrap">' +
+          '<span class="badge" style="background:var(--bg2);color:var(--muted);font-size:.68rem">' + tl + '</span>' +
+          levelLabel +
+        '</div>' +
+      '</div>' +
+      '<i class="fa-solid fa-chevron-right text-xs" style="color:var(--border)"></i>';
+    list.appendChild(d);
+  });
+}
+
+function filterLevel(level) {
+  S.filter = level;
+  document.querySelectorAll('[id^="filter"]').forEach(function(el) {
+    el.style.background = "transparent";
+  });
+  var btn = document.getElementById("filter" + level.toUpperCase());
+  if (btn) btn.style.background = "rgba(212,160,74,.15)";
+  renderList();
+}
+
+function plain(html) {
+  var d = document.createElement("div");
+  d.innerHTML = html;
+  return d.textContent || "";
+}
+
+function startQuiz() {
+  S.qids = QS.map(function(q) { return q.id; });
+  S.ans = {}; S.qi = 0; S.mode = "topic";
+  go("quiz"); renderQ();
+}
+
+function startRandom() {
+  var sh = QS.slice().sort(function() { return Math.random() - 0.5; }).slice(0, 10);
+  S.qids = sh.map(function(q) { return q.id; });
+  S.ans = {}; S.qi = 0; S.mode = "random";
+  go("quiz"); renderQ();
+}
+
+function startWrong() {
+  var wq = QS.filter(function(q) { return S.wrong.indexOf(q.id) >= 0; });
+  if (wq.length === 0) return;
+  S.qids = wq.map(function(q) { return q.id; });
+  S.ans = {}; S.qi = 0; S.mode = "wrong";
+  go("quiz"); renderQ();
+}
+
+function singleQ(qid) {
+  S.qids = [qid]; S.ans = {}; S.qi = 0; S.mode = "single";
+  go("quiz"); renderQ();
+}
+
+function renderQ() {
+  var qid = S.qids[S.qi];
+  var q = QS.find(function(x) { return x.id === qid; });
+  if (!q) return;
+  var total = S.qids.length;
+  var idx = S.qi + 1;
+  var pct = Math.round(idx / total * 100);
+
+  document.getElementById("qCtr").textContent = idx + " / " + total;
+  document.getElementById("qBar").style.width = pct + "%";
+  var tl = {single: "Pilihan Ganda", mcma: "MCMA"};
+  document.getElementById("qTyp").textContent = tl[q.type] || q.type;
+  var levelLabels = {c2:"C2 - Pemahaman", c3:"C3 - Menganalisis", c4:"C4 - Mengevaluasi", c5:"C5 - Mencipta", c6:"C6 - Menilai"};
+  document.getElementById("qLevel").textContent = q.level ? levelLabels[q.level] : "";
+  document.getElementById("bPrv").style.visibility = S.qi > 0 ? "visible" : "hidden";
+  var isLast = S.qi === total - 1;
+  document.getElementById("bNxt").innerHTML = isLast ? "Selesai <i class='fa-solid fa-check ml-1'></i>" : "Selanjutnya <i class='fa-solid fa-chevron-right ml-1'></i>";
+
+  var h = "";
+  if (q.stim) h += '<div class="stim">' + q.stim + '</div>';
+  h += '<h3 class="font-bold text-base mb-4 leading-relaxed" style="color:var(--text)">' + q.q + '</h3>';
+
+  if (q.type === "single") {
+    var letters = "ABCDE";
+    h += '<div class="space-y-2.5">';
+    q.opts.forEach(function(opt, i) {
+      var sel = S.ans[qid] === i;
+      h += '<button class="ob' + (sel ? ' sel' : '') + '" onclick="selS(' + qid + ',' + i + ')">' +
+        '<span class="w-7 h-7 min-w-[1.75rem] rounded-full border-2 flex items-center justify-center text-xs font-bold flex-shrink-0" style="border-color:' + (sel ? 'var(--accent)' : 'var(--border)') + ';color:' + (sel ? 'var(--accent)' : 'var(--muted)') + '">' + letters[i] + '</span>' +
+        '<span class="text-sm">' + opt + '</span></button>';
+    });
+    h += '</div>';
+  } else if (q.type === "mcma") {
+    var ua = S.ans[qid] || [];
+    h += '<div class="space-y-2.5">';
+    q.opts.forEach(function(opt, i) {
+      var sel = ua.indexOf(i) >= 0;
+      h += '<button class="ob' + (sel ? ' sel' : '') + '" onclick="togM(' + qid + ',' + i + ')">' +
+        '<div class="ck">' + (sel ? '<i class="fa-solid fa-check text-xs" style="color:#0b1a17"></i>' : '') + '</div>' +
+        '<span class="text-sm">' + opt + '</span></button>';
+    });
+    h += '</div>';
+    h += '<p class="text-xs mt-2.5" style="color:var(--muted)"><i class="fa-solid fa-circle-info mr-1"></i>Pilih SEMUA jawaban yang benar</p>';
+  }
+  document.getElementById("qArea").innerHTML = h;
+}
+
+function selS(qid, i) { S.ans[qid] = i; renderQ(); }
+function togM(qid, i) {
+  if (!S.ans[qid]) S.ans[qid] = [];
+  var arr = S.ans[qid];
+  var idx = arr.indexOf(i);
+  if (idx >= 0) arr.splice(idx, 1); else arr.push(i);
+  renderQ();
+}
+
+function qNext() {
+  if (S.qi === S.qids.length - 1) { finishQ(); return; }
+  S.qi++; renderQ(); window.scrollTo(0, 0);
+}
+function qPrev() {
+  if (S.qi > 0) { S.qi--; renderQ(); window.scrollTo(0, 0); }
+}
+
+function finishQ() {
+  var correct = 0, wrong = 0;
+  var ts = {};
+
+  S.qids.forEach(function(qid) {
+    var q = QS.find(function(x) { return x.id === qid; });
+    if (!q) return;
+    var ua = S.ans[qid];
+    var ok = false;
+
+    if (q.type === "single") {
+      ok = ua === q.ans;
+    } else if (q.type === "mcma") {
+      var u = (ua || []).slice().sort().join(",");
+      var c = q.ans.slice().sort().join(",");
+      ok = u === c;
+    }
+
+    S.done[qid] = true;
+    if (ok) { correct++; } else { wrong++; S.wrong.push(qid); }
+
+    if (!ts[q.topic]) ts[q.topic] = {c:0, t:0};
+    ts[q.topic].t++;
+    if (ok) ts[q.topic].c++;
+  });
+
+  S.wrong = uniq(S.wrong);
+  for (var k in ts) {
+    if (!S.scores[k]) S.scores[k] = {c:0, t:0};
+    S.scores[k].c += ts[k].c;
+    S.scores[k].t += ts[k].t;
+  }
+  save();
+
+  var total = correct + wrong;
+  var pct = total > 0 ? Math.round(correct / total * 100) : 0;
+  document.getElementById("rPct").textContent = pct + "%";
+  document.getElementById("rOk").textContent = correct;
+  document.getElementById("rNo").textContent = wrong;
+  document.getElementById("rTot").textContent = total;
+
+  var circ = 2 * Math.PI * 55;
+  var ring = document.getElementById("rRing");
+  ring.style.strokeDasharray = circ;
+  ring.style.strokeDashoffset = circ - (circ * pct / 100);
+  ring.style.stroke = pct >= 70 ? "var(--success)" : pct >= 40 ? "var(--accent)" : "var(--error)";
+
+  var lbl = pct >= 90 ? "Luar Biasa!" : pct >= 70 ? "Bagus Sekali!" : pct >= 50 ? "Cukup Baik" : "Perlu Belajar Lagi";
+  document.getElementById("rLbl").textContent = lbl;
+  document.getElementById("bRW").style.display = wrong > 0 ? "inline-flex" : "none";
+  go("res");
+}
+
+function uniq(arr) {
+  var seen = {}, out = [];
+  arr.forEach(function(x) { if (!seen[x]) { seen[x] = true; out.push(x); } });
+  return out;
+}
+
+function retryQ() {
+  if (S.mode === "topic") startQuiz();
+  else if (S.mode === "random") startRandom();
+  else if (S.mode === "wrong") startWrong();
+  else if (S.mode === "single") singleQ(S.qids[0]);
+}
+
+function revWrong() {
+  var wqs = S.qids.filter(function(qid) { return S.wrong.indexOf(qid) >= 0; });
+  if (wqs.length === 0) { toast("Tidak ada jawaban salah", "var(--success)"); return; }
+  S.rqs = wqs.map(function(qid) { return QS.find(function(x) { return x.id === qid; }); }).filter(Boolean);
+  S.ri = 0;
+  go("rev"); renderRev();
+}
+
+function renderRev() {
+  var q = S.rqs[S.ri];
+  if (!q) return;
+  var total = S.rqs.length;
+  document.getElementById("rvPr").style.visibility = S.ri > 0 ? "visible" : "hidden";
+  document.getElementById("rvNx").innerHTML = S.ri === total - 1 ? "Kembali <i class='fa-solid fa-check ml-1'></i>" : "Selanjutnya <i class='fa-solid fa-chevron-right ml-1'></i>";
+
+  var ua = S.ans[q.id];
+  var ok = false;
+  if (q.type === "single") ok = ua === q.ans;
+  else if (q.type === "mcma") {
+    var u = (ua || []).slice().sort().join(",");
+    ok = u === q.ans.slice().sort().join(",");
+  }
+
+  var letters = "ABCDE";
+  var h = '<div class="text-xs mb-2 font-semibold" style="color:var(--muted)">Soal ' + (S.ri + 1) + " / " + total + '</div>';
+  if (q.stim) h += '<div class="stim">' + q.stim + '</div>';
+  h += '<h3 class="font-bold text-sm mb-4 leading-relaxed">' + q.q + '</h3>';
+  h += '<div class="space-y-2.5">';
+
+  if (q.type === "single") {
+    q.opts.forEach(function(opt, i) {
+      var cls = "off";
+      if (i === q.ans) cls += " ok";
+      else if (ua === i && i !== q.ans) cls += " no";
+      h += '<button class="ob ' + cls + '">' +
+        '<span class="w-7 h-7 min-w-[1.75rem] rounded-full border-2 flex items-center justify-center text-xs font-bold flex-shrink-0" style="border-color:' + (i === q.ans ? "var(--success)" : ua === i ? "var(--error)" : "var(--border)") + ';color:' + (i === q.ans ? "var(--success)" : ua === i ? "var(--error)" : "var(--muted)") + '">' + letters[i] + '</span>' +
+        '<span class="text-sm">' + opt + '</span>' +
+        (i === q.ans ? '<i class="fa-solid fa-circle-check ml-auto" style="color:var(--success)"></i>' : '') +
+        (ua === i && i !== q.ans ? '<i class="fa-solid fa-circle-xmark ml-auto" style="color:var(--error)"></i>' : '') +
+      '</button>';
+    });
+  } else if (q.type === "mcma") {
+    q.opts.forEach(function(opt, i) {
+      var isUA = (ua || []).indexOf(i) >= 0;
+      var isCA = q.ans.indexOf(i) >= 0;
+      var cls = "off";
+      if (isCA) cls += " ok";
+      else if (isUA && !isCA) cls += " no";
+      h += '<button class="ob ' + cls + '">' +
+        '<div class="ck">' + (isCA ? '<i class="fa-solid fa-check text-xs" style="color:#0b1a17"></i>' : isUA ? '<i class="fa-solid fa-xmark text-xs" style="color:#fff"></i>' : '') + '</div>' +
+        '<span class="text-sm">' + opt + '</span></button>';
+    });
+  }
+  h += '</div>';
+  h += '<div class="expbox ' + (ok ? 'good' : 'bad') + '">' +
+    '<div class="flex items-center gap-2 mb-1.5 font-bold text-sm">' +
+      '<i class="fa-solid ' + (ok ? 'fa-circle-check' : 'fa-circle-xmark') + '" style="color:' + (ok ? 'var(--success)' : 'var(--error)') + '"></i>' +
+      (ok ? 'Jawaban Benar' : 'Jawaban Salah') +
+    '</div>' +
+    '<p style="color:var(--text);line-height:1.6;font-size:0.9rem;">' + q.exp + '</p>' +
+  '</div>';
+
+  document.getElementById("revA").innerHTML = h;
+  window.scrollTo(0, 0);
+}
+
+function rvNav(dir) {
+  if (dir === 1 && S.ri === S.rqs.length - 1) { backRev(); return; }
+  S.ri = Math.max(0, Math.min(S.rqs.length - 1, S.ri + dir));
+  renderRev();
+}
+function backRev() {
+  if (S.mode === "single") goHome();
+  else go("res");
+}
+
+function openExit() { document.getElementById("exMod").classList.add("open"); }
+function closeMod() { document.getElementById("exMod").classList.remove("open"); }
+function doExit() { closeMod(); goHome(); }
+
+function resetAll() {
+  S.done = {}; S.wrong = []; S.scores = {};
+  save(); renderHome(); toast("Progress berhasil direset", "var(--success)");
+}
+function toast(msg, bg) {
+  var t = document.getElementById("toast");
+  t.style.display = "block"; 
+  t.style.background = bg || "var(--card)"; 
+  t.style.color = "#fff"; 
+  t.textContent = msg;
+  setTimeout(function() { t.style.display = "none"; }, 2200);
+}
+
+// INIT
+renderHome();
+console.log("Titrasi - HOTS C2-C6 loaded: " + QS.length + " soal");
+</script>
+</body>
+</html>

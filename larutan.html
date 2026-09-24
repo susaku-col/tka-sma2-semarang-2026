@@ -1,0 +1,1360 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Larutan — TKA Kimia SMA Negeri 2 Semarang</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Sans+3:ital,wght@0,300;0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+    :root {
+        --bg: #0b1a17; --bg2: #132a24; --card: #1a3a32; --card2: #1e4a3f;
+        --text: #e8f0ec; --muted: #8aa8a0; --border: #2a4a42; --accent: #d4a04a;
+        --success: #34d399; --error: #f87171; --glow: rgba(212, 160, 74, 0.15);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+        font-family: 'Source Sans 3', sans-serif;
+        background: var(--bg); color: var(--text);
+        min-height: 100vh; padding-top: 52px;
+    }
+    .fd { font-family: 'Playfair Display', serif; }
+    .bg-noise {
+        position: fixed; top:0; left:0; right:0; bottom:0;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+        pointer-events: none; z-index: 0;
+    }
+    .hg {
+        position: absolute; width:300px; height:300px;
+        border-radius: 50%; filter: blur(100px);
+        opacity: 0.15; pointer-events: none;
+    }
+    .badge {
+        display: inline-flex; align-items: center; gap: 6px;
+        padding: 4px 14px; border-radius: 100px;
+        font-size: 0.75rem; font-weight: 600;
+        background: rgba(212,160,74,0.12); color: var(--accent);
+    }
+    .glow-card {
+        background: var(--card); border: 1px solid var(--border);
+        border-radius: 12px; padding: 16px 18px; cursor: pointer;
+        transition: all 0.25s ease; display: flex;
+        align-items: center; gap: 12px;
+        text-decoration: none; color: inherit;
+    }
+    .glow-card:hover {
+        border-color: var(--accent); background: var(--card2);
+        box-shadow: 0 0 20px var(--glow);
+    }
+    .bp {
+        background: var(--accent); color: #0b1a17; border: none;
+        padding: 8px 18px; border-radius: 30px; font-weight: 700;
+        font-size: 0.85rem; cursor: pointer; transition: all 0.25s ease;
+        display: inline-flex; align-items: center; gap: 6px;
+    }
+    .bp:hover { background: #e8b84a; transform: scale(1.02); }
+    .bs {
+        background: transparent; color: var(--text);
+        border: 1px solid var(--border); padding: 8px 18px;
+        border-radius: 30px; font-weight: 600; font-size: 0.85rem;
+        cursor: pointer; transition: all 0.25s ease;
+        display: inline-flex; align-items: center; gap: 6px;
+    }
+    .bs:hover { border-color: var(--accent); background: var(--card2); }
+    .view { display: none; }
+    .view.active { display: block; }
+    .stim {
+        background: var(--bg2); padding: 12px 16px;
+        border-radius: 8px; border-left: 3px solid var(--accent);
+        margin-bottom: 12px; font-size: 0.9rem;
+        line-height: 1.6; color: var(--muted);
+    }
+    .table-wrap {
+        overflow-x: auto; margin: 8px 0;
+        border-radius: 8px; border: 1px solid var(--border);
+    }
+    table.soal-table {
+        width: 100%; border-collapse: collapse;
+        font-size: 0.8rem; background: var(--bg2);
+    }
+    table.soal-table th {
+        background: var(--card); color: var(--accent);
+        font-weight: 600; padding: 6px 10px;
+        border: 1px solid var(--border); text-align: center;
+    }
+    table.soal-table td {
+        padding: 6px 10px; border: 1px solid var(--border);
+        text-align: center; color: var(--text);
+    }
+    table.soal-table tr:hover { background: rgba(212,160,74,0.05); }
+    .figure-wrap {
+        display: flex; flex-direction: column; align-items: center;
+        margin: 8px 0; padding: 10px; background: var(--bg2);
+        border-radius: 8px; border: 1px solid var(--border);
+    }
+    .figure-wrap svg { max-width: 100%; height: auto; }
+    .figure-caption {
+        font-size: 0.7rem; color: var(--muted);
+        margin-top: 4px; text-align: center;
+    }
+    .chem-eq {
+        display: block; text-align: center;
+        padding: 0.5rem 0.75rem;
+        font-family: "Times New Roman", serif;
+        font-size: 1rem; background: var(--bg2);
+        border-radius: 0.5rem; border: 1px solid var(--border);
+        margin: 0.5rem 0; color: var(--text);
+    }
+    .sol-type {
+        display: inline-block; padding: 0.15rem 0.6rem;
+        border-radius: 999px; font-size: 0.6rem; font-weight: 600;
+    }
+    .sol-type.konsentrasi { background: rgba(52,211,153,0.2); color: #34d399; }
+    .sol-type.koligatif { background: rgba(96,165,250,0.2); color: #60a5fa; }
+    .sol-type.ksp { background: rgba(251,191,36,0.2); color: #fbbf24; }
+    .sol-type.elektrolit { background: rgba(167,139,250,0.2); color: #a78bfa; }
+    .sol-type.buffer { background: rgba(244,114,182,0.2); color: #f472b6; }
+    .sol-type.titrasi { background: rgba(34,211,238,0.2); color: #22d3ee; }
+    .space-y-2\.5 > * + * { margin-top: 8px; }
+    .ob {
+        display: flex; align-items: center; gap: 10px;
+        width: 100%; padding: 8px 14px; border-radius: 8px;
+        border: 1px solid var(--border); background: var(--bg2);
+        color: var(--text); cursor: pointer;
+        transition: all 0.2s ease; font-size: 0.9rem; text-align: left;
+    }
+    .ob:hover { border-color: var(--muted); }
+    .ob.sel { border-color: var(--accent); background: rgba(212,160,74,0.1); }
+    .ob .ck {
+        width: 20px; height: 20px; min-width: 20px;
+        border-radius: 4px; border: 2px solid var(--border);
+        display: flex; align-items: center; justify-content: center;
+        font-size: 0.7rem; background: var(--bg);
+    }
+    .ob.sel .ck { border-color: var(--accent); background: var(--accent); }
+    .ob.ok .ck { border-color: var(--success); background: var(--success); }
+    .ob.no .ck { border-color: var(--error); background: var(--error); }
+    .modal-bg {
+        display: none; position: fixed; inset: 0;
+        background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
+        z-index: 50; justify-content: center; align-items: center;
+        padding: 20px;
+    }
+    .modal-bg.open { display: flex; }
+    .toast {
+        position: fixed; bottom: 30px; left: 50%;
+        transform: translateX(-50%); padding: 12px 28px;
+        border-radius: 12px; font-weight: 600; z-index: 100;
+        background: var(--card); border: 1px solid var(--border);
+        color: var(--text); max-width: 90%; text-align: center;
+    }
+    .hots-badge {
+        display: inline-block; padding: 0.15rem 0.5rem;
+        border-radius: 999px; font-size: 0.6rem;
+        font-weight: 700; margin-left: 0.5rem;
+    }
+    .hots-c2 { background: rgba(52,211,153,0.2); color: #34d399; }
+    .hots-c3 { background: rgba(251,191,36,0.2); color: #fbbf24; }
+    .hots-c4 { background: rgba(249,115,22,0.2); color: #f97316; }
+    .hots-c5 { background: rgba(239,68,68,0.2); color: #ef4444; }
+    .hots-c6 { background: rgba(139,92,246,0.2); color: #8b5cf6; }
+    .expbox {
+        margin-top: 14px; padding: 14px 18px;
+        border-radius: 8px; font-size: 0.9rem; line-height: 1.7;
+    }
+    .expbox.good {
+        background: rgba(52,211,153,0.06);
+        border-left: 4px solid var(--success);
+    }
+    .expbox.bad {
+        background: rgba(248,113,113,0.06);
+        border-left: 4px solid var(--error);
+    }
+    @media (max-width: 640px) {
+        .ob { font-size: 0.8rem; padding: 6px 12px; }
+        .bp, .bs { font-size: 0.75rem; padding: 6px 14px; }
+        .glow-card { padding: 12px 14px; }
+        .sol-type { font-size: 0.5rem; padding: 0.1rem 0.4rem; }
+    }
+</style>
+</head>
+<body>
+<div class="bg-noise"></div>
+
+<nav class="fixed top-0 left-0 right-0 z-40 backdrop-blur-md border-b" style="background:rgba(11,26,23,.88);border-color:var(--border)">
+<div class="max-w-5xl mx-auto px-4 flex items-center justify-between" style="height:52px">
+<button onclick="location.href='index.html'" class="flex items-center gap-2 text-sm font-bold tracking-wide" style="color:var(--accent);background:none;border:none;cursor:pointer;">
+<i class="fa-solid fa-arrow-left"></i><span class="hidden sm:inline">Kembali</span>
+</button>
+<div class="flex items-center gap-3">
+<span class="hidden sm:flex items-center gap-1.5 text-xs" style="color:var(--muted)">
+<i class="fa-solid fa-trophy" style="color:var(--accent)"></i><span id="nst">0/0</span>
+</span>
+<button onclick="location.href='index.html'" class="text-sm px-2.5 py-1 rounded" style="color:var(--muted);background:none;border:none;cursor:pointer;">
+<i class="fa-solid fa-house"></i>
+</button>
+</div>
+</div>
+</nav>
+
+<!-- HOME -->
+<div id="vHome" class="view active pt-16 pb-12 px-4">
+<div class="max-w-4xl mx-auto">
+    <div class="relative rounded-2xl overflow-hidden mb-8 p-7 md:p-10" style="background:linear-gradient(135deg,var(--card),var(--card2))">
+        <div class="hg" style="background:var(--accent);top:-180px;right:-80px"></div>
+        <div class="hg" style="background:#34d399;bottom:-180px;left:-80px"></div>
+        <div class="relative z-10">
+            <div class="badge mb-3"><i class="fa-solid fa-droplet"></i> Larutan</div>
+            <h1 class="fd text-3xl md:text-4xl font-black mb-2 leading-tight">Larutan <span style="color:var(--accent)">Kimia</span></h1>
+            <p class="text-sm md:text-base max-w-lg" style="color:var(--muted);line-height:1.65">Latihan soal HOTS level C2-C6 tentang konsentrasi, sifat koligatif, Ksp, elektrolit, buffer, titrasi, dan hidrolisis garam.</p>
+            <div class="flex flex-wrap gap-2 mt-4">
+                <span class="badge hots-badge hots-c2">C2 - Pemahaman</span>
+                <span class="badge hots-badge hots-c3">C3 - Menganalisis</span>
+                <span class="badge hots-badge hots-c4">C4 - Mengevaluasi</span>
+                <span class="badge hots-badge hots-c5">C5 - Mencipta</span>
+                <span class="badge hots-badge hots-c6">C6 - Menilai</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="flex flex-wrap gap-2 mb-4">
+        <span class="sol-type konsentrasi"><i class="fa-solid fa-flask"></i> Konsentrasi</span>
+        <span class="sol-type koligatif"><i class="fa-solid fa-temperature-low"></i> Sifat Koligatif</span>
+        <span class="sol-type ksp"><i class="fa-solid fa-cube"></i> Ksp</span>
+        <span class="sol-type elektrolit"><i class="fa-solid fa-bolt"></i> Elektrolit</span>
+        <span class="sol-type buffer"><i class="fa-solid fa-shield-halved"></i> Buffer</span>
+        <span class="sol-type titrasi"><i class="fa-solid fa-flask-vial"></i> Titrasi</span>
+    </div>
+
+    <div class="flex flex-wrap gap-2.5 mb-6">
+        <button onclick="startQuiz()" class="bp"><i class="fa-solid fa-play"></i> Mulai Quiz Semua Soal</button>
+        <button onclick="startRandom()" class="bs"><i class="fa-solid fa-shuffle"></i> Quiz Acak 10 Soal</button>
+        <button onclick="startWrong()" class="bs" id="bWR" style="display:none"><i class="fa-solid fa-rotate-left"></i> Ulangi Salah</button>
+        <button onclick="resetAll()" class="bs"><i class="fa-solid fa-trash-can"></i> Reset</button>
+    </div>
+
+    <div class="flex flex-wrap gap-2 mb-4">
+        <button onclick="filterLevel('all')" class="bs text-xs" id="filterAll" style="background:rgba(212,160,74,.15)">Semua</button>
+        <button onclick="filterLevel('c2')" class="bs text-xs" id="filterC2">C2</button>
+        <button onclick="filterLevel('c3')" class="bs text-xs" id="filterC3">C3</button>
+        <button onclick="filterLevel('c4')" class="bs text-xs" id="filterC4">C4</button>
+        <button onclick="filterLevel('c5')" class="bs text-xs" id="filterC5">C5</button>
+        <button onclick="filterLevel('c6')" class="bs text-xs" id="filterC6">C6</button>
+    </div>
+
+    <div id="qList"></div>
+</div>
+</div>
+
+<!-- QUIZ -->
+<div id="vQuiz" class="view pt-16 pb-12 px-4">
+<div class="max-w-3xl mx-auto">
+    <div class="flex items-center justify-between mb-3">
+        <button onclick="openExit()" class="text-sm flex items-center gap-1.5" style="color:var(--muted);background:none;border:none;cursor:pointer;"><i class="fa-solid fa-xmark"></i>Keluar</button>
+        <div class="flex items-center gap-2.5">
+            <span id="qCtr" class="text-sm font-semibold" style="color:var(--muted)"></span>
+            <span id="qTyp" class="badge" style="background:rgba(212,160,74,.12);color:var(--accent);font-size:0.7rem;"></span>
+            <span id="qLevel" class="badge" style="background:var(--bg2);color:var(--muted);font-size:0.7rem;"></span>
+        </div>
+    </div>
+    <div class="w-full h-1.5 rounded-full mb-5" style="background:var(--border)">
+        <div id="qBar" class="h-full rounded-full" style="background:var(--accent);width:0%"></div>
+    </div>
+    <div id="qArea"></div>
+    <div class="flex items-center justify-between mt-7">
+        <button id="bPrv" onclick="qPrev()" class="bs" style="visibility:hidden"><i class="fa-solid fa-chevron-left mr-1"></i>Sebelumnya</button>
+        <button id="bNxt" onclick="qNext()" class="bp">Selanjutnya <i class="fa-solid fa-chevron-right ml-1"></i></button>
+    </div>
+</div>
+</div>
+
+<!-- RESULTS -->
+<div id="vRes" class="view pt-16 pb-12 px-4">
+<div class="max-w-3xl mx-auto text-center">
+    <div class="mb-7">
+        <svg class="mx-auto mb-3" style="transform:rotate(-90deg)" width="130" height="130" viewBox="0 0 130 130">
+            <circle cx="65" cy="65" r="55" fill="none" stroke="var(--border)" stroke-width="7"/>
+            <circle id="rRing" cx="65" cy="65" r="55" fill="none" stroke="var(--accent)" stroke-width="7" stroke-linecap="round" stroke-dasharray="345.6" stroke-dashoffset="345.6"/>
+        </svg>
+        <div class="text-3xl font-bold" style="color:var(--accent)" id="rPct">0%</div>
+        <div class="text-sm mt-0.5" style="color:var(--muted)" id="rLbl">—</div>
+    </div>
+    <div class="grid grid-cols-3 gap-3 mb-7">
+        <div class="rounded-xl p-3.5" style="background:var(--card);border:1px solid var(--border)">
+            <div class="text-2xl font-bold" style="color:var(--success)" id="rOk">0</div>
+            <div class="text-xs" style="color:var(--muted)">Benar</div>
+        </div>
+        <div class="rounded-xl p-3.5" style="background:var(--card);border:1px solid var(--border)">
+            <div class="text-2xl font-bold" style="color:var(--error)" id="rNo">0</div>
+            <div class="text-xs" style="color:var(--muted)">Salah</div>
+        </div>
+        <div class="rounded-xl p-3.5" style="background:var(--card);border:1px solid var(--border)">
+            <div class="text-2xl font-bold" id="rTot">0</div>
+            <div class="text-xs" style="color:var(--muted)">Total</div>
+        </div>
+    </div>
+    <div class="flex flex-wrap justify-center gap-2.5">
+        <button onclick="location.href='index.html'" class="bs"><i class="fa-solid fa-house mr-1"></i>Beranda</button>
+        <button onclick="revWrong()" class="bp" id="bRW" style="display:none"><i class="fa-solid fa-eye mr-1"></i>Review Salah</button>
+        <button onclick="retryQ()" class="bs"><i class="fa-solid fa-rotate-left mr-1"></i>Ulangi</button>
+    </div>
+</div>
+</div>
+
+<!-- REVIEW -->
+<div id="vRev" class="view pt-16 pb-12 px-4">
+<div class="max-w-3xl mx-auto">
+    <button onclick="backRev()" class="flex items-center gap-2 text-sm mb-5" style="color:var(--muted);background:none;border:none;cursor:pointer;"><i class="fa-solid fa-arrow-left"></i>Kembali</button>
+    <div id="revA"></div>
+    <div class="flex justify-center gap-2.5 mt-7">
+        <button id="rvPr" onclick="rvNav(-1)" class="bs"><i class="fa-solid fa-chevron-left mr-1"></i>Sebelumnya</button>
+        <button id="rvNx" onclick="rvNav(1)" class="bp">Selanjutnya <i class="fa-solid fa-chevron-right ml-1"></i></button>
+    </div>
+</div>
+</div>
+
+<div id="exMod" class="modal-bg">
+    <div class="rounded-xl p-5 max-w-sm w-full" style="background:var(--card);border:1px solid var(--border)">
+        <h3 class="fd text-lg font-bold mb-1.5">Keluar dari Quiz?</h3>
+        <p class="text-sm mb-4" style="color:var(--muted)">Progress quiz ini akan hilang.</p>
+        <div class="flex gap-2.5 justify-end">
+            <button onclick="closeMod()" class="bs text-sm">Batal</button>
+            <button onclick="doExit()" class="text-sm font-bold px-4 py-2 rounded-lg border-none cursor-pointer" style="background:var(--error);color:#fff">Keluar</button>
+        </div>
+    </div>
+</div>
+
+<div id="toast" class="toast" style="display:none"></div>
+
+<script>
+// ================================================================
+// DATA SOAL LARUTAN - HOTS C2-C6 (30 SOAL)
+// ================================================================
+var QS = [];
+
+// ================================================================
+// LEVEL C2 — Pemahaman Dasar (5 soal)
+// ================================================================
+
+QS.push({
+  id: 1, topic: "konsentrasi", type: "single", level: "c2",
+  q: "Molaritas (M) suatu larutan menyatakan...",
+  opts: [
+    "Jumlah mol zat terlarut per liter larutan",
+    "Jumlah gram zat terlarut per liter larutan",
+    "Jumlah mol zat terlarut per kilogram pelarut",
+    "Jumlah gram zat terlarut per kilogram larutan",
+    "Jumlah mol zat terlarut per mol pelarut"
+  ],
+  ans: 0,
+  exp: "Molaritas (M) = mol zat terlarut / volume larutan (liter). Molalitas (m) = mol zat terlarut / massa pelarut (kg)."
+});
+
+QS.push({
+  id: 2, topic: "elektrolit", type: "single", level: "c2",
+  q: "Larutan yang TIDAK dapat menghantarkan listrik adalah larutan...",
+  opts: ["NaCl", "HCl", "CH₃COOH", "NaOH", "Glukosa (C₆H₁₂O₆)"],
+  ans: 4,
+  exp: "Glukosa adalah non-elektrolit: tidak terionisasi dalam air, sehingga tidak ada ion pembawa muatan. NaCl, HCl, NaOH = elektrolit kuat. CH₃COOH = elektrolit lemah."
+});
+
+QS.push({
+  id: 3, topic: "koligatif", type: "single", level: "c2",
+  q: "Sifat koligatif larutan bergantung pada...",
+  opts: [
+    "Jenis zat terlarut",
+    "Jumlah partikel zat terlarut",
+    "Warna zat terlarut",
+    "Massa jenis zat terlarut",
+    "Bentuk kristal zat terlarut"
+  ],
+  ans: 1,
+  exp: "Sifat koligatif (ΔTb, ΔTf, π, penurunan tekanan uap) hanya bergantung pada JUMLAH partikel zat terlarut, bukan jenisnya."
+});
+
+QS.push({
+  id: 4, topic: "ksp", type: "single", level: "c2",
+  q: "Jika Ksp AgCl = 1,8 × 10⁻¹⁰, maka kelarutan AgCl dalam air murni (s) adalah...",
+  opts: [
+    "1,8 × 10⁻¹⁰ M",
+    "1,34 × 10⁻⁵ M",
+    "3,6 × 10⁻¹⁰ M",
+    "9,0 × 10⁻¹¹ M",
+    "1,8 × 10⁻⁵ M"
+  ],
+  ans: 1,
+  exp: "AgCl ⇌ Ag⁺ + Cl⁻. Ksp = s² → s = √(1,8×10⁻¹⁰) = 1,34×10⁻⁵ M."
+});
+
+QS.push({
+  id: 5, topic: "titrasi", type: "single", level: "c2",
+  q: "Titik ekuivalen pada titrasi asam kuat dengan basa kuat terjadi pada pH...",
+  opts: ["< 7", "= 7", "> 7", "= 14", "= 0"],
+  ans: 1,
+  exp: "Asam kuat + basa kuat → garam netral (tidak terhidrolisis) → pH = 7 pada titik ekuivalen. Contoh: HCl + NaOH → NaCl + H₂O."
+});
+
+// ================================================================
+// LEVEL C3 — Menganalisis (6 soal)
+// ================================================================
+
+QS.push({
+  id: 6, topic: "konsentrasi", type: "mcma", level: "c3",
+  stim: `
+    <div class="stim">
+      <strong>💧 Kasus: Pembuatan Larutan Standar</strong><br>
+      Seorang laboran melarutkan 5,85 gram NaCl (Mr=58,5) dalam air hingga volume 500 mL.
+    </div>
+  `,
+  q: "Analisis yang PALING TEPAT tentang larutan NaCl tersebut adalah... (Pilih 2 jawaban benar)",
+  opts: [
+    "Molaritas larutan NaCl adalah 0,2 M",
+    "Jika 100 mL larutan diencerkan menjadi 500 mL, molaritasnya menjadi 0,04 M",
+    "Molaritas larutan NaCl adalah 0,4 M",
+    "Pengenceran mengubah jumlah mol NaCl",
+    "Jumlah mol NaCl setelah pengenceran berkurang"
+  ],
+  ans: [0, 1],
+  exp: "mol NaCl = 5,85/58,5 = 0,1 mol. M = 0,1/0,5 = 0,2 M. Setelah pengenceran 100 mL → 500 mL: M₂ = (0,2 × 100)/500 = 0,04 M. Pengenceran tidak mengubah mol."
+});
+
+QS.push({
+  id: 7, topic: "konsentrasi", type: "mcma", level: "c3",
+  stim: `
+    <div class="stim">
+      <strong>🧪 Kasus: Analisis Larutan Glukosa</strong><br>
+      Larutan dibuat dengan melarutkan 36 g glukosa (Mr=180) dalam 180 g air (Mr=18).
+    </div>
+  `,
+  q: "Analisis yang PALING TEPAT tentang konsentrasi larutan glukosa tersebut adalah... (Pilih 2 jawaban benar)",
+  opts: [
+    "Molalitas larutan glukosa adalah 1,11 molal",
+    "Fraksi mol glukosa dalam larutan adalah 0,0196",
+    "Molalitas larutan glukosa adalah 0,2 molal",
+    "Fraksi mol glukosa dalam larutan adalah 0,5",
+    "% massa glukosa dalam larutan adalah 50%"
+  ],
+  ans: [0, 1],
+  exp: "mol glukosa = 36/180 = 0,2 mol. mol air = 180/18 = 10 mol. Molalitas = 0,2/0,18 = 1,11 molal. Fraksi mol glukosa = 0,2/(0,2+10) = 0,0196."
+});
+
+QS.push({
+  id: 8, topic: "elektrolit", type: "mcma", level: "c3",
+  stim: `
+    <div class="stim">
+      <strong>⚡ Kasus: Uji Daya Hantar Listrik</strong><br>
+      Hasil uji 4 larutan 0,1 M:
+      <div class="table-wrap">
+      <table class="soal-table">
+        <tr><th>Larutan</th><th>Nyala Lampu</th><th>Gelembung Gas</th></tr>
+        <tr><td>NaCl</td><td>Terang</td><td>Banyak</td></tr>
+        <tr><td>CH₃COOH</td><td>Redup</td><td>Sedikit</td></tr>
+        <tr><td>Glukosa</td><td>Mati</td><td>Tidak ada</td></tr>
+        <tr><td>H₂SO₄</td><td>Terang</td><td>Banyak</td></tr>
+      </table>
+      </div>
+    </div>
+  `,
+  q: "Analisis yang PALING TEPAT tentang uji daya hantar listrik tersebut adalah... (Pilih 2 jawaban benar)",
+  opts: [
+    "NaCl dan H₂SO₄ adalah elektrolit kuat karena terionisasi sempurna",
+    "CH₃COOH adalah elektrolit lemah karena terionisasi sebagian",
+    "Glukosa adalah elektrolit kuat karena tidak menghantarkan listrik",
+    "Semua larutan menghantarkan listrik dengan kekuatan yang sama",
+    "Daya hantar listrik tidak bergantung pada jumlah ion"
+  ],
+  ans: [0, 1],
+  exp: "NaCl dan H₂SO₄ = elektrolit kuat (terionisasi sempurna). CH₃COOH = elektrolit lemah. Glukosa = non-elektrolit. Daya hantar ∝ jumlah ion."
+});
+
+QS.push({
+  id: 9, topic: "ksp", type: "mcma", level: "c3",
+  stim: `
+    <div class="stim">
+      <strong>🦴 Kasus: Kelarutan Garam Perak</strong><br>
+      <div class="table-wrap">
+      <table class="soal-table">
+        <tr><th>Garam</th><th>Ksp</th></tr>
+        <tr><td>AgCl</td><td>1,8 × 10⁻¹⁰</td></tr>
+        <tr><td>AgBr</td><td>5,0 × 10⁻¹³</td></tr>
+        <tr><td>AgI</td><td>8,3 × 10⁻¹⁷</td></tr>
+      </table>
+      </div>
+    </div>
+  `,
+  q: "Analisis yang PALING TEPAT tentang kelarutan ketiga garam perak adalah... (Pilih 2 jawaban benar)",
+  opts: [
+    "Urutan kelarutan: AgCl > AgBr > AgI",
+    "AgI paling mudah mengendap karena Ksp paling kecil",
+    "Urutan kelarutan: AgI > AgBr > AgCl",
+    "AgCl paling mudah mengendap karena Ksp paling besar",
+    "Ksp tidak berhubungan dengan kelarutan"
+  ],
+  ans: [0, 1],
+  exp: "Semakin besar Ksp, semakin besar kelarutan. Ksp: AgCl > AgBr > AgI → kelarutan: AgCl > AgBr > AgI. AgI paling mudah mengendap."
+});
+
+QS.push({
+  id: 10, topic: "koligatif", type: "mcma", level: "c3",
+  stim: `
+    <div class="stim">
+      <strong>🧊 Kasus: Membandingkan Sifat Koligatif</strong><br>
+      Empat larutan 0,1 M dibandingkan titik bekunya:
+      <div class="table-wrap">
+      <table class="soal-table">
+        <tr><th>Larutan</th><th>Jumlah Ion</th></tr>
+        <tr><td>Glukosa</td><td>1 (tidak terionisasi)</td></tr>
+        <tr><td>NaCl</td><td>2 (Na⁺, Cl⁻)</td></tr>
+        <tr><td>CaCl₂</td><td>3 (Ca²⁺, 2Cl⁻)</td></tr>
+        <tr><td>AlCl₃</td><td>4 (Al³⁺, 3Cl⁻)</td></tr>
+      </table>
+      </div>
+    </div>
+  `,
+  q: "Analisis yang PALING TEPAT tentang titik beku keempat larutan adalah... (Pilih 2 jawaban benar)",
+  opts: [
+    "Titik beku terendah adalah AlCl₃ karena jumlah ion paling banyak (i=4)",
+    "Urutan titik beku (tertinggi ke terendah): glukosa > NaCl > CaCl₂ > AlCl₃",
+    "Glukosa memiliki titik beku terendah karena tidak terionisasi",
+    "Semua larutan memiliki titik beku yang sama",
+    "Jumlah ion tidak mempengaruhi titik beku"
+  ],
+  ans: [0, 1],
+  exp: "ΔTf = Kf × m × i. Semakin banyak ion (i), semakin besar ΔTf, semakin rendah titik beku. i: glukosa (1) < NaCl (2) < CaCl₂ (3) < AlCl₃ (4)."
+});
+
+QS.push({
+  id: 11, topic: "titrasi", type: "mcma", level: "c3",
+  stim: `
+    <div class="stim">
+      <strong>🧪 Kasus: Titrasi Asam Lemah-Basa Kuat</strong><br>
+      Siswa menitrasi 25 mL CH₃COOH 0,1 M dengan NaOH 0,1 M. Ka CH₃COOH = 1,8×10⁻⁵.
+      <div class="table-wrap">
+      <table class="soal-table">
+        <tr><th>Volume NaOH (mL)</th><th>pH</th></tr>
+        <tr><td>0</td><td>2,87</td></tr>
+        <tr><td>12,5</td><td>4,74</td></tr>
+        <tr><td>25</td><td>8,72</td></tr>
+        <tr><td>30</td><td>11,96</td></tr>
+      </table>
+      </div>
+    </div>
+  `,
+  q: "Analisis yang PALING TEPAT tentang kurva titrasi tersebut adalah... (Pilih 2 jawaban benar)",
+  opts: [
+    "Pada 12,5 mL NaOH terbentuk larutan buffer dengan pH = pKa = 4,74",
+    "Titik ekuivalen terjadi pada pH > 7 karena garam CH₃COONa terhidrolisis",
+    "Titik ekuivalen terjadi pada pH = 7 karena asam dan basa sama kuat",
+    "Pada 25 mL NaOH, larutan bersifat asam",
+    "pH titik ekuivalen sama dengan pH awal asam"
+  ],
+  ans: [0, 1],
+  exp: "Pada 12,5 mL (½ ekuivalen), [CH₃COOH] = [CH₃COO⁻] → pH = pKa = 4,74 (buffer). Titik ekuivalen di 25 mL menghasilkan garam CH₃COONa yang terhidrolisis → pH > 7 (8,72)."
+});
+
+// ================================================================
+// LEVEL C4 — Mengevaluasi (8 soal)
+// ================================================================
+
+QS.push({
+  id: 12, topic: "koligatif", type: "mcma", level: "c4",
+  stim: `
+    <div class="stim">
+      <strong>🧊 Kasus: Antibeku Radiator</strong><br>
+      Radiator diisi air (Kf = 1,86 °C/m). Untuk mencegah pembekuan di musim dingin (-10°C), ditambahkan etilen glikol (C₂H₆O₂, Mr=62).
+      <div class="table-wrap">
+      <table class="soal-table">
+        <tr><th>Massa etilen glikol (g)</th><th>Titik beku (°C)</th></tr>
+        <tr><td>0</td><td>0</td></tr>
+        <tr><td>155</td><td>-9,3</td></tr>
+        <tr><td>310</td><td>-18,6</td></tr>
+      </table>
+      </div>
+    </div>
+  `,
+  q: "Analisis yang PALING TEPAT tentang antibeku tersebut adalah... (Pilih 2 jawaban benar)",
+  opts: [
+    "Untuk mencapai titik beku -10°C, dibutuhkan sekitar 167 g etilen glikol per 500 mL air",
+    "Semakin banyak zat terlarut, titik beku larutan semakin rendah",
+    "Semakin banyak etilen glikol, titik beku semakin tinggi",
+    "Titik beku tidak bergantung pada jumlah zat terlarut",
+    "Etilen glikol tidak dapat menurunkan titik beku air"
+  ],
+  ans: [0, 1],
+  exp: "ΔTf = Kf × m. Untuk ΔTf = 10: m = 10/1,86 = 5,38 molal. Jika 500 g air: mol = 2,69 mol. massa = 2,69 × 62 = 166,8 g ≈ 167 g. Sifat koligatif: zat terlarut menurunkan titik beku."
+});
+
+QS.push({
+  id: 13, topic: "koligatif", type: "single", level: "c4",
+  stim: `
+    <div class="stim">
+      <strong>🍜 Kasus: Air Garam untuk Merebus</strong><br>
+      Ibu menambahkan 58,5 g NaCl (Mr=58,5) ke dalam 500 g air. Kb air = 0,52 °C/m.
+    </div>
+  `,
+  q: "Kenaikan titik didih larutan tersebut adalah...",
+  opts: [
+    "0,52°C",
+    "1,04°C",
+    "2,08°C",
+    "4,16°C",
+    "5,20°C"
+  ],
+  ans: 2,
+  exp: "mol NaCl = 1 mol. Molalitas = 1/0,5 = 2 molal. NaCl terionisasi → i = 2. ΔTb = Kb × m × i = 0,52 × 2 × 2 = 2,08°C."
+});
+
+QS.push({
+  id: 14, topic: "ksp", type: "mcma", level: "c4",
+  stim: `
+    <div class="stim">
+      <strong>💧 Kasus: Pengolahan Limbah Logam Berat</strong><br>
+      Air limbah mengandung Pb²⁺ dan Cd²⁺ masing-masing 0,001 M. Keduanya diendapkan dengan Na₂S.
+      <div class="table-wrap">
+      <table class="soal-table">
+        <tr><th>Senyawa</th><th>Ksp</th></tr>
+        <tr><td>PbS</td><td>3,0 × 10⁻²⁸</td></tr>
+        <tr><td>CdS</td><td>8,0 × 10⁻²⁷</td></tr>
+      </table>
+      </div>
+    </div>
+  `,
+  q: "Analisis yang PALING TEPAT tentang pengendapan logam berat adalah... (Pilih 2 jawaban benar)",
+  opts: [
+    "PbS mengendap lebih dulu karena Ksp lebih kecil",
+    "[S²⁻] minimum untuk mengendapkan Pb²⁺ adalah 3,0 × 10⁻²⁵ M",
+    "CdS mengendap lebih dulu karena Cd lebih reaktif",
+    "[S²⁻] minimum untuk mengendapkan Cd²⁺ adalah 3,0 × 10⁻²⁵ M",
+    "Kedua ion mengendap pada konsentrasi S²⁻ yang sama"
+  ],
+  ans: [0, 1],
+  exp: "Ksp PbS < Ksp CdS → PbS mengendap lebih dulu. [S²⁻] untuk Pb²⁺ = 3×10⁻²⁸/0,001 = 3×10⁻²⁵ M. Untuk Cd²⁺ = 8×10⁻²⁷/0,001 = 8×10⁻²⁴ M."
+});
+
+QS.push({
+  id: 15, topic: "buffer", type: "mcma", level: "c4",
+  stim: `
+    <div class="stim">
+      <strong>💊 Kasus: Buffer Obat Tetes Mata</strong><br>
+      Obat tetes mata memerlukan buffer pH 7,4.
+      <div class="table-wrap">
+      <table class="soal-table">
+        <tr><th>Sistem Buffer</th><th>pKa</th><th>Kapasitas</th><th>Toksisitas</th></tr>
+        <tr><td>H₂PO₄⁻/HPO₄²⁻</td><td>7,21</td><td>Tinggi</td><td>Rendah</td></tr>
+        <tr><td>H₂CO₃/HCO₃⁻</td><td>6,10</td><td>Rendah</td><td>Rendah</td></tr>
+        <tr><td>Tris/HCl</td><td>8,06</td><td>Tinggi</td><td>Sedang</td></tr>
+      </table>
+      </div>
+    </div>
+  `,
+  q: "Analisis yang PALING TEPAT untuk pemilihan buffer adalah... (Pilih 2 jawaban benar)",
+  opts: [
+    "Buffer fosfat dipilih karena pKa paling dekat dengan pH target (selisih 0,19)",
+    "Buffer karbonat tidak dipilih karena pKa terlalu jauh (selisih 1,30)",
+    "Buffer Tris dipilih karena kapasitas tinggi meskipun pKa jauh",
+    "Ketiga buffer sama efektifnya",
+    "Buffer fosfat dipilih karena toksisitas rendah dan kapasitas tinggi"
+  ],
+  ans: [0, 1],
+  exp: "Buffer efektif jika pKa ≈ pH target (±1). Fosfat: |7,4-7,21| = 0,19 (terbaik). Karbonat: |7,4-6,10| = 1,30 (terlalu jauh). Tris: |7,4-8,06| = 0,66 (bisa, tapi toksisitas sedang)."
+});
+
+QS.push({
+  id: 16, topic: "konsentrasi", type: "single", level: "c4",
+  stim: `
+    <div class="stim">
+      <strong>💧 Kasus: Standar Air Minum WHO</strong><br>
+      Standar WHO untuk Pb dalam air minum: maks 0,01 mg/L. Sampel air mengandung Pb 0,05 ppm.
+    </div>
+  `,
+  q: "Berdasarkan standar WHO, sampel air minum tersebut...",
+  opts: [
+    "Aman karena 0,05 ppm < 0,01 mg/L",
+    "Tidak aman karena 0,05 ppm = 0,05 mg/L > 0,01 mg/L",
+    "Aman karena ppm sama dengan persen",
+    "Tidak dapat ditentukan tanpa volume",
+    "Aman karena Pb tidak berbahaya"
+  ],
+  ans: 1,
+  exp: "1 ppm = 1 mg/L. Jadi 0,05 ppm = 0,05 mg/L > 0,01 mg/L (standar WHO). Sampel TIDAK aman."
+});
+
+QS.push({
+  id: 17, topic: "koligatif", type: "single", level: "c4",
+  stim: `
+    <div class="stim">
+      <strong>💉 Kasus: Cairan Infus</strong><br>
+      Cairan infus NaCl 0,9% (massa jenis ≈ 1 g/mL). Mr NaCl = 58,5.
+    </div>
+  `,
+  q: "Molaritas larutan infus NaCl 0,9% adalah...",
+  opts: ["0,009 M", "0,09 M", "0,15 M", "0,90 M", "1,50 M"],
+  ans: 2,
+  exp: "0,9% = 0,9 g NaCl per 100 mL. mol = 0,9/58,5 = 0,0154 mol. Volume = 0,1 L. M = 0,154 M ≈ 0,15 M."
+});
+
+QS.push({
+  id: 18, topic: "buffer", type: "single", level: "c4",
+  stim: `
+    <div class="stim">
+      <strong>💊 Kasus: Buffer Asetat</strong><br>
+      Siswa mencampur 100 mL CH₃COOH 0,2 M dan 100 mL CH₃COONa 0,2 M. Ka = 1,8×10⁻⁵.
+    </div>
+  `,
+  q: "pH larutan buffer tersebut adalah...",
+  opts: ["2,87", "4,74", "5,74", "7,00", "9,26"],
+  ans: 1,
+  exp: "pH = pKa + log([garam]/[asam]) = 4,74 + log(1) = 4,74."
+});
+
+QS.push({
+  id: 19, topic: "ksp", type: "mcma", level: "c4",
+  stim: `
+    <div class="stim">
+      <strong>🫘 Kasus: Batu Ginjal Kalsium Oksalat</strong><br>
+      Batu ginjal CaC₂O₄ terbentuk jika Qsp > Ksp. Ksp CaC₂O₄ = 2,3 × 10⁻⁹.
+      <div class="table-wrap">
+      <table class="soal-table">
+        <tr><th>Kondisi</th><th>[Ca²⁺] (M)</th><th>[C₂O₄²⁻] (M)</th></tr>
+        <tr><td>Orang sehat</td><td>2 × 10⁻³</td><td>1 × 10⁻⁵</td></tr>
+        <tr><td>Pasien A</td><td>4 × 10⁻³</td><td>3 × 10⁻⁵</td></tr>
+        <tr><td>Pasien B</td><td>1 × 10⁻³</td><td>1 × 10⁻⁶</td></tr>
+      </table>
+      </div>
+    </div>
+  `,
+  q: "Analisis yang PALING TEPAT tentang risiko batu ginjal adalah... (Pilih 2 jawaban benar)",
+  opts: [
+    "Pasien A berisiko tinggi karena Qsp = 1,2 × 10⁻⁷ > Ksp",
+    "Pasien B tidak berisiko karena Qsp = 1,0 × 10⁻⁹ < Ksp",
+    "Orang sehat tidak berisiko karena Qsp = 2 × 10⁻⁸ < Ksp",
+    "Semua kondisi tidak berisiko",
+    "Pasien A dan orang sehat sama-sama berisiko tinggi"
+  ],
+  ans: [0, 1],
+  exp: "Pasien A: Qsp = (4×10⁻³)(3×10⁻⁵) = 1,2×10⁻⁷ > Ksp → berisiko tinggi. Pasien B: Qsp = (1×10⁻³)(1×10⁻⁶) = 1×10⁻⁹ < Ksp → tidak berisiko. Orang sehat: Qsp = 2×10⁻⁸ > Ksp → berisiko rendah."
+});
+
+// ================================================================
+// LEVEL C5 — Mencipta (6 soal)
+// ================================================================
+
+QS.push({
+  id: 20, topic: "titrasi", type: "single", level: "c5",
+  stim: `
+    <div class="stim">
+      <strong>🍶 Kasus: Analisis Cuka Dagang</strong><br>
+      Analis menitrasi 10 mL cuka dengan NaOH 0,1 M. Volume NaOH = 8,5 mL. Mr CH₃COOH = 60.
+    </div>
+  `,
+  q: "Kadar asam asetat dalam cuka dagang tersebut adalah...",
+  opts: ["0,51 g/L", "5,1 g/L", "51 g/L", "0,85 g/L", "85 g/L"],
+  ans: 1,
+  exp: "mol NaOH = 0,1 × 0,0085 = 8,5×10⁻⁴ mol. mol CH₃COOH = 8,5×10⁻⁴ mol. massa = 8,5×10⁻⁴ × 60 = 0,051 g. Kadar = 0,051/0,01 = 5,1 g/L."
+});
+
+QS.push({
+  id: 21, topic: "konsentrasi", type: "mcma", level: "c5",
+  stim: `
+    <div class="stim">
+      <strong>🧪 Kasus: Analisis H₂SO₄ Pekat</strong><br>
+      Larutan H₂SO₄ pekat: 18 M, massa jenis 1,84 g/mL. Mr = 98.
+    </div>
+  `,
+  q: "Analisis yang PALING TEPAT tentang H₂SO₄ pekat tersebut adalah... (Pilih 2 jawaban benar)",
+  opts: [
+    "Kadar H₂SO₄ dalam % massa sekitar 96%",
+    "Molalitas H₂SO₄ pekat sekitar 240 molal",
+    "Kadar H₂SO₄ dalam % massa 50%",
+    "Molalitas H₂SO₄ adalah 18 molal",
+    "% massa tidak dapat dihitung dari molaritas"
+  ],
+  ans: [0, 1],
+  exp: "Misal 1 L: massa = 1840 g, mol = 18 mol. massa H₂SO₄ = 18×98 = 1764 g. % massa = 1764/1840 = 95,9% ≈ 96%. Massa air = 76 g = 0,076 kg. Molalitas = 18/0,076 = 236,8 ≈ 240 molal."
+});
+
+QS.push({
+  id: 22, topic: "ksp", type: "mcma", level: "c5",
+  stim: `
+    <div class="stim">
+      <strong>💧 Kasus: Pengendapan Logam dengan Basa</strong><br>
+      Air limbah mengandung Fe²⁺ dan Cu²⁺ masing-masing 0,01 M. Diendapkan dengan NaOH.
+      <div class="table-wrap">
+      <table class="soal-table">
+        <tr><th>Hidroksida</th><th>Ksp</th></tr>
+        <tr><td>Fe(OH)₂</td><td>8,0 × 10⁻¹⁶</td></tr>
+        <tr><td>Cu(OH)₂</td><td>2,2 × 10⁻²⁰</td></tr>
+      </table>
+      </div>
+    </div>
+  `,
+  q: "Analisis yang PALING TEPAT tentang pengendapan logam berat tersebut adalah... (Pilih 2 jawaban benar)",
+  opts: [
+    "Cu(OH)₂ mengendap lebih dulu karena Ksp lebih kecil",
+    "[OH⁻] minimum untuk mengendapkan Cu²⁺ adalah 1,48 × 10⁻⁹ M",
+    "Fe(OH)₂ mengendap lebih dulu karena Fe lebih reaktif",
+    "[OH⁻] minimum untuk mengendapkan Fe²⁺ adalah 1,48 × 10⁻⁹ M",
+    "Kedua ion mengendap pada konsentrasi OH⁻ yang sama"
+  ],
+  ans: [0, 1],
+  exp: "Ksp Cu(OH)₂ < Ksp Fe(OH)₂ → Cu(OH)₂ mengendap lebih dulu. Untuk Cu²⁺: [OH⁻] = √(Ksp/[Cu²⁺]) = √(2,2×10⁻¹⁸) = 1,48×10⁻⁹ M. Untuk Fe²⁺: √(8×10⁻¹⁴) = 2,83×10⁻⁷ M."
+});
+
+QS.push({
+  id: 23, topic: "titrasi", type: "mcma", level: "c5",
+  stim: `
+    <div class="stim">
+      <strong>📊 Kasus: Titrasi H₃PO₄ (Asam Triprotik)</strong><br>
+      Siswa menitrasi 25 mL H₃PO₄ dengan NaOH 0,1 M.
+      <div class="table-wrap">
+      <table class="soal-table">
+        <tr><th>Volume NaOH (mL)</th><th>pH</th></tr>
+        <tr><td>0</td><td>1,5</td></tr>
+        <tr><td>12,5</td><td>2,15</td></tr>
+        <tr><td>25</td><td>7,20</td></tr>
+        <tr><td>50</td><td>9,80</td></tr>
+        <tr><td>75</td><td>11,50</td></tr>
+      </table>
+      </div>
+      pKa₁ = 2,15; pKa₂ = 7,20; pKa₃ = 12,35
+    </div>
+  `,
+  q: "Analisis yang PALING TEPAT tentang titrasi H₃PO₄ tersebut adalah... (Pilih 2 jawaban benar)",
+  opts: [
+    "Titik ½ ekuivalen 1 dan 2 terjadi pada pH = pKa, terbentuk buffer",
+    "Jumlah mol H₃PO₄ = (0,1 × 75)/3 = 2,5 mmol",
+    "H₃PO₄ hanya memiliki 1 titik ekuivalen",
+    "pH titik ekuivalen 1 = 7 karena semua asam ternetralkan",
+    "Titik ekuivalen 3 tidak dapat diamati"
+  ],
+  ans: [0, 1],
+  exp: "Pada ½ ekuivalen, [asam] = [basa konjugat] → pH = pKa (buffer). H₃PO₄ = asam triprotik → 3 titik ekuivalen (25, 50, 75 mL). Mol H₃PO₄ = mol NaOH total/3 = (0,1 × 75)/3 = 2,5 mmol."
+});
+
+QS.push({
+  id: 24, topic: "konsentrasi", type: "single", level: "c5",
+  stim: `
+    <div class="stim">
+      <strong>🧪 Kasus: Pencampuran Dua Larutan NaOH</strong><br>
+      Larutan A: 200 mL NaOH 0,1 M. Larutan B: 300 mL NaOH 0,2 M.
+    </div>
+  `,
+  q: "Molaritas NaOH setelah dicampur adalah...",
+  opts: ["0,12 M", "0,15 M", "0,16 M", "0,18 M", "0,20 M"],
+  ans: 2,
+  exp: "mol total = (0,1 × 0,2) + (0,2 × 0,3) = 0,02 + 0,06 = 0,08 mol. V total = 0,5 L. M = 0,08/0,5 = 0,16 M."
+});
+
+QS.push({
+  id: 25, topic: "elektrolit", type: "mcma", level: "c5",
+  stim: `
+    <div class="stim">
+      <strong>🏥 Kasus: Cairan Infus Rumah Sakit</strong><br>
+      <div class="table-wrap">
+      <table class="soal-table">
+        <tr><th>Cairan</th><th>Komposisi</th><th>Kegunaan</th></tr>
+        <tr><td>NaCl 0,9%</td><td>NaCl 0,9 g/100 mL</td><td>Rehidrasi</td></tr>
+        <tr><td>Dekstrosa 5%</td><td>Glukosa 5 g/100 mL</td><td>Sumber energi</td></tr>
+        <tr><td>Ringer Laktat</td><td>Na⁺, K⁺, Ca²⁺, Cl⁻</td><td>Keseimbangan elektrolit</td></tr>
+      </table>
+      </div>
+    </div>
+  `,
+  q: "Analisis yang PALING TEPAT tentang sifat elektrolit ketiga cairan infus adalah... (Pilih 2 jawaban benar)",
+  opts: [
+    "NaCl 0,9% dan Ringer Laktat adalah elektrolit kuat",
+    "Dekstrosa 5% adalah non-elektrolit karena glukosa tidak terionisasi",
+    "Dekstrosa 5% adalah elektrolit kuat karena mengandung glukosa",
+    "NaCl 0,9% adalah non-elektrolit",
+    "Semua cairan infus memiliki daya hantar sama"
+  ],
+  ans: [0, 1],
+  exp: "NaCl 0,9% dan Ringer Laktat mengandung ion → elektrolit kuat. Dekstrosa 5% (glukosa) tidak terionisasi → non-elektrolit."
+});
+
+// ================================================================
+// LEVEL C6 — Menilai (5 soal)
+// ================================================================
+
+QS.push({
+  id: 26, topic: "buffer", type: "mcma", level: "c6",
+  stim: `
+    <div class="stim">
+      <strong>🏥 Kasus: Sistem Buffer Darah</strong><br>
+      Buffer utama darah: H₂CO₃/HCO₃⁻ dengan pKa = 6,1. pH normal 7,40 dengan rasio 20:1.
+      <div class="table-wrap">
+      <table class="soal-table">
+        <tr><th>Kondisi</th><th>pH Darah</th><th>Rasio</th></tr>
+        <tr><td>Normal</td><td>7,40</td><td>20:1</td></tr>
+        <tr><td>Asidosis</td><td>7,20</td><td>?</td></tr>
+        <tr><td>Alkalosis</td><td>7,60</td><td>?</td></tr>
+      </table>
+      </div>
+    </div>
+  `,
+  q: "Analisis yang PALING TEPAT tentang gangguan keseimbangan asam-basa darah adalah... (Pilih 2 jawaban benar)",
+  opts: [
+    "Asidosis menurunkan rasio [HCO₃⁻]/[H₂CO₃] menjadi sekitar 12,6:1",
+    "Alkalosis menaikkan rasio menjadi sekitar 31,6:1",
+    "Asidosis menaikkan rasio karena H⁺ berkurang",
+    "Alkalosis menurunkan rasio karena H⁺ bertambah",
+    "Rasio tidak berubah meskipun pH berubah"
+  ],
+  ans: [0, 1],
+  exp: "pH = pKa + log r. Asidosis: 7,20 = 6,1 + log r → log r = 1,10 → r = 12,6. Alkalosis: 7,60 = 6,1 + log r → log r = 1,50 → r = 31,6."
+});
+
+QS.push({
+  id: 27, topic: "elektrolit", type: "mcma", level: "c6",
+  stim: `
+    <div class="stim">
+      <strong>🧪 Kasus: Nilai Klaim Siswa</strong><br>
+      Dua siswa berdebat tentang mengapa larutan NaCl 0,1 M menghantarkan listrik, sedangkan larutan gula 0,1 M tidak:
+      <ul style="margin-left:1.2rem;margin-top:0.4rem;">
+        <li><strong>Siswa A:</strong> "Karena NaCl terionisasi menjadi Na⁺ dan Cl⁻, sedangkan gula tidak terionisasi."</li>
+        <li><strong>Siswa B:</strong> "Karena NaCl memiliki ikatan ion yang lebih kuat dari gula."</li>
+      </ul>
+    </div>
+  `,
+  q: "Penilaian yang PALING TEPAT terhadap kedua argumen adalah... (Pilih 2 jawaban benar)",
+  opts: [
+    "Siswa A benar karena NaCl terionisasi sempurna dalam air",
+    "Siswa B kurang tepat karena daya hantar listrik bergantung pada adanya ion, bukan kekuatan ikatan",
+    "Siswa B benar karena ikatan ion NaCl lebih kuat",
+    "Kedua siswa benar",
+    "Kedua siswa salah"
+  ],
+  ans: [0, 1],
+  exp: "Siswa A tepat: NaCl terionisasi sempurna → ada ion bebas. Siswa B kurang tepat: alasan daya hantar bukan 'kekuatan ikatan' tetapi keberadaan ion bebas dalam larutan."
+});
+
+QS.push({
+  id: 28, topic: "koligatif", type: "single", level: "c6",
+  stim: `
+    <div class="stim">
+      <strong>🌊 Kasus: Desalinasi Air Laut</strong><br>
+      Reverse osmosis (RO) untuk desalinasi. Tekanan osmotik air laut ≈ 25 atm. Konsentrasi garam ≈ 0,6 M (i=2).
+    </div>
+  `,
+  q: "Tekanan minimum untuk RO air laut pada 27°C (R = 0,082 L·atm/mol·K) adalah...",
+  opts: ["14,8 atm", "25,0 atm", "29,5 atm", "40,0 atm", "59,0 atm"],
+  ans: 2,
+  exp: "π = iMRT = 2 × 0,6 × 0,082 × 300 = 29,5 atm. Tekanan yang diberikan harus > tekanan osmotik."
+});
+
+QS.push({
+  id: 29, topic: "ksp", type: "mcma", level: "c6",
+  stim: `
+    <div class="stim">
+      <strong>🧪 Kasus: Analisis Kelarutan Garam Sulfat</strong><br>
+      <div class="table-wrap">
+      <table class="soal-table">
+        <tr><th>Garam</th><th>Ksp</th><th>Mr</th></tr>
+        <tr><td>BaSO₄</td><td>1,1 × 10⁻¹⁰</td><td>233</td></tr>
+        <tr><td>CaSO₄</td><td>2,4 × 10⁻⁵</td><td>136</td></tr>
+      </table>
+      </div>
+    </div>
+  `,
+  q: "Analisis yang PALING TEPAT tentang kelarutan kedua garam sulfat adalah... (Pilih 2 jawaban benar)",
+  opts: [
+    "Kelarutan BaSO₄ (mol/L) lebih kecil dari CaSO₄",
+    "Kelarutan CaSO₄ sekitar 0,67 g/L",
+    "Kelarutan BaSO₄ sekitar 0,0023 g/L",
+    "CaSO₄ lebih sukar larut karena Mr lebih kecil",
+    "Kelarutan kedua garam sama"
+  ],
+  ans: [0, 1],
+  exp: "BaSO₄: s = √(1,1×10⁻¹⁰) = 1,05×10⁻⁵ mol/L = 2,45×10⁻³ g/L. CaSO₄: s = √(2,4×10⁻⁵) = 4,9×10⁻³ mol/L = 0,67 g/L. BaSO₄ lebih sukar larut."
+});
+
+QS.push({
+  id: 30, topic: "titrasi", type: "mcma", level: "c6",
+  stim: `
+    <div class="stim">
+      <strong>🌊 Kasus: Analisis Kualitas Air Sungai</strong><br>
+      Data hasil pengujian air sungai:
+      <div class="table-wrap">
+      <table class="soal-table">
+        <tr><th>Parameter</th><th>Hulu</th><th>Tengah</th><th>Hilir</th><th>Standar</th></tr>
+        <tr><td>pH</td><td>7,2</td><td>6,8</td><td>5,4</td><td>6,5-8,5</td></tr>
+        <tr><td>DO (mg/L)</td><td>8,5</td><td>6,2</td><td>3,1</td><td>≥ 4</td></tr>
+        <tr><td>Pb²⁺ (ppm)</td><td>0,001</td><td>0,008</td><td>0,025</td><td>≤ 0,01</td></tr>
+      </table>
+      </div>
+    </div>
+  `,
+  q: "Analisis yang PALING TEPAT tentang kualitas air sungai adalah... (Pilih 2 jawaban benar)",
+  opts: [
+    "Lokasi hilir paling tercemar karena pH rendah, DO rendah, dan Pb²⁺ tinggi",
+    "Pencemaran meningkat dari hulu ke hilir, menunjukkan sumber pencemaran di sepanjang aliran",
+    "Lokasi hulu juga tercemar karena pH di luar standar",
+    "Semua lokasi memenuhi standar",
+    "DO rendah di hilir menunjukkan air semakin bersih"
+  ],
+  ans: [0, 1],
+  exp: "Hilir: pH 5,4 (< 6,5), DO 3,1 (< 4), Pb²⁺ 0,025 (> 0,01) → semua tidak memenuhi standar. Hulu: semua parameter memenuhi standar. Pola pencemaran meningkat dari hulu ke hilir."
+});
+
+// ================================================================
+// STATE MANAGEMENT
+// ================================================================
+var S = {
+  view: "home", qids: [], qi: 0, ans: {}, mode: "topic",
+  ri: 0, rqs: [], wrong: [], done: {}, scores: {}, filter: "all"
+};
+
+function load() {
+  try {
+    var d = JSON.parse(localStorage.getItem("tka_kim_larutan"));
+    if (d) {
+      S.done = {};
+      (d.done || []).forEach(function(x) { S.done[x] = true; });
+      S.wrong = d.wrong || [];
+      S.scores = d.scores || {};
+    }
+  } catch(e) {}
+}
+function save() {
+  try {
+    localStorage.setItem("tka_kim_larutan", JSON.stringify({
+      done: Object.keys(S.done), wrong: S.wrong, scores: S.scores
+    }));
+  } catch(e) {}
+}
+load();
+
+function go(v) {
+  var names = {home:"vHome", quiz:"vQuiz", res:"vRes", rev:"vRev"};
+  document.querySelectorAll(".view").forEach(function(el) { el.classList.remove("active"); });
+  var el = document.getElementById(names[v]);
+  if (el) el.classList.add("active");
+  S.view = v;
+  window.scrollTo(0, 0);
+  if (v === "home") renderHome();
+}
+
+function renderHome() {
+  document.getElementById("bWR").style.display = S.wrong.length > 0 ? "flex" : "none";
+  updateNS();
+  renderList();
+}
+
+function updateNS() {
+  var tc = 0, cc = 0;
+  for (var k in S.scores) { tc += S.scores[k].t; cc += S.scores[k].c; }
+  document.getElementById("nst").textContent = tc > 0 ? cc + "/" + tc : "0/0";
+}
+
+function getLevelBadge(level) {
+  var labels = {c2:"C2", c3:"C3", c4:"C4", c5:"C5", c6:"C6"};
+  var colors = {c2:"#34d399", c3:"#fbbf24", c4:"#f97316", c5:"#ef4444", c6:"#8b5cf6"};
+  var bgColors = {
+    c2:"rgba(52,211,153,0.15)", c3:"rgba(251,191,36,0.15)",
+    c4:"rgba(249,115,22,0.15)", c5:"rgba(239,68,68,0.15)",
+    c6:"rgba(139,92,246,0.15)"
+  };
+  return '<span class="badge" style="background:' + bgColors[level] + ';color:' + colors[level] + ';font-size:0.65rem;">' + labels[level] + '</span>';
+}
+
+function renderList() {
+  var list = document.getElementById("qList");
+  list.innerHTML = "";
+  var filtered = QS.filter(function(q) {
+    if (S.filter === "all") return true;
+    return q.level === S.filter;
+  });
+  filtered.forEach(function(q, i) {
+    var answered = S.done[q.id];
+    var wasWrong = S.wrong.indexOf(q.id) >= 0;
+    var tl = q.type === "mcma" ? "MCMA" : "Pilihan Ganda";
+    var levelLabel = q.level ? getLevelBadge(q.level) : "";
+
+    var d = document.createElement("div");
+    d.className = "glow-card";
+    d.style.cursor = "pointer";
+    d.onclick = function() { singleQ(q.id); };
+    d.innerHTML =
+      '<div class="w-9 h-9 rounded-lg flex items-center justify-center text-sm font-bold flex-shrink-0" style="background:' +
+        (answered ? (wasWrong ? 'rgba(248,113,113,.12);color:var(--error)' : 'rgba(52,211,153,.12);color:var(--success)') : 'var(--bg2);color:var(--muted)') +
+      '">' + (answered ? (wasWrong ? '<i class="fa-solid fa-xmark"></i>' : '<i class="fa-solid fa-check"></i>') : (i + 1)) + '</div>' +
+      '<div class="flex-1 min-w-0">' +
+        '<div class="text-sm font-semibold mb-0.5 truncate" style="color:var(--text)">' + plain(q.q).substring(0, 75) + (q.q.length > 75 ? '...' : '') + '</div>' +
+        '<div class="flex items-center gap-2 flex-wrap">' +
+          '<span class="badge" style="background:var(--bg2);color:var(--muted);font-size:.68rem">' + tl + '</span>' +
+          levelLabel +
+        '</div>' +
+      '</div>' +
+      '<i class="fa-solid fa-chevron-right text-xs" style="color:var(--border)"></i>';
+    list.appendChild(d);
+  });
+}
+
+function filterLevel(level) {
+  S.filter = level;
+  document.querySelectorAll('[id^="filter"]').forEach(function(el) {
+    el.style.background = "transparent";
+  });
+  var btn = document.getElementById("filter" + level.toUpperCase());
+  if (btn) btn.style.background = "rgba(212,160,74,.15)";
+  renderList();
+}
+
+function plain(html) {
+  var d = document.createElement("div");
+  d.innerHTML = html;
+  return d.textContent || "";
+}
+
+function startQuiz() {
+  S.qids = QS.map(function(q) { return q.id; });
+  S.ans = {}; S.qi = 0; S.mode = "topic";
+  go("quiz"); renderQ();
+}
+function startRandom() {
+  var sh = QS.slice().sort(function() { return Math.random() - 0.5; }).slice(0, 10);
+  S.qids = sh.map(function(q) { return q.id; });
+  S.ans = {}; S.qi = 0; S.mode = "random";
+  go("quiz"); renderQ();
+}
+function startWrong() {
+  var wq = QS.filter(function(q) { return S.wrong.indexOf(q.id) >= 0; });
+  if (wq.length === 0) return;
+  S.qids = wq.map(function(q) { return q.id; });
+  S.ans = {}; S.qi = 0; S.mode = "wrong";
+  go("quiz"); renderQ();
+}
+function singleQ(qid) {
+  S.qids = [qid]; S.ans = {}; S.qi = 0; S.mode = "single";
+  go("quiz"); renderQ();
+}
+
+function renderQ() {
+  var qid = S.qids[S.qi];
+  var q = QS.find(function(x) { return x.id === qid; });
+  if (!q) return;
+  var total = S.qids.length;
+  var idx = S.qi + 1;
+  var pct = Math.round(idx / total * 100);
+
+  document.getElementById("qCtr").textContent = idx + " / " + total;
+  document.getElementById("qBar").style.width = pct + "%";
+  var tl = {single: "Pilihan Ganda", mcma: "MCMA"};
+  document.getElementById("qTyp").textContent = tl[q.type] || q.type;
+  var levelLabels = {c2:"C2 - Pemahaman", c3:"C3 - Menganalisis", c4:"C4 - Mengevaluasi", c5:"C5 - Mencipta", c6:"C6 - Menilai"};
+  document.getElementById("qLevel").textContent = q.level ? levelLabels[q.level] : "";
+  document.getElementById("bPrv").style.visibility = S.qi > 0 ? "visible" : "hidden";
+  var isLast = S.qi === total - 1;
+  document.getElementById("bNxt").innerHTML = isLast ? "Selesai <i class='fa-solid fa-check ml-1'></i>" : "Selanjutnya <i class='fa-solid fa-chevron-right ml-1'></i>";
+
+  var h = "";
+  if (q.stim) h += '<div class="stim">' + q.stim + '</div>';
+  h += '<h3 class="font-bold text-base mb-4 leading-relaxed" style="color:var(--text)">' + q.q + '</h3>';
+
+  if (q.type === "single") {
+    var letters = "ABCDE";
+    h += '<div class="space-y-2.5">';
+    q.opts.forEach(function(opt, i) {
+      var sel = S.ans[qid] === i;
+      h += '<button class="ob' + (sel ? ' sel' : '') + '" onclick="selS(' + qid + ',' + i + ')">' +
+        '<span class="w-7 h-7 min-w-[1.75rem] rounded-full border-2 flex items-center justify-center text-xs font-bold flex-shrink-0" style="border-color:' + (sel ? 'var(--accent)' : 'var(--border)') + ';color:' + (sel ? 'var(--accent)' : 'var(--muted)') + '">' + letters[i] + '</span>' +
+        '<span class="text-sm">' + opt + '</span></button>';
+    });
+    h += '</div>';
+  } else if (q.type === "mcma") {
+    var ua = S.ans[qid] || [];
+    h += '<div class="space-y-2.5">';
+    q.opts.forEach(function(opt, i) {
+      var sel = ua.indexOf(i) >= 0;
+      h += '<button class="ob' + (sel ? ' sel' : '') + '" onclick="togM(' + qid + ',' + i + ')">' +
+        '<div class="ck">' + (sel ? '<i class="fa-solid fa-check text-xs" style="color:#0b1a17"></i>' : '') + '</div>' +
+        '<span class="text-sm">' + opt + '</span></button>';
+    });
+    h += '</div>';
+    h += '<p class="text-xs mt-2.5" style="color:var(--muted)"><i class="fa-solid fa-circle-info mr-1"></i>Pilih SEMUA jawaban yang benar</p>';
+  }
+  document.getElementById("qArea").innerHTML = h;
+}
+
+function selS(qid, i) { S.ans[qid] = i; renderQ(); }
+function togM(qid, i) {
+  if (!S.ans[qid]) S.ans[qid] = [];
+  var arr = S.ans[qid];
+  var idx = arr.indexOf(i);
+  if (idx >= 0) arr.splice(idx, 1); else arr.push(i);
+  renderQ();
+}
+
+function qNext() {
+  if (S.qi === S.qids.length - 1) { finishQ(); return; }
+  S.qi++; renderQ(); window.scrollTo(0, 0);
+}
+function qPrev() {
+  if (S.qi > 0) { S.qi--; renderQ(); window.scrollTo(0, 0); }
+}
+
+function finishQ() {
+  var correct = 0, wrong = 0;
+  var ts = {};
+  S.qids.forEach(function(qid) {
+    var q = QS.find(function(x) { return x.id === qid; });
+    if (!q) return;
+    var ua = S.ans[qid];
+    var ok = false;
+    if (q.type === "single") ok = ua === q.ans;
+    else if (q.type === "mcma") {
+      var u = (ua || []).slice().sort().join(",");
+      var c = q.ans.slice().sort().join(",");
+      ok = u === c;
+    }
+    S.done[qid] = true;
+    if (ok) correct++; else { wrong++; S.wrong.push(qid); }
+    if (!ts[q.topic]) ts[q.topic] = {c:0, t:0};
+    ts[q.topic].t++;
+    if (ok) ts[q.topic].c++;
+  });
+  S.wrong = uniq(S.wrong);
+  for (var k in ts) {
+    if (!S.scores[k]) S.scores[k] = {c:0, t:0};
+    S.scores[k].c += ts[k].c;
+    S.scores[k].t += ts[k].t;
+  }
+  save();
+
+  var total = correct + wrong;
+  var pct = total > 0 ? Math.round(correct / total * 100) : 0;
+  document.getElementById("rPct").textContent = pct + "%";
+  document.getElementById("rOk").textContent = correct;
+  document.getElementById("rNo").textContent = wrong;
+  document.getElementById("rTot").textContent = total;
+
+  var circ = 2 * Math.PI * 55;
+  var ring = document.getElementById("rRing");
+  ring.style.strokeDasharray = circ;
+  ring.style.strokeDashoffset = circ - (circ * pct / 100);
+  ring.style.stroke = pct >= 70 ? "var(--success)" : pct >= 40 ? "var(--accent)" : "var(--error)";
+
+  var lbl = pct >= 90 ? "Luar Biasa!" : pct >= 70 ? "Bagus Sekali!" : pct >= 50 ? "Cukup Baik" : "Perlu Belajar Lagi";
+  document.getElementById("rLbl").textContent = lbl;
+  document.getElementById("bRW").style.display = wrong > 0 ? "inline-flex" : "none";
+  go("res");
+}
+
+function uniq(arr) {
+  var seen = {}, out = [];
+  arr.forEach(function(x) { if (!seen[x]) { seen[x] = true; out.push(x); } });
+  return out;
+}
+
+function retryQ() {
+  if (S.mode === "topic") startQuiz();
+  else if (S.mode === "random") startRandom();
+  else if (S.mode === "wrong") startWrong();
+  else if (S.mode === "single") singleQ(S.qids[0]);
+}
+
+function revWrong() {
+  var wqs = S.qids.filter(function(qid) { return S.wrong.indexOf(qid) >= 0; });
+  if (wqs.length === 0) { toast("Tidak ada jawaban salah", "var(--success)"); return; }
+  S.rqs = wqs.map(function(qid) { return QS.find(function(x) { return x.id === qid; }); }).filter(Boolean);
+  S.ri = 0;
+  go("rev"); renderRev();
+}
+
+function renderRev() {
+  var q = S.rqs[S.ri];
+  if (!q) return;
+  var total = S.rqs.length;
+  document.getElementById("rvPr").style.visibility = S.ri > 0 ? "visible" : "hidden";
+  document.getElementById("rvNx").innerHTML = S.ri === total - 1 ? "Kembali <i class='fa-solid fa-check ml-1'></i>" : "Selanjutnya <i class='fa-solid fa-chevron-right ml-1'></i>";
+
+  var ua = S.ans[q.id];
+  var ok = false;
+  if (q.type === "single") ok = ua === q.ans;
+  else if (q.type === "mcma") {
+    var u = (ua || []).slice().sort().join(",");
+    ok = u === q.ans.slice().sort().join(",");
+  }
+
+  var letters = "ABCDE";
+  var h = '<div class="text-xs mb-2 font-semibold" style="color:var(--muted)">Soal ' + (S.ri + 1) + " / " + total + '</div>';
+  if (q.stim) h += '<div class="stim">' + q.stim + '</div>';
+  h += '<h3 class="font-bold text-sm mb-4 leading-relaxed">' + q.q + '</h3>';
+  h += '<div class="space-y-2.5">';
+
+  if (q.type === "single") {
+    q.opts.forEach(function(opt, i) {
+      var cls = "off";
+      if (i === q.ans) cls += " ok";
+      else if (ua === i && i !== q.ans) cls += " no";
+      h += '<button class="ob ' + cls + '">' +
+        '<span class="w-7 h-7 min-w-[1.75rem] rounded-full border-2 flex items-center justify-center text-xs font-bold flex-shrink-0" style="border-color:' + (i === q.ans ? "var(--success)" : ua === i ? "var(--error)" : "var(--border)") + ';color:' + (i === q.ans ? "var(--success)" : ua === i ? "var(--error)" : "var(--muted)") + '">' + letters[i] + '</span>' +
+        '<span class="text-sm">' + opt + '</span>' +
+        (i === q.ans ? '<i class="fa-solid fa-circle-check ml-auto" style="color:var(--success)"></i>' : '') +
+        (ua === i && i !== q.ans ? '<i class="fa-solid fa-circle-xmark ml-auto" style="color:var(--error)"></i>' : '') +
+      '</button>';
+    });
+  } else if (q.type === "mcma") {
+    q.opts.forEach(function(opt, i) {
+      var isUA = (ua || []).indexOf(i) >= 0;
+      var isCA = q.ans.indexOf(i) >= 0;
+      var cls = "off";
+      if (isCA) cls += " ok";
+      else if (isUA && !isCA) cls += " no";
+      h += '<button class="ob ' + cls + '">' +
+        '<div class="ck">' + (isCA ? '<i class="fa-solid fa-check text-xs" style="color:#0b1a17"></i>' : isUA ? '<i class="fa-solid fa-xmark text-xs" style="color:#fff"></i>' : '') + '</div>' +
+        '<span class="text-sm">' + opt + '</span></button>';
+    });
+  }
+  h += '</div>';
+  h += '<div class="expbox ' + (ok ? 'good' : 'bad') + '">' +
+    '<div class="flex items-center gap-2 mb-1.5 font-bold text-sm">' +
+      '<i class="fa-solid ' + (ok ? 'fa-circle-check' : 'fa-circle-xmark') + '" style="color:' + (ok ? 'var(--success)' : 'var(--error)') + '"></i>' +
+      (ok ? 'Jawaban Benar' : 'Jawaban Salah') +
+    '</div>' +
+    '<p style="color:var(--text);line-height:1.6;font-size:0.9rem;">' + q.exp + '</p>' +
+  '</div>';
+
+  document.getElementById("revA").innerHTML = h;
+  window.scrollTo(0, 0);
+}
+
+function rvNav(dir) {
+  if (dir === 1 && S.ri === S.rqs.length - 1) { backRev(); return; }
+  S.ri = Math.max(0, Math.min(S.rqs.length - 1, S.ri + dir));
+  renderRev();
+}
+function backRev() {
+  if (S.mode === "single") go("home");
+  else go("res");
+}
+
+function openExit() { document.getElementById("exMod").classList.add("open"); }
+function closeMod() { document.getElementById("exMod").classList.remove("open"); }
+function doExit() { closeMod(); go("home"); }
+
+function resetAll() {
+  S.done = {}; S.wrong = []; S.scores = {};
+  save(); renderHome(); toast("Progress berhasil direset", "var(--success)");
+}
+function toast(msg, bg) {
+  var t = document.getElementById("toast");
+  t.style.display = "block";
+  t.style.background = bg || "var(--card)";
+  t.style.color = "#fff";
+  t.textContent = msg;
+  setTimeout(function() { t.style.display = "none"; }, 2200);
+}
+
+renderHome();
+console.log("Larutan - HOTS C2-C6 loaded: " + QS.length + " soal");
+var stat = {c2:0, c3:0, c4:0, c5:0, c6:0, single:0, mcma:0};
+QS.forEach(function(q) {
+  stat[q.level]++;
+  if (q.type === "single") stat.single++; else stat.mcma++;
+});
+console.log("Distribusi:", stat);
+</script>
+</body>
+</html>

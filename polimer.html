@@ -1,0 +1,1210 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Polimer — TKA Kimia SMA Negeri 2 Semarang</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Sans+3:ital,wght@0,300;0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+    :root {
+        --bg: #0b1a17; --bg2: #132a24; --card: #1a3a32; --card2: #1e4a3f;
+        --text: #e8f0ec; --muted: #8aa8a0; --border: #2a4a42; --accent: #d4a04a;
+        --success: #34d399; --error: #f87171; --glow: rgba(212, 160, 74, 0.15);
+        --danger: #ef4444; --warn: #fbbf24;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+        font-family: 'Source Sans 3', sans-serif;
+        background: var(--bg); color: var(--text);
+        min-height: 100vh; padding-top: 52px;
+    }
+    .fd { font-family: 'Playfair Display', serif; }
+    .bg-noise {
+        position: fixed; top:0; left:0; right:0; bottom:0;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+        pointer-events: none; z-index: 0;
+    }
+    .hg {
+        position: absolute; width:300px; height:300px;
+        border-radius: 50%; filter: blur(100px);
+        opacity: 0.15; pointer-events: none;
+    }
+    .badge {
+        display: inline-flex; align-items: center; gap: 6px;
+        padding: 4px 14px; border-radius: 100px;
+        font-size: 0.75rem; font-weight: 600;
+        background: rgba(212,160,74,0.12); color: var(--accent);
+    }
+    .glow-card {
+        background: var(--card); border: 1px solid var(--border);
+        border-radius: 12px; padding: 16px 18px; cursor: pointer;
+        transition: all 0.25s ease; display: flex;
+        align-items: center; gap: 12px;
+        text-decoration: none; color: inherit;
+    }
+    .glow-card:hover {
+        border-color: var(--accent); background: var(--card2);
+        box-shadow: 0 0 20px var(--glow);
+    }
+    .bp {
+        background: var(--accent); color: #0b1a17; border: none;
+        padding: 8px 18px; border-radius: 30px; font-weight: 700;
+        font-size: 0.85rem; cursor: pointer; transition: all 0.25s ease;
+        display: inline-flex; align-items: center; gap: 6px;
+    }
+    .bp:hover { background: #e8b84a; transform: scale(1.02); }
+    .bs {
+        background: transparent; color: var(--text);
+        border: 1px solid var(--border); padding: 8px 18px;
+        border-radius: 30px; font-weight: 600; font-size: 0.85rem;
+        cursor: pointer; transition: all 0.25s ease;
+        display: inline-flex; align-items: center; gap: 6px;
+    }
+    .bs:hover { border-color: var(--accent); background: var(--card2); }
+    .view { display: none; }
+    .view.active { display: block; }
+    .stim {
+        background: var(--bg2); padding: 12px 16px;
+        border-radius: 8px; border-left: 3px solid var(--accent);
+        margin-bottom: 12px; font-size: 0.9rem;
+        line-height: 1.6; color: var(--muted);
+    }
+    .table-wrap {
+        overflow-x: auto; margin: 8px 0;
+        border-radius: 8px; border: 1px solid var(--border);
+    }
+    table.soal-table {
+        width: 100%; border-collapse: collapse;
+        font-size: 0.8rem; background: var(--bg2);
+    }
+    table.soal-table th {
+        background: var(--card); color: var(--accent);
+        font-weight: 600; padding: 6px 10px;
+        border: 1px solid var(--border); text-align: center;
+    }
+    table.soal-table td {
+        padding: 6px 10px; border: 1px solid var(--border);
+        text-align: center; color: var(--text);
+    }
+    table.soal-table tr:hover { background: rgba(212,160,74,0.05); }
+    .figure-wrap {
+        display: flex; flex-direction: column; align-items: center;
+        margin: 8px 0; padding: 10px; background: var(--bg2);
+        border-radius: 8px; border: 1px solid var(--border);
+    }
+    .figure-wrap svg { max-width: 100%; height: auto; }
+    .figure-caption {
+        font-size: 0.7rem; color: var(--muted);
+        margin-top: 4px; text-align: center;
+    }
+    .chem-eq {
+        display: block; text-align: center;
+        padding: 0.5rem 0.75rem;
+        font-family: "Times New Roman", serif;
+        font-size: 1rem; background: var(--bg2);
+        border-radius: 0.5rem; border: 1px solid var(--border);
+        margin: 0.5rem 0; color: var(--text);
+    }
+    .polymer-chain {
+        display: flex; align-items: center; justify-content: center;
+        gap: 0.3rem; flex-wrap: wrap; padding: 0.5rem;
+        background: var(--bg2); border-radius: 0.5rem;
+        border: 1px solid var(--border); margin: 0.5rem 0;
+    }
+    .monomer-unit {
+        display: flex; flex-direction: column; align-items: center;
+        padding: 0.3rem 0.5rem; border-radius: 0.3rem;
+        background: rgba(212,160,74,0.15); border: 1px solid var(--accent);
+        font-size: 0.7rem; font-weight: 600; color: var(--accent);
+    }
+    .monomer-unit .sub { font-size: 0.55rem; color: var(--muted); font-weight: 400; }
+    .space-y-2\.5 > * + * { margin-top: 8px; }
+    .ob {
+        display: flex; align-items: center; gap: 10px;
+        width: 100%; padding: 8px 14px; border-radius: 8px;
+        border: 1px solid var(--border); background: var(--bg2);
+        color: var(--text); cursor: pointer;
+        transition: all 0.2s ease; font-size: 0.9rem; text-align: left;
+    }
+    .ob:hover { border-color: var(--muted); }
+    .ob.sel { border-color: var(--accent); background: rgba(212,160,74,0.1); }
+    .ob .ck {
+        width: 20px; height: 20px; min-width: 20px;
+        border-radius: 4px; border: 2px solid var(--border);
+        display: flex; align-items: center; justify-content: center;
+        font-size: 0.7rem; background: var(--bg);
+    }
+    .ob.sel .ck { border-color: var(--accent); background: var(--accent); }
+    .ob.ok .ck { border-color: var(--success); background: var(--success); }
+    .ob.no .ck { border-color: var(--error); background: var(--error); }
+    .modal-bg {
+        display: none; position: fixed; inset: 0;
+        background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
+        z-index: 50; justify-content: center; align-items: center;
+        padding: 20px;
+    }
+    .modal-bg.open { display: flex; }
+    .toast {
+        position: fixed; bottom: 30px; left: 50%;
+        transform: translateX(-50%); padding: 12px 28px;
+        border-radius: 12px; font-weight: 600; z-index: 100;
+        background: var(--card); border: 1px solid var(--border);
+        color: var(--text); max-width: 90%; text-align: center;
+    }
+    .hots-badge {
+        display: inline-block; padding: 0.15rem 0.5rem;
+        border-radius: 999px; font-size: 0.6rem;
+        font-weight: 700; margin-left: 0.5rem;
+    }
+    .hots-c2 { background: rgba(52,211,153,0.2); color: #34d399; }
+    .hots-c3 { background: rgba(251,191,36,0.2); color: #fbbf24; }
+    .hots-c4 { background: rgba(249,115,22,0.2); color: #f97316; }
+    .hots-c5 { background: rgba(239,68,68,0.2); color: #ef4444; }
+    .hots-c6 { background: rgba(139,92,246,0.2); color: #8b5cf6; }
+    .poly-type {
+        display: inline-flex; align-items: center; gap: 4px;
+        padding: 0.15rem 0.6rem; border-radius: 999px;
+        font-size: 0.6rem; font-weight: 600;
+    }
+    .poly-type.adisi { background: rgba(52,211,153,0.2); color: #34d399; }
+    .poly-type.kondensasi { background: rgba(96,165,250,0.2); color: #60a5fa; }
+    .poly-type.alam { background: rgba(167,139,250,0.2); color: #a78bfa; }
+    .poly-type.sintetis { background: rgba(251,191,36,0.2); color: #fbbf24; }
+    .expbox {
+        margin-top: 14px; padding: 14px 18px;
+        border-radius: 8px; font-size: 0.9rem; line-height: 1.7;
+    }
+    .expbox.good {
+        background: rgba(52,211,153,0.06);
+        border-left: 4px solid var(--success);
+    }
+    .expbox.bad {
+        background: rgba(248,113,113,0.06);
+        border-left: 4px solid var(--error);
+    }
+    @media (max-width: 640px) {
+        .ob { font-size: 0.8rem; padding: 6px 12px; }
+        .bp, .bs { font-size: 0.75rem; padding: 6px 14px; }
+        .glow-card { padding: 12px 14px; }
+        .monomer-unit { padding: 0.2rem 0.3rem; font-size: 0.6rem; }
+    }
+</style>
+</head>
+<body>
+<div class="bg-noise"></div>
+
+<nav class="fixed top-0 left-0 right-0 z-40 backdrop-blur-md border-b" style="background:rgba(11,26,23,.88);border-color:var(--border)">
+<div class="max-w-5xl mx-auto px-4 flex items-center justify-between" style="height:52px">
+<button onclick="location.href='index.html'" class="flex items-center gap-2 text-sm font-bold tracking-wide" style="color:var(--accent);background:none;border:none;cursor:pointer;">
+<i class="fa-solid fa-arrow-left"></i><span class="hidden sm:inline">Kembali</span>
+</button>
+<div class="flex items-center gap-3">
+<span class="hidden sm:flex items-center gap-1.5 text-xs" style="color:var(--muted)">
+<i class="fa-solid fa-trophy" style="color:var(--accent)"></i><span id="nst">0/0</span>
+</span>
+<button onclick="location.href='index.html'" class="text-sm px-2.5 py-1 rounded" style="color:var(--muted);background:none;border:none;cursor:pointer;">
+<i class="fa-solid fa-house"></i>
+</button>
+</div>
+</div>
+</nav>
+
+<!-- HOME -->
+<div id="vHome" class="view active pt-16 pb-12 px-4">
+<div class="max-w-4xl mx-auto">
+    <div class="relative rounded-2xl overflow-hidden mb-8 p-7 md:p-10" style="background:linear-gradient(135deg,var(--card),var(--card2))">
+        <div class="hg" style="background:var(--accent);top:-180px;right:-80px"></div>
+        <div class="hg" style="background:#a78bfa;bottom:-180px;left:-80px"></div>
+        <div class="relative z-10">
+            <div class="badge mb-3"><i class="fa-solid fa-cubes"></i> Polimer</div>
+            <h1 class="fd text-3xl md:text-4xl font-black mb-2 leading-tight">Polimer <span style="color:var(--accent)">Kimia</span></h1>
+            <p class="text-sm md:text-base max-w-lg" style="color:var(--muted);line-height:1.65">Latihan soal HOTS level C2-C6 tentang polimer: jenis, reaksi pembentukan, sifat, dan aplikasi dalam kehidupan.</p>
+            <div class="flex flex-wrap gap-2 mt-4">
+                <span class="badge hots-badge hots-c2">C2 - Pemahaman</span>
+                <span class="badge hots-badge hots-c3">C3 - Menganalisis</span>
+                <span class="badge hots-badge hots-c4">C4 - Mengevaluasi</span>
+                <span class="badge hots-badge hots-c5">C5 - Mencipta</span>
+                <span class="badge hots-badge hots-c6">C6 - Menilai</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- KATEGORI POLIMER -->
+    <div class="flex flex-wrap gap-2 mb-4">
+        <span class="poly-type adisi"><i class="fa-solid fa-bolt"></i> Adisi</span>
+        <span class="poly-type kondensasi"><i class="fa-solid fa-droplet"></i> Kondensasi</span>
+        <span class="poly-type alam"><i class="fa-solid fa-leaf"></i> Alam</span>
+        <span class="poly-type sintetis"><i class="fa-solid fa-flask"></i> Sintetis</span>
+    </div>
+
+    <div class="flex flex-wrap gap-2.5 mb-6">
+        <button onclick="startQuiz()" class="bp"><i class="fa-solid fa-play"></i> Mulai Quiz Semua Soal</button>
+        <button onclick="startRandom()" class="bs"><i class="fa-solid fa-shuffle"></i> Quiz Acak 10 Soal</button>
+        <button onclick="startWrong()" class="bs" id="bWR" style="display:none"><i class="fa-solid fa-rotate-left"></i> Ulangi Salah</button>
+        <button onclick="resetAll()" class="bs"><i class="fa-solid fa-trash-can"></i> Reset</button>
+    </div>
+
+    <div class="flex flex-wrap gap-2 mb-4">
+        <button onclick="filterLevel('all')" class="bs text-xs" id="filterAll" style="background:rgba(212,160,74,.15)">Semua</button>
+        <button onclick="filterLevel('c2')" class="bs text-xs" id="filterC2">C2</button>
+        <button onclick="filterLevel('c3')" class="bs text-xs" id="filterC3">C3</button>
+        <button onclick="filterLevel('c4')" class="bs text-xs" id="filterC4">C4</button>
+        <button onclick="filterLevel('c5')" class="bs text-xs" id="filterC5">C5</button>
+        <button onclick="filterLevel('c6')" class="bs text-xs" id="filterC6">C6</button>
+    </div>
+
+    <div id="qList"></div>
+</div>
+</div>
+
+<!-- QUIZ -->
+<div id="vQuiz" class="view pt-16 pb-12 px-4">
+<div class="max-w-3xl mx-auto">
+    <div class="flex items-center justify-between mb-3">
+        <button onclick="openExit()" class="text-sm flex items-center gap-1.5" style="color:var(--muted);background:none;border:none;cursor:pointer;"><i class="fa-solid fa-xmark"></i>Keluar</button>
+        <div class="flex items-center gap-2.5">
+            <span id="qCtr" class="text-sm font-semibold" style="color:var(--muted)"></span>
+            <span id="qTyp" class="badge" style="background:rgba(212,160,74,.12);color:var(--accent);font-size:0.7rem;"></span>
+            <span id="qLevel" class="badge" style="background:var(--bg2);color:var(--muted);font-size:0.7rem;"></span>
+        </div>
+    </div>
+    <div class="w-full h-1.5 rounded-full mb-5" style="background:var(--border)">
+        <div id="qBar" class="h-full rounded-full" style="background:var(--accent);width:0%"></div>
+    </div>
+    <div id="qArea"></div>
+    <div class="flex items-center justify-between mt-7">
+        <button id="bPrv" onclick="qPrev()" class="bs" style="visibility:hidden"><i class="fa-solid fa-chevron-left mr-1"></i>Sebelumnya</button>
+        <button id="bNxt" onclick="qNext()" class="bp">Selanjutnya <i class="fa-solid fa-chevron-right ml-1"></i></button>
+    </div>
+</div>
+</div>
+
+<!-- RESULTS -->
+<div id="vRes" class="view pt-16 pb-12 px-4">
+<div class="max-w-3xl mx-auto text-center">
+    <div class="mb-7">
+        <svg class="mx-auto mb-3" style="transform:rotate(-90deg)" width="130" height="130" viewBox="0 0 130 130">
+            <circle cx="65" cy="65" r="55" fill="none" stroke="var(--border)" stroke-width="7"/>
+            <circle id="rRing" cx="65" cy="65" r="55" fill="none" stroke="var(--accent)" stroke-width="7" stroke-linecap="round" stroke-dasharray="345.6" stroke-dashoffset="345.6"/>
+        </svg>
+        <div class="text-3xl font-bold" style="color:var(--accent)" id="rPct">0%</div>
+        <div class="text-sm mt-0.5" style="color:var(--muted)" id="rLbl">—</div>
+    </div>
+    <div class="grid grid-cols-3 gap-3 mb-7">
+        <div class="rounded-xl p-3.5" style="background:var(--card);border:1px solid var(--border)">
+            <div class="text-2xl font-bold" style="color:var(--success)" id="rOk">0</div>
+            <div class="text-xs" style="color:var(--muted)">Benar</div>
+        </div>
+        <div class="rounded-xl p-3.5" style="background:var(--card);border:1px solid var(--border)">
+            <div class="text-2xl font-bold" style="color:var(--error)" id="rNo">0</div>
+            <div class="text-xs" style="color:var(--muted)">Salah</div>
+        </div>
+        <div class="rounded-xl p-3.5" style="background:var(--card);border:1px solid var(--border)">
+            <div class="text-2xl font-bold" id="rTot">0</div>
+            <div class="text-xs" style="color:var(--muted)">Total</div>
+        </div>
+    </div>
+    <div class="flex flex-wrap justify-center gap-2.5">
+        <button onclick="location.href='index.html'" class="bs"><i class="fa-solid fa-house mr-1"></i>Beranda</button>
+        <button onclick="revWrong()" class="bp" id="bRW" style="display:none"><i class="fa-solid fa-eye mr-1"></i>Review Salah</button>
+        <button onclick="retryQ()" class="bs"><i class="fa-solid fa-rotate-left mr-1"></i>Ulangi</button>
+    </div>
+</div>
+</div>
+
+<!-- REVIEW -->
+<div id="vRev" class="view pt-16 pb-12 px-4">
+<div class="max-w-3xl mx-auto">
+    <button onclick="backRev()" class="flex items-center gap-2 text-sm mb-5" style="color:var(--muted);background:none;border:none;cursor:pointer;"><i class="fa-solid fa-arrow-left"></i>Kembali</button>
+    <div id="revA"></div>
+    <div class="flex justify-center gap-2.5 mt-7">
+        <button id="rvPr" onclick="rvNav(-1)" class="bs"><i class="fa-solid fa-chevron-left mr-1"></i>Sebelumnya</button>
+        <button id="rvNx" onclick="rvNav(1)" class="bp">Selanjutnya <i class="fa-solid fa-chevron-right ml-1"></i></button>
+    </div>
+</div>
+</div>
+
+<div id="exMod" class="modal-bg">
+    <div class="rounded-xl p-5 max-w-sm w-full" style="background:var(--card);border:1px solid var(--border)">
+        <h3 class="fd text-lg font-bold mb-1.5">Keluar dari Quiz?</h3>
+        <p class="text-sm mb-4" style="color:var(--muted)">Progress quiz ini akan hilang.</p>
+        <div class="flex gap-2.5 justify-end">
+            <button onclick="closeMod()" class="bs text-sm">Batal</button>
+            <button onclick="doExit()" class="text-sm font-bold px-4 py-2 rounded-lg border-none cursor-pointer" style="background:var(--error);color:#fff">Keluar</button>
+        </div>
+    </div>
+</div>
+
+<div id="toast" class="toast" style="display:none"></div>
+
+<script>
+// ================================================================
+// DATA SOAL POLIMER - HOTS C2-C6 (FINAL REVISI)
+// Semua MCMA memiliki ≥3 kunci
+// Total: 20 soal (4 C2, 5 C3, 5 C4, 3 C5, 3 C6)
+// ================================================================
+var QS = [];
+
+// ================================================================
+// LEVEL C2 — Pemahaman Dasar (4 soal)
+// ================================================================
+
+// id:1 - Konsep dasar polimer
+QS.push({
+  id: 1, topic: "polimer", type: "mcma", level: "c2",
+  q: "Pernyataan BENAR tentang konsep dasar polimer adalah... (Pilih 3 jawaban benar)",
+  opts: [
+    "Polimer adalah molekul besar yang tersusun dari unit berulang (monomer)",
+    "Monomer adalah molekul kecil yang menyusun polimer",
+    "Derajat polimerisasi adalah jumlah unit monomer dalam rantai polimer",
+    "Semua polimer terbentuk dari monomer yang sama",
+    "Polimer tidak dapat ditemukan di alam",
+    "Polimer selalu bersifat plastik"
+  ],
+  ans: [0, 1, 2],
+  exp: "Polimer = makromolekul dari unit berulang (monomer). Monomer = molekul kecil penyusun. Derajat polimerisasi = jumlah unit monomer. Polimer bisa dari monomer berbeda (kopolimer). Polimer alam: selulosa, pati, protein."
+});
+
+// id:2 - Jenis polimer
+QS.push({
+  id: 2, topic: "polimer", type: "single", level: "c2",
+  q: "Polimer yang terbentuk melalui reaksi adisi adalah...",
+  opts: [
+    "Nilon 6,6",
+    "Polietilena (PE)",
+    "Bakelit",
+    "Dacron (PET)",
+    "Protein"
+  ],
+  ans: 1,
+  exp: "Polietilena (PE) terbentuk dari monomer etilena (CH₂=CH₂) melalui reaksi adisi (pembukaan ikatan rangkap). Nilon, bakelit, dan PET terbentuk melalui kondensasi."
+});
+
+// id:3 - Polimer alam
+QS.push({
+  id: 3, topic: "polimer", type: "mcma", level: "c2",
+  q: "Polimer alam dan monomernya yang BENAR adalah... (Pilih 3 jawaban benar)",
+  opts: [
+    "Karet alam - isoprena (2-metil-1,3-butadiena)",
+    "Selulosa - glukosa",
+    "Protein - asam amino",
+    "Polietilena - etilena (termasuk polimer alam)",
+    "Teflon - tetrafluoroetilena (termasuk polimer alam)",
+    "Nilon - asam adipat (termasuk polimer alam)"
+  ],
+  ans: [0, 1, 2],
+  exp: "Karet alam = polimer isoprena. Selulosa = polimer glukosa. Protein = polimer asam amino. PE, teflon, nilon adalah polimer SINTETIS."
+});
+
+// id:4 - Sifat polimer
+QS.push({
+  id: 4, topic: "polimer", type: "mcma", level: "c2",
+  q: "Pernyataan BENAR tentang sifat polimer adalah... (Pilih 3 jawaban benar)",
+  opts: [
+    "Termoplas dapat melunak saat dipanaskan dan mengeras saat didinginkan",
+    "Termoset tidak dapat melunak kembali setelah dipanaskan",
+    "Elastomer memiliki sifat elastis seperti karet",
+    "Semua polimer bersifat termoplas",
+    "Polimer tidak dapat didaur ulang",
+    "Serat polimer tidak dapat digunakan untuk tekstil"
+  ],
+  ans: [0, 1, 2],
+  exp: "Termoplas: melunak saat panas, mengeras saat dingin (dapat didaur ulang). Termoset: mengeras permanen. Elastomer: elastis. Tidak semua termoplas. Polimer dapat didaur ulang. Serat polimer untuk tekstil."
+});
+
+// ================================================================
+// LEVEL C3 — Menganalisis (5 soal)
+// ================================================================
+
+// C3.1 - Analisis reaksi adisi vs kondensasi
+QS.push({
+  id: 3001, topic: "polimer", type: "mcma", level: "c3",
+  stim: `
+    <div class="stim">
+      <p>Perhatikan dua reaksi pembentukan polimer:</p>
+      <div class="chem-eq">(1) n CH₂=CH₂ → [-CH₂-CH₂-]ₙ</div>
+      <div class="chem-eq">(2) n H₂N-(CH₂)₆-NH₂ + n HOOC-(CH₂)₄-COOH → [-NH-(CH₂)₆-NH-CO-(CH₂)₄-CO-]ₙ + 2n H₂O</div>
+    </div>
+  `,
+  q: "Analisis yang PALING TEPAT tentang kedua reaksi tersebut adalah... (Pilih 3 jawaban benar)",
+  opts: [
+    "Reaksi (1) adalah polimerisasi adisi karena tidak ada molekul kecil yang dilepaskan",
+    "Reaksi (2) adalah polimerisasi kondensasi karena melepaskan H₂O",
+    "Reaksi (1) menghasilkan polietilena (PE)",
+    "Reaksi (1) adalah polimerisasi kondensasi karena melepaskan H₂O",
+    "Reaksi (2) adalah polimerisasi adisi karena menggunakan ikatan rangkap",
+    "Kedua reaksi menghasilkan polimer yang sama"
+  ],
+  ans: [0, 1, 2],
+  exp: "Reaksi (1) adisi: pembukaan ikatan rangkap, tanpa melepas molekul kecil (PE). Reaksi (2) kondensasi: gugus -NH₂ dan -COOH bereaksi melepas H₂O (nilon 6,6)."
+});
+
+// C3.2 - Analisis jenis polimer dari struktur
+QS.push({
+  id: 3002, topic: "polimer", type: "single", level: "c3",
+  stim: `
+    <div class="polymer-chain">
+      <span class="monomer-unit">CH₂<span class="sub">=</span>CH<span class="sub">Cl</span></span>
+      <span style="color:var(--accent);font-size:1.2rem;">→</span>
+      <span class="monomer-unit">[-CH₂-CHCl-]ₙ</span>
+    </div>
+    <div style="font-size:0.85rem;color:var(--muted);margin-top:0.5rem;">
+      <i class="fa-solid fa-info-circle"></i> Struktur monomer dan polimer yang terbentuk.
+    </div>
+  `,
+  q: "Polimer yang terbentuk dari monomer di atas adalah...",
+  opts: [
+    "Polietilena (PE)",
+    "Polivinilklorida (PVC)",
+    "Polipropilena (PP)",
+    "Polistirena (PS)",
+    "Teflon (PTFE)"
+  ],
+  ans: 1,
+  exp: "Monomer CH₂=CHCl adalah vinil klorida. Polimer yang terbentuk adalah PVC (polivinilklorida)."
+});
+
+// C3.3 - Analisis polimer alam vs sintetis
+QS.push({
+  id: 3003, topic: "polimer", type: "mcma", level: "c3",
+  stim: `
+    <div class="table-wrap">
+      <table class="soal-table">
+        <tr><th>No</th><th>Polimer</th><th>Monomer</th><th>Jenis</th></tr>
+        <tr><td>1</td><td>Selulosa</td><td>Glukosa</td><td>Alam</td></tr>
+        <tr><td>2</td><td>Polietilena</td><td>Etilena</td><td>Sintetis</td></tr>
+        <tr><td>3</td><td>Protein</td><td>Asam amino</td><td>Alam</td></tr>
+        <tr><td>4</td><td>Nilon 6,6</td><td>Asam adipat + heksametilendiamina</td><td>Sintetis</td></tr>
+        <tr><td>5</td><td>Karet alam</td><td>Isoprena</td><td>Alam</td></tr>
+      </table>
+    </div>
+  `,
+  q: "Analisis yang PALING TEPAT tentang tabel di atas adalah... (Pilih 3 jawaban benar)",
+  opts: [
+    "Polimer 1, 3, 5 adalah polimer alam yang dapat terurai secara alami (biodegradable)",
+    "Polimer 2 dan 4 adalah polimer sintetis yang umumnya sulit terurai",
+    "Polimer 2 (PE) terbentuk melalui reaksi adisi",
+    "Semua polimer dalam tabel adalah polimer adisi",
+    "Polimer 4 (nilon) terbentuk melalui reaksi adisi",
+    "Polimer 1 dan 2 memiliki monomer yang sama"
+  ],
+  ans: [0, 1, 2],
+  exp: "Polimer alam (1,3,5) biodegradable. Polimer sintetis (2,4) sulit terurai. PE = adisi, nilon = kondensasi. Polimer 1 (selulosa) dan 2 (PE) memiliki monomer berbeda."
+});
+
+// C3.4 - Analisis sifat termoplas vs termoset
+QS.push({
+  id: 3004, topic: "polimer", type: "mcma", level: "c3",
+  stim: `
+    <div class="table-wrap">
+      <table class="soal-table">
+        <tr><th>Sifat</th><th>Termoplas</th><th>Termoset</th></tr>
+        <tr><td>Pengaruh panas</td><td>Melunak</td><td>Tidak melunak</td></tr>
+        <tr><td>Ikatan antar rantai</td><td>Van der Waals</td><td>Ikatan silang kovalen</td></tr>
+        <tr><td>Dapat didaur ulang</td><td>Ya</td><td>Tidak</td></tr>
+        <tr><td>Contoh</td><td>PE, PP, PVC</td><td>Bakelit, melamin</td></tr>
+      </table>
+    </div>
+  `,
+  q: "Analisis yang PALING TEPAT tentang perbedaan termoplas dan termoset adalah... (Pilih 3 jawaban benar)",
+  opts: [
+    "Termoplas dapat didaur ulang karena ikatan antar rantainya lemah (Van der Waals)",
+    "Termoset tidak dapat didaur ulang karena memiliki ikatan silang kovalen yang kuat",
+    "Termoplas dapat melunak saat dipanaskan karena rantai dapat bergerak bebas",
+    "Termoset lebih mudah melunak saat dipanaskan daripada termoplas",
+    "Termoplas memiliki ikatan silang kovalen yang kuat",
+    "Kedua jenis polimer memiliki sifat yang sama"
+  ],
+  ans: [0, 1, 2],
+  exp: "Termoplas: ikatan antar rantai lemah (Van der Waals) → dapat melunak & didaur ulang. Termoset: ikatan silang kovalen kuat → tidak melunak & tidak dapat didaur ulang."
+});
+
+// C3.5 - Analisis dampak lingkungan
+QS.push({
+  id: 3005, topic: "polimer", type: "mcma", level: "c3",
+  stim: `
+    <div class="stim">
+      <p>Polimer sintetis seperti PE, PP, dan PET sangat sulit terurai di lingkungan. Diperlukan waktu ratusan tahun untuk terurai secara alami. Sampah plastik di laut dapat terpecah menjadi mikroplastik (< 5 mm) yang berbahaya bagi biota laut.</p>
+    </div>
+  `,
+  q: "Analisis yang PALING TEPAT tentang dampak polimer sintetis adalah... (Pilih 3 jawaban benar)",
+  opts: [
+    "Polimer sintetis sulit terurai karena ikatan kovalen C-C yang sangat kuat",
+    "Mikroplastik dapat masuk ke rantai makanan dan terakumulasi pada organisme",
+    "Polimer sintetis tidak dikenali oleh enzim mikroorganisme tanah",
+    "Polimer sintetis mudah terurai oleh mikroorganisme tanah",
+    "Mikroplastik tidak berbahaya karena ukurannya sangat kecil",
+    "Polimer sintetis dapat terurai dalam waktu 1-2 tahun"
+  ],
+  ans: [0, 1, 2],
+  exp: "Polimer sintetis sulit terurai karena ikatan C-C kuat dan tidak dikenali enzim mikroorganisme. Mikroplastik terakumulasi dalam rantai makanan (biomagnifikasi)."
+});
+
+// ================================================================
+// LEVEL C4 — Mengevaluasi (5 soal)
+// ================================================================
+
+// C4.1 - Evaluasi pemilihan polimer
+QS.push({
+  id: 4001, topic: "polimer", type: "mcma", level: "c4",
+  stim: `
+    <div class="table-wrap">
+      <table class="soal-table">
+        <tr><th>Polimer</th><th>Sifat Unggulan</th><th>Kelemahan</th><th>Harga</th></tr>
+        <tr><td>PE</td><td>Fleksibel, tahan air</td><td>Sulit terurai</td><td>Murah</td></tr>
+        <tr><td>PET</td><td>Kuat, transparan</td><td>Dapat melepas antimon</td><td>Sedang</td></tr>
+        <tr><td>PVC</td><td>Kuat, tahan api</td><td>Melepas dioksin jika dibakar</td><td>Murah</td></tr>
+        <tr><td>PLA (bioplastik)</td><td>Biodegradable</td><td>Mahal, titik leleh rendah</td><td>Mahal</td></tr>
+      </table>
+    </div>
+  `,
+  q: "Evaluasi yang PALING TEPAT untuk kemasan makanan ramah lingkungan adalah... (Pilih 3 jawaban benar)",
+  opts: [
+    "PLA (bioplastik) paling tepat karena dapat terurai secara alami",
+    "PET masih dapat digunakan tetapi perlu pengelolaan daur ulang yang baik",
+    "PLA memiliki kelemahan titik leleh rendah sehingga tidak cocok untuk makanan panas",
+    "PVC paling tepat karena murah dan kuat",
+    "PE paling tepat karena tahan air dan murah",
+    "Semua polimer sama baiknya untuk kemasan makanan"
+  ],
+  ans: [0, 1, 2],
+  exp: "PLA: biodegradable, cocok untuk kemasan ramah lingkungan (meski mahal & titik leleh rendah). PET: dapat didaur ulang jika dikelola baik. PVC berbahaya (dioksin). PE sulit terurai."
+});
+
+// C4.2 - Error analysis
+QS.push({
+  id: 4002, topic: "polimer", type: "single", level: "c4",
+  stim: `
+    <div class="stim">
+      <p>Seorang siswa menulis:</p>
+      <blockquote style="margin-left:1rem;border-left:3px solid var(--accent);padding-left:0.8rem;font-style:italic;color:var(--muted);">
+        "Semua polimer adalah plastik. Polimer selalu dibuat di pabrik dan tidak ada di alam. 
+        Semua polimer tidak dapat terurai di lingkungan."
+      </blockquote>
+    </div>
+  `,
+  q: "Kesalahan penalaran utama siswa tersebut terletak pada...",
+  opts: [
+    "Menganggap semua polimer adalah plastik, padahal polimer alam seperti selulosa, protein, dan DNA bukan plastik",
+    "Menganggap polimer dibuat di pabrik, padahal tidak ada polimer sintetis",
+    "Menganggap polimer tidak dapat terurai, padahal semua polimer mudah terurai",
+    "Menganggap plastik bukan polimer",
+    "Menganggap polimer hanya ada di alam"
+  ],
+  ans: 0,
+  exp: "Kesalahan: siswa menganggap semua polimer = plastik. Padahal polimer alam (selulosa, pati, protein, DNA) bukan plastik dan banyak ditemukan di alam. Beberapa polimer (alam) mudah terurai."
+});
+
+// C4.3 - Evaluasi daur ulang
+QS.push({
+  id: 4003, topic: "polimer", type: "mcma", level: "c4",
+  stim: `
+    <div class="stim">
+      <p>Kode daur ulang plastik:</p>
+      <ul style="margin-left:1.2rem;">
+        <li>PET (1): botol air minum</li>
+        <li>HDPE (2): botol detergen</li>
+        <li>PVC (3): pipa</li>
+        <li>LDPE (4): kantong plastik</li>
+        <li>PP (5): wadah makanan</li>
+        <li>PS (6): styrofoam</li>
+      </ul>
+    </div>
+  `,
+  q: "Evaluasi yang PALING TEPAT tentang daur ulang plastik adalah... (Pilih 3 jawaban benar)",
+  opts: [
+    "PET dan HDPE paling mudah didaur ulang dan paling banyak diterima di bank sampah",
+    "PVC dan PS sebaiknya dihindari karena sulit didaur ulang dan berpotensi melepas zat beracun",
+    "PP (kode 5) aman untuk wadah makanan karena tahan panas",
+    "Semua jenis plastik dapat didaur ulang dengan mudah",
+    "LDPE dan PP tidak dapat didaur ulang sama sekali",
+    "Kode daur ulang menunjukkan tingkat keamanan untuk makanan"
+  ],
+  ans: [0, 1, 2],
+  exp: "PET (1) dan HDPE (2) paling mudah didaur ulang. PVC (3) dan PS (6) sulit didaur ulang dan berbahaya. PP (5) aman untuk wadah makanan (tahan panas). LDPE dan PP masih dapat didaur ulang. Kode = jenis plastik, bukan tingkat keamanan."
+});
+
+// C4.4 - Nilai klaim bioplastik
+QS.push({
+  id: 4004, topic: "polimer", type: "single", level: "c4",
+  stim: `
+    <div class="stim">
+      <p>Dua siswa berdebat tentang bioplastik:</p>
+      <ul style="margin-left:1.2rem;">
+        <li><strong>Siswa A:</strong> "Bioplastik selalu dapat terurai di lingkungan apa pun, jadi aman dibuang sembarangan."</li>
+        <li><strong>Siswa B:</strong> "Bioplastik hanya terurai optimal di kondisi kompos tertentu (suhu, kelembapan, mikroorganisme), jadi tetap perlu pengelolaan."</li>
+      </ul>
+    </div>
+  `,
+  q: "Penilaian yang PALING TEPAT terhadap kedua argumen adalah...",
+  opts: [
+    "Siswa B benar karena bioplastik PLA memerlukan kondisi kompos industri untuk terurai optimal",
+    "Siswa A benar karena semua bioplastik terurai di lingkungan apa pun",
+    "Kedua siswa benar karena bioplastik selalu aman",
+    "Kedua siswa salah karena bioplastik tidak dapat terurai",
+    "Tidak dapat dinilai tanpa data kuantitatif"
+  ],
+  ans: 0,
+  exp: "Siswa B benar. Bioplastik seperti PLA memerlukan kondisi kompos industri (suhu 50-60°C, kelembapan tinggi, mikroorganisme spesifik) untuk terurai optimal. Di laut atau TPA biasa, PLA bisa bertahan lama."
+});
+
+// C4.5 - Evaluasi struktur polimer
+QS.push({
+  id: 4005, topic: "polimer", type: "mcma", level: "c4",
+  stim: `
+    <div class="figure-wrap">
+      <svg width="400" height="200" viewBox="0 0 400 200">
+        <text x="40" y="25" fill="#d4a04a" font-size="10" font-weight="bold">Linear</text>
+        <line x1="30" y1="50" x2="130" y2="50" stroke="#34d399" stroke-width="3"/>
+        <line x1="30" y1="70" x2="130" y2="70" stroke="#34d399" stroke-width="3"/>
+        <text x="40" y="90" fill="#8fa89e" font-size="8">Kuat, fleksibel</text>
+        <text x="180" y="25" fill="#d4a04a" font-size="10" font-weight="bold">Bercabang</text>
+        <line x1="170" y1="50" x2="270" y2="50" stroke="#60a5fa" stroke-width="3"/>
+        <line x1="200" y1="50" x2="200" y2="75" stroke="#60a5fa" stroke-width="3"/>
+        <line x1="240" y1="50" x2="240" y2="75" stroke="#60a5fa" stroke-width="3"/>
+        <text x="180" y="95" fill="#8fa89e" font-size="8">Kurang rapat</text>
+        <text x="40" y="130" fill="#d4a04a" font-size="10" font-weight="bold">Ikatan Silang</text>
+        <line x1="30" y1="155" x2="130" y2="155" stroke="#f87171" stroke-width="3"/>
+        <line x1="30" y1="175" x2="130" y2="175" stroke="#f87171" stroke-width="3"/>
+        <line x1="60" y1="155" x2="60" y2="175" stroke="#f87171" stroke-width="2"/>
+        <line x1="100" y1="155" x2="100" y2="175" stroke="#f87171" stroke-width="2"/>
+        <text x="40" y="195" fill="#8fa89e" font-size="8">Kaku, kuat</text>
+      </svg>
+      <div class="figure-caption">Struktur polimer: linear, bercabang, dan ikatan silang</div>
+    </div>
+  `,
+  q: "Evaluasi yang PALING TEPAT tentang hubungan struktur dan sifat polimer adalah... (Pilih 3 jawaban benar)",
+  opts: [
+    "Polimer linear umumnya lebih kuat dan fleksibel karena rantai tersusun rapat",
+    "Polimer dengan ikatan silang lebih kaku dan kuat karena rantai terhubung kovalen",
+    "Polimer dengan ikatan silang tidak dapat melunak saat dipanaskan (termoset)",
+    "Polimer bercabang lebih rapat dari polimer linear",
+    "Ikatan silang membuat polimer lebih mudah melunak saat dipanaskan",
+    "Struktur polimer tidak mempengaruhi sifatnya"
+  ],
+  ans: [0, 1, 2],
+  exp: "Linear: rantai rapat → kuat, fleksibel. Ikatan silang: kovalen antar rantai → kaku, kuat, tidak melunak (termoset). Bercabang: kurang rapat."
+});
+
+// ================================================================
+// LEVEL C5 — Mencipta (3 soal)
+// ================================================================
+
+// C5.1 - Rancang polimer untuk aplikasi tertentu
+QS.push({
+  id: 5001, topic: "polimer", type: "mcma", level: "c5",
+  stim: `
+    <div class="stim">
+      <p>Sebuah perusahaan ingin merancang polimer untuk <strong>pipa air panas</strong> (suhu 80-100°C). Kriteria:</p>
+      <ul style="margin-left:1.2rem;">
+        <li>Tahan panas tinggi</li>
+        <li>Kuat dan tidak mudah retak</li>
+        <li>Tidak bereaksi dengan air</li>
+      </ul>
+    </div>
+  `,
+  q: "Rancangan polimer yang PALING TEPAT adalah... (Pilih 3 jawaban benar)",
+  opts: [
+    "Gunakan polimer termoset seperti resin epoksi karena ikatan silangnya kuat dan tahan panas",
+    "Gunakan PEX (polietilena ikatan silang) yang tahan panas hingga 90°C",
+    "Gunakan polimer termoset karena tidak melunak saat dipanaskan",
+    "Gunakan PVC karena paling murah dan tahan air",
+    "Gunakan PE biasa karena mudah dibentuk",
+    "Gunakan PLA karena biodegradable"
+  ],
+  ans: [0, 1, 2],
+  exp: "Termoset (epoksi) tahan panas karena ikatan silang. PEX (PE ikatan silang) tahan panas hingga 90°C. Termoset tidak melunak saat dipanaskan. PVC tidak tahan panas tinggi. PE biasa melunak pada suhu tinggi. PLA titik leleh rendah."
+});
+
+// C5.2 - Rancang solusi limbah plastik
+QS.push({
+  id: 5002, topic: "polimer", type: "mcma", level: "c5",
+  stim: `
+    <div class="stim">
+      <p>Sebuah kota menghasilkan 100 ton sampah plastik per hari dengan komposisi:</p>
+      <ul style="margin-left:1.2rem;">
+        <li>PET (botol): 40%</li>
+        <li>LDPE (kantong): 30%</li>
+        <li>PS (styrofoam): 20%</li>
+        <li>PVC: 10%</li>
+      </ul>
+    </div>
+  `,
+  q: "Rancangan solusi pengelolaan yang PALING TEPAT adalah... (Pilih 3 jawaban benar)",
+  opts: [
+    "Daur ulang PET menjadi serat tekstil atau botol baru",
+    "Olah LDPE menjadi bahan bakar cair (pirolisis) atau paving block",
+    "Hindari pembakaran PVC karena menghasilkan dioksin",
+    "Bakar semua plastik untuk menghasilkan listrik",
+    "Buang styrofoam ke laut karena akan terurai",
+    "Campur semua plastik dan jadikan satu produk"
+  ],
+  ans: [0, 1, 2],
+  exp: "PET didaur ulang. LDPE dipirolisis atau dijadikan paving. PVC jangan dibakar (dioksin). Bakar semua = salah (PVC beracun). Styrofoam di laut = mikroplastik. Campur semua = tidak efisien."
+});
+
+// C5.3 - Rancang bioplastik
+QS.push({
+  id: 5003, topic: "polimer", type: "mcma", level: "c5",
+  stim: `
+    <div class="stim">
+      <p>Seorang peneliti ingin membuat bioplastik dari bahan alami. Kriteria:</p>
+      <ul style="margin-left:1.2rem;">
+        <li>Bahan baku terbarukan</li>
+        <li>Dapat terurai secara alami</li>
+        <li>Kuat dan tahan air (untuk kemasan)</li>
+      </ul>
+    </div>
+  `,
+  q: "Rancangan bioplastik yang PALING TEPAT adalah... (Pilih 3 jawaban benar)",
+  opts: [
+    "PLA dari pati jagung/singkong yang dapat terurai",
+    "PHA (polihidroksialkanoat) dari bakteri yang biodegradable",
+    "Campuran PLA dengan pati termoplastik untuk meningkatkan kekuatan",
+    "PET dari minyak bumi (termasuk bioplastik)",
+    "PVC dari garam (termasuk bioplastik)",
+    "Nilon dari minyak bumi (termasuk bioplastik)"
+  ],
+  ans: [0, 1, 2],
+  exp: "PLA dari pati (jagung/singkong) = bioplastik. PHA dari bakteri = bioplastik. Campuran PLA + pati termoplastik untuk meningkatkan sifat mekanik. PET, PVC, nilon dari minyak bumi = BUKAN bioplastik."
+});
+
+// ================================================================
+// LEVEL C6 — Menilai (3 soal)
+// ================================================================
+
+// C6.1 - Nilai klaim greenwashing
+QS.push({
+  id: 6001, topic: "polimer", type: "mcma", level: "c6",
+  stim: `
+    <div class="stim">
+      <p>Sebuah perusahaan mengklaim produknya "100% biodegradable" karena:</p>
+      <ul style="margin-left:1.2rem;">
+        <li>Mengandung 10% pati</li>
+        <li>Warna kemasan hijau</li>
+        <li>Tidak ada sertifikasi independen</li>
+      </ul>
+    </div>
+  `,
+  q: "Penilaian yang PALING TEPAT tentang klaim tersebut adalah... (Pilih 3 jawaban benar)",
+  opts: [
+    "Klaim tersebut termasuk greenwashing karena tidak didukung data ilmiah",
+    "Klaim '100% biodegradable' harus dibuktikan dengan sertifikasi (misalnya OK Compost, BPI)",
+    "Sertifikasi independen diperlukan untuk memverifikasi klaim lingkungan",
+    "Warna hijau dan 10% pati sudah cukup untuk klaim biodegradable",
+    "Semua klaim perusahaan tentang lingkungan selalu benar",
+    "Kata 'biodegradable' tidak perlu sertifikasi"
+  ],
+  ans: [0, 1, 2],
+  exp: "Klaim tanpa data = greenwashing. Klaim biodegradable memerlukan sertifikasi independen (OK Compost, BPI, dll). Warna hijau & 10% pati tidak cukup."
+});
+
+// C6.2 - Nilai kebijakan plastik
+QS.push({
+  id: 6002, topic: "polimer", type: "mcma", level: "c6",
+  stim: `
+    <div class="stim">
+      <p>Pemerintah mengeluarkan kebijakan:</p>
+      <ol style="margin-left:1.2rem;">
+        <li>Larangan kantong plastik sekali pakai</li>
+        <li>Pajak untuk produk plastik kemasan</li>
+        <li>Subsidi untuk produsen bioplastik</li>
+        <li>Pembangunan PLTU untuk mendaur ulang plastik menjadi listrik</li>
+      </ol>
+    </div>
+  `,
+  q: "Penilaian yang PALING TEPAT tentang kebijakan tersebut adalah... (Pilih 3 jawaban benar)",
+  opts: [
+    "Kebijakan 1, 2, dan 3 konsisten dengan pengurangan limbah plastik",
+    "Kebijakan 4 (PLTU) berpotensi menghasilkan emisi dan dioksin jika membakar PVC",
+    "Kebijakan 4 sebaiknya diganti dengan daur ulang mekanik atau kimia",
+    "Semua kebijakan konsisten dengan pengurangan limbah",
+    "Kebijakan 3 (subsidi bioplastik) tidak perlu karena bioplastik sudah murah",
+    "Kebijakan 1, 2, 3, dan 4 sama-sama ramah lingkungan"
+  ],
+  ans: [0, 1, 2],
+  exp: "Kebijakan 1, 2, 3 mengurangi limbah plastik. Kebijakan 4 (PLTU) berisiko emisi & dioksin. Sebaiknya diganti dengan daur ulang mekanik/kimia. Bioplastik masih mahal."
+});
+
+// C6.3 - Nilai klaim industri
+QS.push({
+  id: 6003, topic: "polimer", type: "single", level: "c6",
+  stim: `
+    <div class="stim">
+      <p>Tiga siswa berdebat tentang solusi terbaik untuk masalah sampah plastik:</p>
+      <ul style="margin-left:1.2rem;">
+        <li><strong>Siswa A:</strong> "Daur ulang adalah solusi terbaik karena mengurangi sampah dan menghemat sumber daya."</li>
+        <li><strong>Siswa B:</strong> "Mengurangi penggunaan plastik (reduce) lebih baik karena daur ulang hanya menunda masalah."</li>
+        <li><strong>Siswa C:</strong> "Membakar plastik adalah solusi terbaik karena menghasilkan energi."</li>
+      </ul>
+    </div>
+  `,
+  q: "Penilaian yang PALING TEPAT terhadap ketiga argumen adalah...",
+  opts: [
+    "Siswa A dan B sama-sama benar; keduanya diperlukan (reduce + recycle), sedangkan C salah karena membakar PVC beracun",
+    "Siswa C benar karena pembakaran plastik menghasilkan energi",
+    "Siswa A benar dan B salah karena daur ulang selalu lebih baik",
+    "Siswa B benar dan A salah karena daur ulang tidak berguna",
+    "Ketiga siswa salah karena tidak ada solusi untuk sampah plastik"
+  ],
+  ans: 0,
+  exp: "A benar (daur ulang mengurangi sampah). B benar (reduce lebih preventif). C salah: membakar PVC menghasilkan dioksin; membakar plastik lain menghasilkan CO₂. Solusi terbaik = kombinasi reduce + reuse + recycle."
+});
+
+// ================================================================
+// STATE MANAGEMENT
+// ================================================================
+var S = {
+  view: "home", qids: [], qi: 0, ans: {}, mode: "topic",
+  ri: 0, rqs: [], wrong: [], done: {}, scores: {}, filter: "all"
+};
+
+function load() {
+  try {
+    var d = JSON.parse(localStorage.getItem("tka_kim_polimer"));
+    if (d) {
+      S.done = {};
+      (d.done || []).forEach(function(x) { S.done[x] = true; });
+      S.wrong = d.wrong || [];
+      S.scores = d.scores || {};
+    }
+  } catch(e) {}
+}
+function save() {
+  try {
+    localStorage.setItem("tka_kim_polimer", JSON.stringify({
+      done: Object.keys(S.done), wrong: S.wrong, scores: S.scores
+    }));
+  } catch(e) {}
+}
+load();
+
+function go(v) {
+  var names = {home:"vHome", quiz:"vQuiz", res:"vRes", rev:"vRev"};
+  document.querySelectorAll(".view").forEach(function(el) { el.classList.remove("active"); });
+  var el = document.getElementById(names[v]);
+  if (el) el.classList.add("active");
+  S.view = v;
+  window.scrollTo(0, 0);
+  if (v === "home") renderHome();
+}
+
+function renderHome() {
+  document.getElementById("bWR").style.display = S.wrong.length > 0 ? "flex" : "none";
+  updateNS();
+  renderList();
+}
+
+function updateNS() {
+  var tc = 0, cc = 0;
+  for (var k in S.scores) { tc += S.scores[k].t; cc += S.scores[k].c; }
+  document.getElementById("nst").textContent = tc > 0 ? cc + "/" + tc : "0/0";
+}
+
+function getLevelBadge(level) {
+  var labels = {c2:"C2", c3:"C3", c4:"C4", c5:"C5", c6:"C6"};
+  var colors = {c2:"#34d399", c3:"#fbbf24", c4:"#f97316", c5:"#ef4444", c6:"#8b5cf6"};
+  var bgColors = {
+    c2:"rgba(52,211,153,0.15)", c3:"rgba(251,191,36,0.15)",
+    c4:"rgba(249,115,22,0.15)", c5:"rgba(239,68,68,0.15)",
+    c6:"rgba(139,92,246,0.15)"
+  };
+  return '<span class="badge" style="background:' + bgColors[level] + ';color:' + colors[level] + ';font-size:0.65rem;">' + labels[level] + '</span>';
+}
+
+function renderList() {
+  var list = document.getElementById("qList");
+  list.innerHTML = "";
+  var filtered = QS.filter(function(q) {
+    if (S.filter === "all") return true;
+    return q.level === S.filter;
+  });
+  filtered.forEach(function(q, i) {
+    var answered = S.done[q.id];
+    var wasWrong = S.wrong.indexOf(q.id) >= 0;
+    var tl = q.type === "mcma" ? "MCMA" : "Pilihan Ganda";
+    var levelLabel = q.level ? getLevelBadge(q.level) : "";
+
+    var d = document.createElement("div");
+    d.className = "glow-card";
+    d.style.cursor = "pointer";
+    d.onclick = function() { singleQ(q.id); };
+    d.innerHTML =
+      '<div class="w-9 h-9 rounded-lg flex items-center justify-center text-sm font-bold flex-shrink-0" style="background:' +
+        (answered ? (wasWrong ? 'rgba(248,113,113,.12);color:var(--error)' : 'rgba(52,211,153,.12);color:var(--success)') : 'var(--bg2);color:var(--muted)') +
+      '">' + (answered ? (wasWrong ? '<i class="fa-solid fa-xmark"></i>' : '<i class="fa-solid fa-check"></i>') : (i + 1)) + '</div>' +
+      '<div class="flex-1 min-w-0">' +
+        '<div class="text-sm font-semibold mb-0.5 truncate" style="color:var(--text)">' + plain(q.q).substring(0, 75) + (q.q.length > 75 ? '...' : '') + '</div>' +
+        '<div class="flex items-center gap-2 flex-wrap">' +
+          '<span class="badge" style="background:var(--bg2);color:var(--muted);font-size:.68rem">' + tl + '</span>' +
+          levelLabel +
+        '</div>' +
+      '</div>' +
+      '<i class="fa-solid fa-chevron-right text-xs" style="color:var(--border)"></i>';
+    list.appendChild(d);
+  });
+}
+
+function filterLevel(level) {
+  S.filter = level;
+  document.querySelectorAll('[id^="filter"]').forEach(function(el) {
+    el.style.background = "transparent";
+  });
+  var btn = document.getElementById("filter" + level.toUpperCase());
+  if (btn) btn.style.background = "rgba(212,160,74,.15)";
+  renderList();
+}
+
+function plain(html) {
+  var d = document.createElement("div");
+  d.innerHTML = html;
+  return d.textContent || "";
+}
+
+function startQuiz() {
+  S.qids = QS.map(function(q) { return q.id; });
+  S.ans = {}; S.qi = 0; S.mode = "topic";
+  go("quiz"); renderQ();
+}
+function startRandom() {
+  var sh = QS.slice().sort(function() { return Math.random() - 0.5; }).slice(0, 10);
+  S.qids = sh.map(function(q) { return q.id; });
+  S.ans = {}; S.qi = 0; S.mode = "random";
+  go("quiz"); renderQ();
+}
+function startWrong() {
+  var wq = QS.filter(function(q) { return S.wrong.indexOf(q.id) >= 0; });
+  if (wq.length === 0) return;
+  S.qids = wq.map(function(q) { return q.id; });
+  S.ans = {}; S.qi = 0; S.mode = "wrong";
+  go("quiz"); renderQ();
+}
+function singleQ(qid) {
+  S.qids = [qid]; S.ans = {}; S.qi = 0; S.mode = "single";
+  go("quiz"); renderQ();
+}
+
+function renderQ() {
+  var qid = S.qids[S.qi];
+  var q = QS.find(function(x) { return x.id === qid; });
+  if (!q) return;
+  var total = S.qids.length;
+  var idx = S.qi + 1;
+  var pct = Math.round(idx / total * 100);
+
+  document.getElementById("qCtr").textContent = idx + " / " + total;
+  document.getElementById("qBar").style.width = pct + "%";
+  var tl = {single: "Pilihan Ganda", mcma: "MCMA"};
+  document.getElementById("qTyp").textContent = tl[q.type] || q.type;
+  var levelLabels = {c2:"C2 - Pemahaman", c3:"C3 - Menganalisis", c4:"C4 - Mengevaluasi", c5:"C5 - Mencipta", c6:"C6 - Menilai"};
+  document.getElementById("qLevel").textContent = q.level ? levelLabels[q.level] : "";
+  document.getElementById("bPrv").style.visibility = S.qi > 0 ? "visible" : "hidden";
+  var isLast = S.qi === total - 1;
+  document.getElementById("bNxt").innerHTML = isLast ? "Selesai <i class='fa-solid fa-check ml-1'></i>" : "Selanjutnya <i class='fa-solid fa-chevron-right ml-1'></i>";
+
+  var h = "";
+  if (q.stim) h += '<div class="stim">' + q.stim + '</div>';
+  h += '<h3 class="font-bold text-base mb-4 leading-relaxed" style="color:var(--text)">' + q.q + '</h3>';
+
+  if (q.type === "single") {
+    var letters = "ABCDE";
+    h += '<div class="space-y-2.5">';
+    q.opts.forEach(function(opt, i) {
+      var sel = S.ans[qid] === i;
+      h += '<button class="ob' + (sel ? ' sel' : '') + '" onclick="selS(' + qid + ',' + i + ')">' +
+        '<span class="w-7 h-7 min-w-[1.75rem] rounded-full border-2 flex items-center justify-center text-xs font-bold flex-shrink-0" style="border-color:' + (sel ? 'var(--accent)' : 'var(--border)') + ';color:' + (sel ? 'var(--accent)' : 'var(--muted)') + '">' + letters[i] + '</span>' +
+        '<span class="text-sm">' + opt + '</span></button>';
+    });
+    h += '</div>';
+  } else if (q.type === "mcma") {
+    var ua = S.ans[qid] || [];
+    h += '<div class="space-y-2.5">';
+    q.opts.forEach(function(opt, i) {
+      var sel = ua.indexOf(i) >= 0;
+      h += '<button class="ob' + (sel ? ' sel' : '') + '" onclick="togM(' + qid + ',' + i + ')">' +
+        '<div class="ck">' + (sel ? '<i class="fa-solid fa-check text-xs" style="color:#0b1a17"></i>' : '') + '</div>' +
+        '<span class="text-sm">' + opt + '</span></button>';
+    });
+    h += '</div>';
+    h += '<p class="text-xs mt-2.5" style="color:var(--muted)"><i class="fa-solid fa-circle-info mr-1"></i>Pilih SEMUA jawaban yang benar</p>';
+  }
+  document.getElementById("qArea").innerHTML = h;
+}
+
+function selS(qid, i) { S.ans[qid] = i; renderQ(); }
+function togM(qid, i) {
+  if (!S.ans[qid]) S.ans[qid] = [];
+  var arr = S.ans[qid];
+  var idx = arr.indexOf(i);
+  if (idx >= 0) arr.splice(idx, 1); else arr.push(i);
+  renderQ();
+}
+
+function qNext() {
+  if (S.qi === S.qids.length - 1) { finishQ(); return; }
+  S.qi++; renderQ(); window.scrollTo(0, 0);
+}
+function qPrev() {
+  if (S.qi > 0) { S.qi--; renderQ(); window.scrollTo(0, 0); }
+}
+
+function finishQ() {
+  var correct = 0, wrong = 0;
+  var ts = {};
+  S.qids.forEach(function(qid) {
+    var q = QS.find(function(x) { return x.id === qid; });
+    if (!q) return;
+    var ua = S.ans[qid];
+    var ok = false;
+    if (q.type === "single") ok = ua === q.ans;
+    else if (q.type === "mcma") {
+      var u = (ua || []).slice().sort().join(",");
+      var c = q.ans.slice().sort().join(",");
+      ok = u === c;
+    }
+    S.done[qid] = true;
+    if (ok) correct++; else { wrong++; S.wrong.push(qid); }
+    if (!ts[q.topic]) ts[q.topic] = {c:0, t:0};
+    ts[q.topic].t++;
+    if (ok) ts[q.topic].c++;
+  });
+  S.wrong = uniq(S.wrong);
+  for (var k in ts) {
+    if (!S.scores[k]) S.scores[k] = {c:0, t:0};
+    S.scores[k].c += ts[k].c;
+    S.scores[k].t += ts[k].t;
+  }
+  save();
+
+  var total = correct + wrong;
+  var pct = total > 0 ? Math.round(correct / total * 100) : 0;
+  document.getElementById("rPct").textContent = pct + "%";
+  document.getElementById("rOk").textContent = correct;
+  document.getElementById("rNo").textContent = wrong;
+  document.getElementById("rTot").textContent = total;
+
+  var circ = 2 * Math.PI * 55;
+  var ring = document.getElementById("rRing");
+  ring.style.strokeDasharray = circ;
+  ring.style.strokeDashoffset = circ - (circ * pct / 100);
+  ring.style.stroke = pct >= 70 ? "var(--success)" : pct >= 40 ? "var(--accent)" : "var(--error)";
+
+  var lbl = pct >= 90 ? "Luar Biasa!" : pct >= 70 ? "Bagus Sekali!" : pct >= 50 ? "Cukup Baik" : "Perlu Belajar Lagi";
+  document.getElementById("rLbl").textContent = lbl;
+  document.getElementById("bRW").style.display = wrong > 0 ? "inline-flex" : "none";
+  go("res");
+}
+
+function uniq(arr) {
+  var seen = {}, out = [];
+  arr.forEach(function(x) { if (!seen[x]) { seen[x] = true; out.push(x); } });
+  return out;
+}
+
+function retryQ() {
+  if (S.mode === "topic") startQuiz();
+  else if (S.mode === "random") startRandom();
+  else if (S.mode === "wrong") startWrong();
+  else if (S.mode === "single") singleQ(S.qids[0]);
+}
+
+function revWrong() {
+  var wqs = S.qids.filter(function(qid) { return S.wrong.indexOf(qid) >= 0; });
+  if (wqs.length === 0) { toast("Tidak ada jawaban salah", "var(--success)"); return; }
+  S.rqs = wqs.map(function(qid) { return QS.find(function(x) { return x.id === qid; }); }).filter(Boolean);
+  S.ri = 0;
+  go("rev"); renderRev();
+}
+
+function renderRev() {
+  var q = S.rqs[S.ri];
+  if (!q) return;
+  var total = S.rqs.length;
+  document.getElementById("rvPr").style.visibility = S.ri > 0 ? "visible" : "hidden";
+  document.getElementById("rvNx").innerHTML = S.ri === total - 1 ? "Kembali <i class='fa-solid fa-check ml-1'></i>" : "Selanjutnya <i class='fa-solid fa-chevron-right ml-1'></i>";
+
+  var ua = S.ans[q.id];
+  var ok = false;
+  if (q.type === "single") ok = ua === q.ans;
+  else if (q.type === "mcma") {
+    var u = (ua || []).slice().sort().join(",");
+    ok = u === q.ans.slice().sort().join(",");
+  }
+
+  var letters = "ABCDE";
+  var h = '<div class="text-xs mb-2 font-semibold" style="color:var(--muted)">Soal ' + (S.ri + 1) + " / " + total + '</div>';
+  if (q.stim) h += '<div class="stim">' + q.stim + '</div>';
+  h += '<h3 class="font-bold text-sm mb-4 leading-relaxed">' + q.q + '</h3>';
+  h += '<div class="space-y-2.5">';
+
+  if (q.type === "single") {
+    q.opts.forEach(function(opt, i) {
+      var cls = "off";
+      if (i === q.ans) cls += " ok";
+      else if (ua === i && i !== q.ans) cls += " no";
+      h += '<button class="ob ' + cls + '">' +
+        '<span class="w-7 h-7 min-w-[1.75rem] rounded-full border-2 flex items-center justify-center text-xs font-bold flex-shrink-0" style="border-color:' + (i === q.ans ? "var(--success)" : ua === i ? "var(--error)" : "var(--border)") + ';color:' + (i === q.ans ? "var(--success)" : ua === i ? "var(--error)" : "var(--muted)") + '">' + letters[i] + '</span>' +
+        '<span class="text-sm">' + opt + '</span>' +
+        (i === q.ans ? '<i class="fa-solid fa-circle-check ml-auto" style="color:var(--success)"></i>' : '') +
+        (ua === i && i !== q.ans ? '<i class="fa-solid fa-circle-xmark ml-auto" style="color:var(--error)"></i>' : '') +
+      '</button>';
+    });
+  } else if (q.type === "mcma") {
+    q.opts.forEach(function(opt, i) {
+      var isUA = (ua || []).indexOf(i) >= 0;
+      var isCA = q.ans.indexOf(i) >= 0;
+      var cls = "off";
+      if (isCA) cls += " ok";
+      else if (isUA && !isCA) cls += " no";
+      h += '<button class="ob ' + cls + '">' +
+        '<div class="ck">' + (isCA ? '<i class="fa-solid fa-check text-xs" style="color:#0b1a17"></i>' : isUA ? '<i class="fa-solid fa-xmark text-xs" style="color:#fff"></i>' : '') + '</div>' +
+        '<span class="text-sm">' + opt + '</span></button>';
+    });
+  }
+  h += '</div>';
+  h += '<div class="expbox ' + (ok ? 'good' : 'bad') + '">' +
+    '<div class="flex items-center gap-2 mb-1.5 font-bold text-sm">' +
+      '<i class="fa-solid ' + (ok ? 'fa-circle-check' : 'fa-circle-xmark') + '" style="color:' + (ok ? 'var(--success)' : 'var(--error)') + '"></i>' +
+      (ok ? 'Jawaban Benar' : 'Jawaban Salah') +
+    '</div>' +
+    '<p style="color:var(--text);line-height:1.6;font-size:0.9rem;">' + q.exp + '</p>' +
+  '</div>';
+
+  document.getElementById("revA").innerHTML = h;
+  window.scrollTo(0, 0);
+}
+
+function rvNav(dir) {
+  if (dir === 1 && S.ri === S.rqs.length - 1) { backRev(); return; }
+  S.ri = Math.max(0, Math.min(S.rqs.length - 1, S.ri + dir));
+  renderRev();
+}
+function backRev() {
+  if (S.mode === "single") go("home");
+  else go("res");
+}
+
+function openExit() { document.getElementById("exMod").classList.add("open"); }
+function closeMod() { document.getElementById("exMod").classList.remove("open"); }
+function doExit() { closeMod(); go("home"); }
+
+function resetAll() {
+  S.done = {}; S.wrong = []; S.scores = {};
+  save(); renderHome(); toast("Progress berhasil direset", "var(--success)");
+}
+function toast(msg, bg) {
+  var t = document.getElementById("toast");
+  t.style.display = "block";
+  t.style.background = bg || "var(--card)";
+  t.style.color = "#fff";
+  t.textContent = msg;
+  setTimeout(function() { t.style.display = "none"; }, 2200);
+}
+
+renderHome();
+console.log("Polimer - HOTS C2-C6 (FINAL) loaded: " + QS.length + " soal");
+</script>
+</body>
+</html>

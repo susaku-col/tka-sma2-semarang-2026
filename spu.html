@@ -1,0 +1,1303 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sistem Periodik Unsur — TKA Kimia</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Sans+3:ital,wght@0,300;0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+    :root {
+        --bg: #0b1a17;
+        --bg2: #132a24;
+        --card: #1a3a32;
+        --card2: #1e4a3f;
+        --text: #e8f0ec;
+        --muted: #8aa8a0;
+        --border: #2a4a42;
+        --accent: #d4a04a;
+        --success: #34d399;
+        --error: #f87171;
+        --glow: rgba(212, 160, 74, 0.15);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+        font-family: 'Source Sans 3', sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        min-height: 100vh;
+        padding-top: 52px;
+    }
+    .fd { font-family: 'Playfair Display', serif; }
+    .bg-noise {
+        position: fixed; top:0; left:0; right:0; bottom:0;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+        pointer-events: none; z-index: 0;
+    }
+    .hg {
+        position: absolute; width:300px; height:300px;
+        border-radius: 50%; filter: blur(100px);
+        opacity: 0.15; pointer-events: none;
+    }
+    .badge {
+        display: inline-flex; align-items: center; gap: 6px;
+        padding: 4px 14px; border-radius: 100px;
+        font-size: 0.75rem; font-weight: 600;
+        background: rgba(212,160,74,0.12); color: var(--accent);
+    }
+    .glow-card {
+        background: var(--card); border: 1px solid var(--border);
+        border-radius: 12px; padding: 16px 18px; cursor: pointer;
+        transition: all 0.25s ease; display: flex; align-items: center;
+        gap: 12px; text-decoration: none; color: inherit;
+    }
+    .glow-card:hover {
+        border-color: var(--accent); background: var(--card2);
+        box-shadow: 0 0 20px var(--glow);
+    }
+    .bp {
+        background: var(--accent); color: #0b1a17; border: none;
+        padding: 8px 18px; border-radius: 30px; font-weight: 700;
+        font-size: 0.85rem; cursor: pointer; transition: all 0.25s ease;
+        display: inline-flex; align-items: center; gap: 6px;
+    }
+    .bp:hover { background: #e8b84a; transform: scale(1.02); }
+    .bs {
+        background: transparent; color: var(--text);
+        border: 1px solid var(--border); padding: 8px 18px;
+        border-radius: 30px; font-weight: 600; font-size: 0.85rem;
+        cursor: pointer; transition: all 0.25s ease;
+        display: inline-flex; align-items: center; gap: 6px;
+    }
+    .bs:hover { border-color: var(--accent); background: var(--card2); }
+    .view { display: none; }
+    .view.active { display: block; }
+    .stim {
+        background: var(--bg2); padding: 12px 16px;
+        border-radius: 8px; border-left: 3px solid var(--accent);
+        margin-bottom: 12px; font-size: 0.9rem;
+        line-height: 1.6; color: var(--muted);
+    }
+    .table-wrap {
+        overflow-x: auto; margin: 8px 0;
+        border-radius: 8px; border: 1px solid var(--border);
+    }
+    table.soal-table {
+        width: 100%; border-collapse: collapse;
+        font-size: 0.8rem; background: var(--bg2);
+    }
+    table.soal-table th {
+        background: var(--card); color: var(--accent);
+        font-weight: 600; padding: 6px 10px;
+        border: 1px solid var(--border); text-align: center;
+    }
+    table.soal-table td {
+        padding: 6px 10px; border: 1px solid var(--border);
+        text-align: center; color: var(--text);
+    }
+    table.soal-table tr:hover { background: rgba(212,160,74,0.05); }
+    .figure-wrap {
+        display: flex; flex-direction: column; align-items: center;
+        margin: 8px 0; padding: 10px; background: var(--bg2);
+        border-radius: 8px; border: 1px solid var(--border);
+    }
+    .figure-wrap svg { max-width: 100%; height: auto; }
+    .figure-caption {
+        font-size: 0.7rem; color: var(--muted);
+        margin-top: 4px; text-align: center;
+    }
+    .space-y-2\.5 > * + * { margin-top: 8px; }
+    .ob {
+        display: flex; align-items: center; gap: 10px;
+        width: 100%; padding: 8px 14px; border-radius: 8px;
+        border: 1px solid var(--border); background: var(--bg2);
+        color: var(--text); cursor: pointer; transition: all 0.2s ease;
+        font-size: 0.9rem; text-align: left;
+    }
+    .ob:hover { border-color: var(--muted); }
+    .ob.sel { border-color: var(--accent); background: rgba(212,160,74,0.1); }
+    .ob .ck {
+        width: 20px; height: 20px; min-width: 20px;
+        border-radius: 4px; border: 2px solid var(--border);
+        display: flex; align-items: center; justify-content: center;
+        font-size: 0.7rem; background: var(--bg);
+    }
+    .ob.sel .ck { border-color: var(--accent); background: var(--accent); }
+    .ob.ok .ck { border-color: var(--success); background: var(--success); }
+    .ob.no .ck { border-color: var(--error); background: var(--error); }
+    .modal-bg {
+        display: none; position: fixed; inset: 0;
+        background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
+        z-index: 50; justify-content: center; align-items: center;
+        padding: 20px;
+    }
+    .modal-bg.open { display: flex; }
+    .toast {
+        position: fixed; bottom: 30px; left: 50%;
+        transform: translateX(-50%); padding: 12px 28px;
+        border-radius: 12px; font-weight: 600; z-index: 100;
+        background: var(--card); border: 1px solid var(--border);
+        color: var(--text); max-width: 90%; text-align: center;
+    }
+    .hots-badge {
+        display: inline-block; padding: 0.15rem 0.5rem;
+        border-radius: 999px; font-size: 0.6rem;
+        font-weight: 700; margin-left: 0.5rem;
+    }
+    .hots-c3 { background: rgba(251,191,36,0.2); color: #fbbf24; }
+    .hots-c4 { background: rgba(249,115,22,0.2); color: #f97316; }
+    .hots-c5 { background: rgba(239,68,68,0.2); color: #ef4444; }
+    .hots-c6 { background: rgba(139,92,246,0.2); color: #8b5cf6; }
+    .spu-mini {
+        font-size: 0.7rem; text-align: center;
+        background: var(--bg2); border-radius: 0.5rem;
+        padding: 0.5rem; border: 1px solid var(--border);
+        overflow-x: auto;
+    }
+    .spu-mini .period {
+        display: flex; gap: 0.1rem; margin-bottom: 0.1rem;
+        justify-content: center; flex-wrap: wrap;
+    }
+    .spu-mini .cell {
+        width: 28px; height: 28px; display: flex;
+        flex-direction: column; align-items: center;
+        justify-content: center; border-radius: 3px;
+        font-size: 0.55rem; font-weight: 600;
+        border: 1px solid var(--border);
+        background: var(--bg); color: var(--text); line-height: 1.1;
+    }
+    .spu-mini .cell .symbol { font-size: 0.55rem; }
+    .spu-mini .cell .number { font-size: 0.4rem; opacity: 0.7; }
+    .spu-mini .cell.alkali { background: rgba(52,211,153,0.3); border-color: #34d399; color: #34d399; }
+    .spu-mini .cell.alkali-tanah { background: rgba(96,165,250,0.3); border-color: #60a5fa; color: #60a5fa; }
+    .spu-mini .cell.transisi { background: rgba(167,139,250,0.3); border-color: #a78bfa; color: #a78bfa; }
+    .spu-mini .cell.nonlogam { background: rgba(248,113,113,0.3); border-color: #f87171; color: #f87171; }
+    .spu-mini .cell.halogen { background: rgba(251,191,36,0.3); border-color: #fbbf24; color: #fbbf24; }
+    .spu-mini .cell.gas-mulia { background: rgba(52,211,153,0.15); border-color: #34d399; color: #34d399; }
+    .spu-mini .cell.metaloid { background: rgba(251,146,60,0.3); border-color: #fb923c; color: #fb923c; }
+    .spu-mini .cell.empty { border: none; background: transparent; }
+    .spu-mini .legend {
+        display: flex; flex-wrap: wrap; gap: 0.3rem;
+        justify-content: center; margin-top: 0.3rem;
+    }
+    .spu-mini .legend-item {
+        display: flex; align-items: center; gap: 0.2rem;
+        font-size: 0.5rem; color: var(--muted);
+    }
+    .spu-mini .legend-item .box {
+        width: 10px; height: 10px; border-radius: 2px;
+        border: 1px solid var(--border);
+    }
+    .expbox {
+        margin-top: 14px; padding: 14px 18px;
+        border-radius: 8px; font-size: 0.9rem; line-height: 1.7;
+    }
+    .expbox.good {
+        background: rgba(52,211,153,0.06);
+        border-left: 4px solid var(--success);
+    }
+    .expbox.bad {
+        background: rgba(248,113,113,0.06);
+        border-left: 4px solid var(--error);
+    }
+    @media (max-width: 640px) {
+        .ob { font-size: 0.8rem; padding: 6px 12px; }
+        .bp, .bs { font-size: 0.75rem; padding: 6px 14px; }
+        .glow-card { padding: 12px 14px; }
+        .glow-card h3 { font-size: 0.8rem; }
+        .spu-mini .cell { width: 20px; height: 20px; font-size: 0.4rem; }
+        .spu-mini .cell .symbol { font-size: 0.4rem; }
+        .spu-mini .cell .number { font-size: 0.3rem; }
+    }
+</style>
+</head>
+<body>
+<div class="bg-noise"></div>
+
+<!-- NAV -->
+<nav class="fixed top-0 left-0 right-0 z-40 backdrop-blur-md border-b" style="background:rgba(11,26,23,.88);border-color:var(--border)">
+<div class="max-w-5xl mx-auto px-4 flex items-center justify-between" style="height:52px">
+<button onclick="location.href='index.html'" class="flex items-center gap-2 text-sm font-bold tracking-wide" style="color:var(--accent);background:none;border:none;cursor:pointer;">
+<i class="fa-solid fa-arrow-left"></i><span class="hidden sm:inline">Kembali</span>
+</button>
+<div class="flex items-center gap-3">
+<span class="hidden sm:flex items-center gap-1.5 text-xs" style="color:var(--muted)">
+<i class="fa-solid fa-trophy" style="color:var(--accent)"></i><span id="nst">0/0</span>
+</span>
+<button onclick="location.href='index.html'" class="text-sm px-2.5 py-1 rounded" style="color:var(--muted);background:none;border:none;cursor:pointer;" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--muted)'">
+<i class="fa-solid fa-house"></i>
+</button>
+</div>
+</div>
+</nav>
+
+<!-- HOME -->
+<div id="vHome" class="view active pt-16 pb-12 px-4">
+<div class="max-w-4xl mx-auto">
+    <div class="relative rounded-2xl overflow-hidden mb-8 p-7 md:p-10" style="background:linear-gradient(135deg,var(--card),var(--card2))">
+        <div class="hg" style="background:var(--accent);top:-180px;right:-80px"></div>
+        <div class="hg" style="background:#34d399;bottom:-180px;left:-80px"></div>
+        <div class="relative z-10">
+            <div class="badge mb-3"><i class="fa-solid fa-table"></i> Sistem Periodik Unsur</div>
+            <h1 class="fd text-3xl md:text-4xl font-black mb-2 leading-tight">Sistem Periodik <span style="color:var(--accent)">Unsur</span></h1>
+            <p class="text-sm md:text-base max-w-lg" style="color:var(--muted);line-height:1.65">Latihan soal HOTS level C2-C6 tentang sistem periodik unsur, sifat periodik, dan hubungan konfigurasi elektron.</p>
+            <div class="flex flex-wrap gap-2 mt-4">
+                <span class="badge hots-badge hots-c3">C3 - Menganalisis</span>
+                <span class="badge hots-badge hots-c4">C4 - Mengevaluasi</span>
+                <span class="badge hots-badge hots-c5">C5 - Mencipta</span>
+                <span class="badge hots-badge hots-c6">C6 - Menilai</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="spu-mini mb-6">
+        <div class="period">
+            <div class="cell nonlogam"><span class="symbol">H</span><span class="number">1</span></div>
+            <div class="cell empty" style="width:28px;"></div><div class="cell empty" style="width:28px;"></div>
+            <div class="cell empty" style="width:28px;"></div><div class="cell empty" style="width:28px;"></div>
+            <div class="cell empty" style="width:28px;"></div><div class="cell empty" style="width:28px;"></div>
+            <div class="cell empty" style="width:28px;"></div><div class="cell empty" style="width:28px;"></div>
+            <div class="cell empty" style="width:28px;"></div><div class="cell empty" style="width:28px;"></div>
+            <div class="cell empty" style="width:28px;"></div><div class="cell empty" style="width:28px;"></div>
+            <div class="cell empty" style="width:28px;"></div><div class="cell empty" style="width:28px;"></div>
+            <div class="cell empty" style="width:28px;"></div><div class="cell empty" style="width:28px;"></div>
+            <div class="cell gas-mulia"><span class="symbol">He</span><span class="number">2</span></div>
+        </div>
+        <div class="period">
+            <div class="cell alkali"><span class="symbol">Li</span><span class="number">3</span></div>
+            <div class="cell alkali-tanah"><span class="symbol">Be</span><span class="number">4</span></div>
+            <div class="cell metaloid"><span class="symbol">B</span><span class="number">5</span></div>
+            <div class="cell nonlogam"><span class="symbol">C</span><span class="number">6</span></div>
+            <div class="cell nonlogam"><span class="symbol">N</span><span class="number">7</span></div>
+            <div class="cell nonlogam"><span class="symbol">O</span><span class="number">8</span></div>
+            <div class="cell nonlogam"><span class="symbol">F</span><span class="number">9</span></div>
+            <div class="cell gas-mulia"><span class="symbol">Ne</span><span class="number">10</span></div>
+        </div>
+        <div class="period">
+            <div class="cell alkali"><span class="symbol">Na</span><span class="number">11</span></div>
+            <div class="cell alkali-tanah"><span class="symbol">Mg</span><span class="number">12</span></div>
+            <div class="cell transisi"><span class="symbol">Al</span><span class="number">13</span></div>
+            <div class="cell metaloid"><span class="symbol">Si</span><span class="number">14</span></div>
+            <div class="cell nonlogam"><span class="symbol">P</span><span class="number">15</span></div>
+            <div class="cell nonlogam"><span class="symbol">S</span><span class="number">16</span></div>
+            <div class="cell halogen"><span class="symbol">Cl</span><span class="number">17</span></div>
+            <div class="cell gas-mulia"><span class="symbol">Ar</span><span class="number">18</span></div>
+        </div>
+        <div class="period">
+            <div class="cell alkali"><span class="symbol">K</span><span class="number">19</span></div>
+            <div class="cell alkali-tanah"><span class="symbol">Ca</span><span class="number">20</span></div>
+            <div class="cell transisi"><span class="symbol">Sc</span><span class="number">21</span></div>
+            <div class="cell transisi"><span class="symbol">Ti</span><span class="number">22</span></div>
+            <div class="cell transisi"><span class="symbol">V</span><span class="number">23</span></div>
+            <div class="cell transisi"><span class="symbol">Cr</span><span class="number">24</span></div>
+            <div class="cell transisi"><span class="symbol">Mn</span><span class="number">25</span></div>
+            <div class="cell transisi"><span class="symbol">Fe</span><span class="number">26</span></div>
+            <div class="cell transisi"><span class="symbol">Co</span><span class="number">27</span></div>
+            <div class="cell transisi"><span class="symbol">Ni</span><span class="number">28</span></div>
+            <div class="cell transisi"><span class="symbol">Cu</span><span class="number">29</span></div>
+            <div class="cell transisi"><span class="symbol">Zn</span><span class="number">30</span></div>
+            <div class="cell metaloid"><span class="symbol">Ga</span><span class="number">31</span></div>
+            <div class="cell metaloid"><span class="symbol">Ge</span><span class="number">32</span></div>
+            <div class="cell metaloid"><span class="symbol">As</span><span class="number">33</span></div>
+            <div class="cell nonlogam"><span class="symbol">Se</span><span class="number">34</span></div>
+            <div class="cell halogen"><span class="symbol">Br</span><span class="number">35</span></div>
+            <div class="cell gas-mulia"><span class="symbol">Kr</span><span class="number">36</span></div>
+        </div>
+        <div class="legend">
+            <span class="legend-item"><span class="box" style="background:rgba(52,211,153,0.3);border-color:#34d399;"></span> Alkali</span>
+            <span class="legend-item"><span class="box" style="background:rgba(96,165,250,0.3);border-color:#60a5fa;"></span> Alkali tanah</span>
+            <span class="legend-item"><span class="box" style="background:rgba(167,139,250,0.3);border-color:#a78bfa;"></span> Transisi</span>
+            <span class="legend-item"><span class="box" style="background:rgba(248,113,113,0.3);border-color:#f87171;"></span> Nonlogam</span>
+            <span class="legend-item"><span class="box" style="background:rgba(251,191,36,0.3);border-color:#fbbf24;"></span> Halogen</span>
+            <span class="legend-item"><span class="box" style="background:rgba(52,211,153,0.15);border-color:#34d399;"></span> Gas mulia</span>
+            <span class="legend-item"><span class="box" style="background:rgba(251,146,60,0.3);border-color:#fb923c;"></span> Metaloid</span>
+        </div>
+    </div>
+
+    <div class="flex flex-wrap gap-2.5 mb-6">
+        <button onclick="startQuiz()" class="bp"><i class="fa-solid fa-play"></i> Mulai Quiz Semua Soal</button>
+        <button onclick="startRandom()" class="bs"><i class="fa-solid fa-shuffle"></i> Quiz Acak 10 Soal</button>
+        <button onclick="startWrong()" class="bs" id="bWR" style="display:none"><i class="fa-solid fa-rotate-left"></i> Ulangi Salah</button>
+        <button onclick="resetAll()" class="bs"><i class="fa-solid fa-trash-can"></i> Reset</button>
+    </div>
+
+    <div class="flex flex-wrap gap-2 mb-4">
+        <button onclick="filterLevel('all')" class="bs text-xs" id="filterAll" style="background:rgba(212,160,74,.15)">Semua</button>
+        <button onclick="filterLevel('c2')" class="bs text-xs" id="filterC2">C2</button>
+        <button onclick="filterLevel('c3')" class="bs text-xs" id="filterC3">C3</button>
+        <button onclick="filterLevel('c4')" class="bs text-xs" id="filterC4">C4</button>
+        <button onclick="filterLevel('c5')" class="bs text-xs" id="filterC5">C5</button>
+        <button onclick="filterLevel('c6')" class="bs text-xs" id="filterC6">C6</button>
+    </div>
+
+    <div id="qList"></div>
+</div>
+</div>
+
+<!-- QUIZ -->
+<div id="vQuiz" class="view pt-16 pb-12 px-4">
+<div class="max-w-3xl mx-auto">
+    <div class="flex items-center justify-between mb-3">
+        <button onclick="openExit()" class="text-sm flex items-center gap-1.5" style="color:var(--muted);background:none;border:none;cursor:pointer;"><i class="fa-solid fa-xmark"></i>Keluar</button>
+        <div class="flex items-center gap-2.5">
+            <span id="qCtr" class="text-sm font-semibold" style="color:var(--muted)"></span>
+            <span id="qTyp" class="badge" style="background:rgba(212,160,74,.12);color:var(--accent);font-size:0.7rem;"></span>
+            <span id="qLevel" class="badge" style="background:var(--bg2);color:var(--muted);font-size:0.7rem;"></span>
+        </div>
+    </div>
+    <div class="w-full h-1.5 rounded-full mb-5" style="background:var(--border)">
+        <div id="qBar" class="h-full rounded-full transition-all" style="background:var(--accent);width:0%"></div>
+    </div>
+    <div id="qArea"></div>
+    <div class="flex items-center justify-between mt-7">
+        <button id="bPrv" onclick="qPrev()" class="bs" style="visibility:hidden"><i class="fa-solid fa-chevron-left mr-1"></i>Sebelumnya</button>
+        <button id="bNxt" onclick="qNext()" class="bp">Selanjutnya <i class="fa-solid fa-chevron-right ml-1"></i></button>
+    </div>
+</div>
+</div>
+
+<!-- RESULTS -->
+<div id="vRes" class="view pt-16 pb-12 px-4">
+<div class="max-w-3xl mx-auto text-center">
+    <div class="mb-7">
+        <svg class="mx-auto mb-3" style="transform:rotate(-90deg)" width="130" height="130" viewBox="0 0 130 130">
+            <circle cx="65" cy="65" r="55" fill="none" stroke="var(--border)" stroke-width="7"/>
+            <circle id="rRing" cx="65" cy="65" r="55" fill="none" stroke="var(--accent)" stroke-width="7" stroke-linecap="round" stroke-dasharray="345.6" stroke-dashoffset="345.6"/>
+        </svg>
+        <div class="text-3xl font-bold" style="color:var(--accent)" id="rPct">0%</div>
+        <div class="text-sm mt-0.5" style="color:var(--muted)" id="rLbl">—</div>
+    </div>
+    <div class="grid grid-cols-3 gap-3 mb-7">
+        <div class="rounded-xl p-3.5" style="background:var(--card);border:1px solid var(--border)">
+            <div class="text-2xl font-bold" style="color:var(--success)" id="rOk">0</div>
+            <div class="text-xs" style="color:var(--muted)">Benar</div>
+        </div>
+        <div class="rounded-xl p-3.5" style="background:var(--card);border:1px solid var(--border)">
+            <div class="text-2xl font-bold" style="color:var(--error)" id="rNo">0</div>
+            <div class="text-xs" style="color:var(--muted)">Salah</div>
+        </div>
+        <div class="rounded-xl p-3.5" style="background:var(--card);border:1px solid var(--border)">
+            <div class="text-2xl font-bold" id="rTot">0</div>
+            <div class="text-xs" style="color:var(--muted)">Total</div>
+        </div>
+    </div>
+    <div class="flex flex-wrap justify-center gap-2.5">
+        <button onclick="location.href='index.html'" class="bs"><i class="fa-solid fa-house mr-1"></i>Beranda</button>
+        <button onclick="revWrong()" class="bp" id="bRW" style="display:none"><i class="fa-solid fa-eye mr-1"></i>Review Salah</button>
+        <button onclick="retryQ()" class="bs"><i class="fa-solid fa-rotate-left mr-1"></i>Ulangi</button>
+    </div>
+</div>
+</div>
+
+<!-- REVIEW -->
+<div id="vRev" class="view pt-16 pb-12 px-4">
+<div class="max-w-3xl mx-auto">
+    <button onclick="backRev()" class="flex items-center gap-2 text-sm mb-5" style="color:var(--muted);background:none;border:none;cursor:pointer;"><i class="fa-solid fa-arrow-left"></i>Kembali</button>
+    <div id="revA"></div>
+    <div class="flex justify-center gap-2.5 mt-7">
+        <button id="rvPr" onclick="rvNav(-1)" class="bs"><i class="fa-solid fa-chevron-left mr-1"></i>Sebelumnya</button>
+        <button id="rvNx" onclick="rvNav(1)" class="bp">Selanjutnya <i class="fa-solid fa-chevron-right ml-1"></i></button>
+    </div>
+</div>
+</div>
+
+<!-- EXIT MODAL -->
+<div id="exMod" class="modal-bg">
+    <div class="rounded-xl p-5 max-w-sm w-full" style="background:var(--card);border:1px solid var(--border)">
+        <h3 class="fd text-lg font-bold mb-1.5">Keluar dari Quiz?</h3>
+        <p class="text-sm mb-4" style="color:var(--muted)">Progress quiz ini akan hilang.</p>
+        <div class="flex gap-2.5 justify-end">
+            <button onclick="closeMod()" class="bs text-sm">Batal</button>
+            <button onclick="doExit()" class="text-sm font-bold px-4 py-2 rounded-lg border-none cursor-pointer" style="background:var(--error);color:#fff">Keluar</button>
+        </div>
+    </div>
+</div>
+
+<div id="toast" class="toast" style="display:none"></div>
+
+<script>
+// ================================================================
+// DATA SOAL SISTEM PERIODIK UNSUR - HOTS C2-C6
+// ================================================================
+var QS = [];
+
+// ================================================================
+// LEVEL C2 — Pemahaman Dasar (7 soal)
+// ================================================================
+
+QS.push({
+  id: 1, topic: "struktur", type: "mcma", level: "c2",
+  stim: `
+    <div style="margin-bottom:0.5rem;">
+      <strong>Perhatikan konfigurasi elektron:</strong><br>
+      Unsur A: 1s² 2s² 2p⁶ 3s² 3p⁴<br>
+      Unsur B: 1s² 2s² 2p⁶ 3s²<br>
+      Unsur C: 1s² 2s² 2p⁶ 3s² 3p⁶ 4s¹
+    </div>
+  `,
+  q: "Pernyataan manakah yang benar mengenai sifat-sifat ketiga unsur tersebut?",
+  opts: [
+    "Unsur A memiliki elektronegativitas lebih tinggi daripada Unsur B",
+    "Unsur C termasuk golongan alkali",
+    "Unsur B bersifat nonlogam",
+    "Unsur C memiliki jari-jari atom paling besar",
+    "Unsur A memiliki 6 elektron valensi"
+  ],
+  ans: [0, 1, 3, 4],
+  exp: "A=S (elektronegatifitas tinggi, 6e valensi), B=Mg (logam, bukan nonlogam), C=K (alkali, periode 4 sehingga jari-jari terbesar). Pernyataan 3 salah karena Mg adalah logam."
+});
+
+QS.push({
+  id: 1085, topic: "struktur", type: "single", level: "c2",
+  q: "Unsur X berada di periode 3 dan memiliki 5 elektron valensi. Konfigurasi elektron atom X adalah...",
+  opts: [
+    "1s² 2s² 2p⁶ 3s² 3p³",
+    "1s² 2s² 2p⁶ 3s¹ 3p⁴",
+    "1s² 2s² 2p⁶ 3s² 3p⁵",
+    "1s² 2s² 2p⁶ 3s² 3p²",
+    "1s² 2s² 2p⁶ 3s² 3p⁴"
+  ],
+  ans: 0,
+  exp: "Periode 3 = kulit n=3. 5 elektron valensi = 3s² 3p³. Konfigurasi lengkap: 1s² 2s² 2p⁶ 3s² 3p³."
+});
+
+QS.push({
+  id: 1086, topic: "struktur", type: "single", level: "c2",
+  q: "Manakah ion berikut yang tidak memiliki konfigurasi elektron yang stabil (konfigurasi gas mulia)?",
+  opts: ["Na⁺", "O²⁻", "F⁻", "Be²⁺", "Li²⁺"],
+  ans: 4,
+  exp: "Li²⁺: Li (Z=3) melepas 2 elektron → 1 elektron tersisa (1s¹), tidak seperti gas mulia (He: 1s²). Na⁺ = Ne, O²⁻ = Ne, F⁻ = Ne, Be²⁺ = He."
+});
+
+QS.push({
+  id: 1087, topic: "struktur", type: "single", level: "c2",
+  q: "Unsur dengan nomor atom 17 akan membentuk ion bermuatan ... agar mencapai konfigurasi elektron stabil seperti gas argon.",
+  opts: ["3⁻", "2⁻", "1⁻", "1⁺", "2⁺"],
+  ans: 2,
+  exp: "Cl (Z=17): 1s² 2s² 2p⁶ 3s² 3p⁵. Untuk mencapai Ar (18 elektron), Cl menangkap 1 elektron → Cl⁻ (1⁻)."
+});
+
+QS.push({
+  id: 1088, topic: "struktur", type: "single", level: "c2",
+  q: "Magnesium (Z = 12) memiliki konfigurasi [Ne]3s². Ion stabil apakah yang cenderung dibentuk magnesium?",
+  opts: ["Mg⁺", "Mg²⁺", "Mg⁻", "Mg²⁻", "Mg³⁺"],
+  ans: 1,
+  exp: "Mg melepas 2 elektron valensi (3s²) mencapai konfigurasi Ne (2-8) → Mg²⁺."
+});
+
+QS.push({
+  id: 1129, topic: "struktur", type: "single", level: "c2",
+  q: "Atom netral dari unsur klor memiliki nomor massa 35,5. Berdasarkan informasi ini, atom klor memiliki konfigurasi elektron, jumlah kulit, dan elektron valensi berturut-turut adalah...",
+  opts: [
+    "1s² 2s² 2p⁶ 3s² 3p⁵ - 3 - 7",
+    "1s² 2s² 2p⁶ 3s² 3p⁶ - 3 - 8",
+    "1s² 2s² 2p⁶ 3s² 3p⁵ - 3 - 5",
+    "1s² 2s² 2p⁶ 3s¹ - 3 - 1",
+    "1s² 2s² 2p⁵ - 2 - 7"
+  ],
+  ans: 0,
+  exp: "Cl (Z=17): 1s² 2s² 2p⁶ 3s² 3p⁵. Jumlah kulit=3 (n=1,2,3). Elektron valensi=7 (3s² 3p⁵)."
+});
+
+QS.push({
+  id: 1130, topic: "struktur", type: "single", level: "c2",
+  q: "Unsur Kalium dalam sistem periodik, terletak pada...",
+  opts: ["Periode 3, Golongan VIIA", "Periode 4, Golongan IA", "Periode 3, Golongan IA", "Periode 4, Golongan VIIIA", "Periode 2, Golongan IA"],
+  ans: 1,
+  exp: "K (Z=19): 1s² 2s² 2p⁶ 3s² 3p⁶ 4s¹. Kulit terluar n=4 (periode 4), elektron valensi 1 (golongan IA)."
+});
+
+// ================================================================
+// LEVEL C3 — Menganalisis (5 soal)
+// ================================================================
+
+QS.push({
+  id: 3001, topic: "struktur", type: "single", level: "c3",
+  stim: `
+    <div class="figure-wrap">
+      <svg width="450" height="200" viewBox="0 0 450 200">
+        <line x1="40" y1="170" x2="430" y2="170" stroke="#1e4a3f" stroke-width="2"/>
+        <line x1="40" y1="170" x2="40" y2="20" stroke="#1e4a3f" stroke-width="2"/>
+        <text x="200" y="195" fill="#8fa89e" font-size="10">Nomor Atom</text>
+        <text x="10" y="100" fill="#8fa89e" font-size="10" transform="rotate(-90,10,100)">Jari-jari Atom (pm)</text>
+        <rect x="55" y="130" width="25" height="40" fill="rgba(52,211,153,0.6)" stroke="#34d399"/>
+        <text x="58" y="125" fill="#8fa89e" font-size="8">Na</text>
+        <rect x="95" y="138" width="25" height="32" fill="rgba(96,165,250,0.6)" stroke="#60a5fa"/>
+        <text x="98" y="133" fill="#8fa89e" font-size="8">Mg</text>
+        <rect x="135" y="142" width="25" height="28" fill="rgba(167,139,250,0.6)" stroke="#a78bfa"/>
+        <text x="138" y="137" fill="#8fa89e" font-size="8">Al</text>
+        <rect x="175" y="145" width="25" height="25" fill="rgba(248,113,113,0.6)" stroke="#f87171"/>
+        <text x="178" y="140" fill="#8fa89e" font-size="8">Si</text>
+        <rect x="215" y="148" width="25" height="22" fill="rgba(251,146,60,0.6)" stroke="#fb923c"/>
+        <text x="218" y="143" fill="#8fa89e" font-size="8">P</text>
+        <rect x="255" y="150" width="25" height="20" fill="rgba(251,191,36,0.6)" stroke="#fbbf24"/>
+        <text x="258" y="145" fill="#8fa89e" font-size="8">S</text>
+        <rect x="295" y="153" width="25" height="17" fill="rgba(52,211,153,0.6)" stroke="#34d399"/>
+        <text x="298" y="148" fill="#8fa89e" font-size="8">Cl</text>
+        <rect x="335" y="155" width="25" height="15" fill="rgba(96,165,250,0.6)" stroke="#60a5fa"/>
+        <text x="338" y="150" fill="#8fa89e" font-size="8">Ar</text>
+      </svg>
+      <div class="figure-caption">Jari-jari atom unsur periode 3</div>
+    </div>
+  `,
+  q: "Berdasarkan grafik di atas, faktor utama yang menyebabkan penurunan jari-jari atom dari Na ke Ar adalah...",
+  opts: [
+    "Massa atom semakin besar",
+    "Jumlah proton semakin banyak sehingga tarikan inti semakin kuat",
+    "Jumlah elektron valensi semakin banyak",
+    "Energi ionisasi semakin kecil",
+    "Afinitas elektron semakin positif"
+  ],
+  ans: 1,
+  exp: "Dalam satu periode, jari-jari atom menurun dari kiri ke kanan karena jumlah proton meningkat (tarikan inti lebih kuat) sedangkan jumlah kulit tetap, sehingga elektron tertarik lebih dekat ke inti."
+});
+
+QS.push({
+  id: 3002, topic: "struktur", type: "mcma", level: "c3",
+  stim: `
+    <div class="table-wrap">
+      <table class="soal-table">
+        <tr><th>Unsur</th><th>Na</th><th>Mg</th><th>Al</th><th>Si</th><th>P</th><th>S</th><th>Cl</th><th>Ar</th></tr>
+        <tr><td>IE₁</td><td>496</td><td>738</td><td>578</td><td>789</td><td>1012</td><td>1000</td><td>1251</td><td>1521</td></tr>
+      </table>
+    </div>
+    <div style="font-size:0.85rem;color:var(--muted);margin-top:0.5rem;">
+      <i class="fa-solid fa-info-circle"></i> Perhatikan pola energi ionisasi dari Na ke Ar.
+    </div>
+  `,
+  q: "Berdasarkan data energi ionisasi di atas, pernyataan yang BENAR adalah... (Pilih 2 jawaban benar)",
+  opts: [
+    "Energi ionisasi Na < Mg karena Na memiliki elektron valensi 1 yang lebih mudah dilepas",
+    "Energi ionisasi Al < Mg karena elektron 3p lebih mudah dilepas dari 3s",
+    "Energi ionisasi S > P karena S memiliki elektron berpasangan pada orbital p",
+    "Energi ionisasi Cl < Ar karena Cl memiliki 7 elektron valensi",
+    "Energi ionisasi meningkat secara teratur dari Na ke Ar tanpa anomali"
+  ],
+  ans: [0, 1],
+  exp: "Na memiliki elektron valensi 1 (lebih mudah dilepas) daripada Mg (2 elektron). Al lebih rendah dari Mg karena elektron 3p (Al) lebih mudah dilepas dari 3s (Mg). S lebih rendah dari P karena elektron berpasangan. Ar tertinggi karena oktet penuh."
+});
+
+QS.push({
+  id: 3003, topic: "struktur", type: "mcma", level: "c3",
+  stim: `
+    <div class="table-wrap">
+      <table class="soal-table">
+        <tr><th>Unsur</th><th>F</th><th>Cl</th><th>Br</th><th>I</th></tr>
+        <tr><td>Elektronegativitas</td><td>3,98</td><td>3,16</td><td>2,96</td><td>2,66</td></tr>
+        <tr><td>Jari-jari atom (pm)</td><td>64</td><td>99</td><td>114</td><td>133</td></tr>
+      </table>
+    </div>
+  `,
+  q: "Berdasarkan data di atas, pernyataan yang BENAR tentang hubungan jari-jari atom dan keelektronegatifan adalah... (Pilih 2 jawaban benar)",
+  opts: [
+    "Semakin besar jari-jari atom, semakin kecil keelektronegatifan",
+    "Semakin kecil jari-jari atom, semakin besar keelektronegatifan",
+    "F memiliki keelektronegatifan tertinggi karena jari-jarinya terkecil",
+    "I memiliki keelektronegatifan tertinggi karena jari-jarinya terbesar",
+    "Jari-jari atom tidak mempengaruhi keelektronegatifan"
+  ],
+  ans: [0, 2],
+  exp: "Dalam satu golongan, jari-jari atom meningkat dari atas ke bawah (F < Cl < Br < I), sedangkan keelektronegatifan menurun (F > Cl > Br > I). Semakin kecil jari-jari, semakin kuat tarikan inti terhadap elektron, sehingga keelektronegatifan semakin besar."
+});
+
+// ── SOAL C3.4 (REVISI) ──
+QS.push({
+  id: 3004, topic: "struktur", type: "mcma", level: "c3",
+  stim: `
+    <div class="stim">
+      <p>Dua unsur tak dikenal memiliki konfigurasi elektron berikut:</p>
+      <p style="margin-top:0.4rem;">
+        <strong>Unsur X:</strong> [Kr] 4d¹⁰ 5s² 5p⁴<br>
+        <strong>Unsur Y:</strong> [Kr] 4d¹⁰ 5s² 5p²
+      </p>
+      <p style="margin-top:0.4rem;font-size:0.85rem;color:var(--muted);">
+        <i class="fa-solid fa-info-circle"></i> Kedua unsur berada pada periode yang sama.
+      </p>
+    </div>
+  `,
+  q: "Berdasarkan konfigurasi elektron di atas, perbandingan sifat X dan Y yang PALING TEPAT adalah... (Pilih 2 jawaban benar)",
+  opts: [
+    "Energi ionisasi pertama X > Y karena elektron valensi X lebih banyak",
+    "Jari-jari atom X < Y karena tarikan inti X lebih kuat terhadap elektron valensi",
+    "Keelektronegatifan Y > X karena Y memiliki elektron valensi lebih sedikit",
+    "X dan Y berada pada golongan yang sama karena sama-sama berakhir di subkulit p",
+    "Afinitas elektron Y lebih negatif dari X karena Y lebih mudah menerima elektron"
+  ],
+  ans: [0, 1],
+  exp: "X (5s² 5p⁴) = golongan VIA, Y (5s² 5p²) = golongan IVA. Dalam satu periode (kiri→kanan), X lebih ke kanan dari Y. Maka: jari-jari X < Y (tarikan inti lebih kuat), energi ionisasi X > Y (elektron lebih terikat), keelektronegatifan X > Y. Opsi C, D, E salah karena Y berada di kiri X."
+});
+
+// ── SOAL C3.5 (REVISI) ──
+QS.push({
+  id: 3005, topic: "struktur", type: "mcma", level: "c3",
+  stim: `
+    <div class="stim">
+      <p>Tiga unsur berada pada periode 3:</p>
+      <p style="margin-top:0.4rem;">
+        <strong>X:</strong> 1s² 2s² 2p⁶ 3s¹<br>
+        <strong>Y:</strong> 1s² 2s² 2p⁶ 3s² 3p¹<br>
+        <strong>Z:</strong> 1s² 2s² 2p⁶ 3s² 3p⁶
+      </p>
+    </div>
+  `,
+  q: "Berdasarkan konfigurasi elektron di atas, pernyataan yang PALING TEPAT tentang urutan energi ionisasi pertama (IE₁) adalah... (Pilih 2 jawaban benar)",
+  opts: [
+    "IE₁ Z > Y > X karena Z memiliki oktet penuh yang sangat stabil",
+    "IE₁ X > Y > Z karena X memiliki elektron valensi paling sedikit",
+    "IE₁ Y < X karena elektron 3p Y lebih mudah dilepas dari 3s X",
+    "IE₁ X < Y karena X hanya memiliki 1 elektron valensi",
+    "IE₁ ketiganya sama karena berada pada periode yang sama"
+  ],
+  ans: [0, 3],
+  exp: "X = Na (3s¹, golongan IA), Y = Al (3s² 3p¹, golongan IIIA), Z = Ar (3s² 3p⁶, gas mulia). Urutan IE₁: Ar > Al > Na. Opsi A benar (Z tertinggi karena oktet penuh). Opsi D benar (Na < Al karena hanya 1 elektron valensi). Opsi B salah karena urutannya terbalik. Opsi C salah karena data menunjukkan Al > Na. Opsi E salah."
+});
+
+// ================================================================
+// LEVEL C4 — Mengevaluasi (4 soal)
+// ================================================================
+
+QS.push({
+  id: 4001, topic: "struktur", type: "mcma", level: "c4",
+  stim: `
+    <div style="background:var(--bg2);border-radius:0.5rem;padding:0.75rem;margin-bottom:0.5rem;border:1px solid var(--border);">
+      <ol style="color:var(--text);font-size:0.9rem;list-style-type:decimal;padding-left:1.5rem;">
+        <li>Jari-jari atom menurun dalam satu periode dari kiri ke kanan</li>
+        <li>Energi ionisasi meningkat dalam satu periode dari kiri ke kanan</li>
+        <li>Afinitas elektron meningkat dalam satu golongan dari atas ke bawah</li>
+        <li>Keelektronegatifan meningkat dalam satu periode dari kiri ke kanan</li>
+        <li>Sifat logam meningkat dalam satu periode dari kiri ke kanan</li>
+      </ol>
+    </div>
+  `,
+  q: "Dari pernyataan-pernyataan di atas, manakah yang PALING TEPAT mengenai sifat keperiodikan unsur? (Pilih 2 pernyataan yang benar)",
+  opts: [
+    "Pernyataan 1 benar: jari-jari atom menurun karena tarikan inti meningkat",
+    "Pernyataan 2 benar: energi ionisasi meningkat karena elektron lebih terikat kuat",
+    "Pernyataan 3 benar: afinitas elektron meningkat karena jari-jari atom bertambah",
+    "Pernyataan 4 benar: keelektronegatifan meningkat karena tarikan inti lebih kuat",
+    "Pernyataan 5 benar: sifat logam meningkat karena energi ionisasi menurun"
+  ],
+  ans: [0, 3],
+  exp: "Pernyataan 1 dan 4 benar. Dalam satu periode, jari-jari atom menurun (kiri→kanan) dan keelektronegatifan meningkat. Pernyataan 3 salah karena afinitas elektron menurun dalam golongan (atas→bawah). Pernyataan 5 salah karena sifat logam menurun dalam periode."
+});
+
+QS.push({
+  id: 4002, topic: "struktur", type: "mcma", level: "c4",
+  stim: `
+    <div class="table-wrap">
+      <table class="soal-table">
+        <tr><th>Ion</th><th>Konfigurasi Elektron</th><th>Jumlah Proton</th><th>Jumlah Elektron</th></tr>
+        <tr><td>N³⁻</td><td>1s² 2s² 2p⁶</td><td>7</td><td>10</td></tr>
+        <tr><td>O²⁻</td><td>1s² 2s² 2p⁶</td><td>8</td><td>10</td></tr>
+        <tr><td>F⁻</td><td>1s² 2s² 2p⁶</td><td>9</td><td>10</td></tr>
+        <tr><td>Na⁺</td><td>1s² 2s² 2p⁶</td><td>11</td><td>10</td></tr>
+        <tr><td>Mg²⁺</td><td>1s² 2s² 2p⁶</td><td>12</td><td>10</td></tr>
+      </table>
+    </div>
+    <div style="font-size:0.85rem;color:var(--muted);margin-top:0.5rem;">
+      <i class="fa-solid fa-info-circle"></i> Ion-isoelektronik memiliki jumlah elektron yang sama.
+    </div>
+  `,
+  q: "Berdasarkan data di atas, pernyataan yang PALING TEPAT tentang ion-isoelektronik adalah... (Pilih 2 jawaban benar)",
+  opts: [
+    "Jari-jari ion N³⁻ > O²⁻ > F⁻ > Na⁺ > Mg²⁺",
+    "Jari-jari ion Mg²⁺ > Na⁺ > F⁻ > O²⁻ > N³⁻",
+    "Semakin besar muatan positif, semakin kecil jari-jari ion",
+    "Semakin besar muatan negatif, semakin kecil jari-jari ion",
+    "Semua ion memiliki jari-jari yang sama karena jumlah elektron sama"
+  ],
+  ans: [0, 2],
+  exp: "Untuk ion isoelektronik, semakin besar muatan positif (jumlah proton lebih banyak), semakin kuat tarikan inti terhadap elektron, sehingga jari-jari ion semakin kecil. Urutan: N³⁻ (muatan -3) > O²⁻ > F⁻ > Na⁺ > Mg²⁺ (muatan +2)."
+});
+
+QS.push({
+  id: 4003, topic: "struktur", type: "single", level: "c4",
+  stim: `
+    <div class="table-wrap">
+      <table class="soal-table">
+        <tr><th>Unsur</th><th>Afinitas Elektron (kJ/mol)</th></tr>
+        <tr><td>F</td><td>-328</td></tr>
+        <tr><td>Cl</td><td>-349</td></tr>
+        <tr><td>Br</td><td>-325</td></tr>
+        <tr><td>I</td><td>-295</td></tr>
+        <tr><td>O</td><td>-141</td></tr>
+        <tr><td>S</td><td>-200</td></tr>
+      </table>
+    </div>
+  `,
+  q: "Berdasarkan data afinitas elektron di atas, pernyataan yang PALING TEPAT adalah...",
+  opts: [
+    "Cl memiliki afinitas elektron paling negatif karena jari-jarinya paling kecil",
+    "F memiliki afinitas elektron paling negatif karena jari-jarinya paling kecil",
+    "Cl memiliki afinitas elektron lebih negatif dari F karena jari-jari Cl lebih besar",
+    "I memiliki afinitas elektron paling negatif karena jari-jarinya paling besar",
+    "O memiliki afinitas elektron lebih negatif dari S karena jari-jari O lebih besar"
+  ],
+  ans: 2,
+  exp: "Cl memiliki afinitas elektron lebih negatif (-349 kJ/mol) daripada F (-328 kJ/mol) karena jari-jari Cl lebih besar sehingga lebih mudah menerima elektron tanpa tolakan yang kuat. F memiliki jari-jari sangat kecil sehingga tolakan elektron lebih besar."
+});
+
+// ── SOAL C4.4 (BARU) — Error Analysis ──
+QS.push({
+  id: 4004, topic: "struktur", type: "single", level: "c4",
+  stim: `
+    <div class="stim">
+      <p>Seorang siswa menulis:</p>
+      <blockquote style="margin-left:1rem;border-left:3px solid var(--accent);padding-left:0.8rem;font-style:italic;color:var(--muted);">
+        "Karena Cl memiliki 7 elektron valensi dan jari-jari lebih besar dari F, 
+        maka Cl lebih elektronegatif dari F. Hal ini karena Cl lebih mudah 
+        menarik elektron dari F."
+      </blockquote>
+      <p style="margin-top:0.5rem;">Data:</p>
+      <table class="soal-table">
+        <tr><th>Unsur</th><th>Elektronegativitas</th><th>Jari-jari (pm)</th></tr>
+        <tr><td>F</td><td>3,98</td><td>64</td></tr>
+        <tr><td>Cl</td><td>3,16</td><td>99</td></tr>
+      </table>
+    </div>
+  `,
+  q: "Kesalahan penalaran utama siswa tersebut terletak pada...",
+  opts: [
+    "Menganggap jari-jari lebih besar berarti lebih elektronegatif, padahal hubungannya berbanding terbalik",
+    "Menganggap Cl memiliki 7 elektron valensi, padahal Cl memiliki 8",
+    "Menganggap F memiliki jari-jari lebih kecil, padahal F lebih besar dari Cl",
+    "Menganggap data elektronegativitas tidak relevan dengan jari-jari",
+    "Menganggap Cl dan F berada di golongan yang berbeda"
+  ],
+  ans: 0,
+  exp: "Kesalahan utama: siswa menganggap jari-jari lebih besar → keelektronegatifan lebih besar. Padahal hubungannya BERBANDING TERBALIK: semakin besar jari-jari, semakin lemah tarikan inti terhadap elektron, sehingga keelektronegatifan menurun. Data menunjukkan F (r=64) memiliki EN 3,98 > Cl (r=99) EN 3,16."
+});
+
+// ================================================================
+// LEVEL C5 — Mencipta (3 soal)
+// ================================================================
+
+// ── SOAL C5.1 (REVISI) — Prediksi unsur Z=120 ──
+QS.push({
+  id: 5001, topic: "struktur", type: "mcma", level: "c5",
+  stim: `
+    <div class="stim">
+      <p>Para ilmuwan sedang berupaya mensintesis <strong>unsur superberat dengan nomor atom 120 (Ubn)</strong>. 
+      Unsur ini diprediksi terletak di bawah Radium (Ra, Z=88) pada tabel periodik.</p>
+      <p style="margin-top:0.4rem;">Pola konfigurasi elektron golongan IIA:</p>
+      <p style="margin-top:0.4rem;font-size:0.85rem;">
+        Be: [He] 2s² → Mg: [Ne] 3s² → Ca: [Ar] 4s² → Sr: [Kr] 5s²<br>
+        Ba: [Xe] 6s² → Ra: [Rn] 7s² → <strong>Ubn: [Og] 8s²</strong>
+      </p>
+      <p style="margin-top:0.4rem;font-size:0.85rem;color:var(--muted);">
+        <i class="fa-solid fa-lightbulb"></i> Prediksikan sifat Ubn berdasarkan tren golongan IIA.
+      </p>
+    </div>
+  `,
+  q: "Prediksi yang PALING TEPAT tentang unsur Ubn (Z=120) adalah... (Pilih 3 jawaban benar)",
+  opts: [
+    "Konfigurasi elektronnya berakhir pada [Og] 8s²",
+    "Termasuk golongan logam alkali tanah dengan 2 elektron valensi",
+    "Memiliki jari-jari atom lebih besar dari Ra karena penambahan kulit 8",
+    "Memiliki energi ionisasi pertama lebih besar dari Ba karena inti lebih besar",
+    "Merupakan gas mulia karena mengisi kulit 8",
+    "Titik lelehnya lebih tinggi dari Mg karena ikatan logam lebih kuat"
+  ],
+  ans: [0, 1, 2],
+  exp: "Ubn (Z=120) diprediksi: (1) konfigurasi [Og] 8s² (golongan IIA, periode 8); (2) logam alkali tanah dengan 2 elektron valensi; (3) jari-jari atom lebih besar dari Ra karena penambahan kulit. Opsi D salah: IE₁ justru menurun dalam golongan (Ba > Ra > Ubn). Opsi E salah: bukan gas mulia. Opsi F salah: titik leleh menurun dalam golongan IIA dari atas ke bawah."
+});
+
+// ── SOAL C5.2 (REVISI) — Rancang pemisahan logam ──
+QS.push({
+  id: 5002, topic: "struktur", type: "mcma", level: "c5",
+  stim: `
+    <div class="stim">
+      <p>Sebuah laboratorium menerima <strong>campuran serbuk logam Fe, Cu, dan Zn</strong>. 
+      Ketiga logam ini akan dipisahkan berdasarkan sifat magnetiknya menggunakan magnet kuat.</p>
+    </div>
+    <div class="table-wrap">
+      <table class="soal-table">
+        <tr><th>Logam</th><th>Konfigurasi 3d</th><th>Sifat Magnetik</th></tr>
+        <tr><td>Fe</td><td>3d⁶ 4s²</td><td>Feromagnetik (ditarik magnet)</td></tr>
+        <tr><td>Cu</td><td>3d¹⁰ 4s¹</td><td>Diamagnetik (tidak ditarik)</td></tr>
+        <tr><td>Zn</td><td>3d¹⁰ 4s²</td><td>Diamagnetik (tidak ditarik)</td></tr>
+      </table>
+    </div>
+  `,
+  q: "Strategi pemisahan yang PALING TEPAT dan ALASAN yang benar adalah... (Pilih 2 jawaban benar)",
+  opts: [
+    "Fe dapat dipisahkan dari Cu dan Zn menggunakan magnet karena Fe memiliki elektron tidak berpasangan di orbital 3d",
+    "Cu dan Zn tidak dapat dipisahkan dengan magnet karena keduanya diamagnetik (semua elektron berpasangan)",
+    "Cu dapat dipisahkan dari Zn menggunakan magnet karena Cu memiliki 1 elektron di 4s",
+    "Zn dapat dipisahkan dari Cu dengan magnet karena Zn memiliki 3d¹⁰ yang stabil",
+    "Ketiga logam dapat dipisahkan sekaligus menggunakan magnet karena semuanya transisi"
+  ],
+  ans: [0, 1],
+  exp: "Fe feromagnetik karena elektron 3d⁶ memiliki 4 elektron tidak berpasangan → ditarik magnet. Cu (3d¹⁰ 4s¹) dan Zn (3d¹⁰ 4s²) diamagnetik karena semua elektron berpasangan → tidak ditarik magnet. Setelah Fe terpisah, Cu dan Zn masih bercampur dan perlu metode lain (misalnya reaksi dengan HCl: Zn larut, Cu tidak)."
+});
+
+// ── SOAL C5.3 (BARU) — Rancang unsur kriteria ganda ──
+QS.push({
+  id: 5003, topic: "struktur", type: "mcma", level: "c5",
+  stim: `
+    <div class="stim">
+      <p>Seorang peneliti ingin <strong>merancang unsur baru</strong> yang memiliki sifat berikut:</p>
+      <ul style="margin-left:1.2rem;margin-top:0.4rem;">
+        <li>Memiliki 2 elektron valensi</li>
+        <li>Berada pada periode 5</li>
+        <li>Jari-jari atom lebih kecil dari Sr tetapi lebih besar dari Ca</li>
+        <li>Energi ionisasi pertama lebih tinggi dari Rb tetapi lebih rendah dari Ca</li>
+      </ul>
+    </div>
+  `,
+  q: "Rancangan unsur yang PALING TEPAT untuk memenuhi semua kriteria di atas adalah... (Pilih 2 jawaban benar)",
+  opts: [
+    "Unsur tersebut berada di golongan IIA",
+    "Konfigurasi elektronnya berakhir pada [Kr] 5s²",
+    "Unsur tersebut adalah logam transisi karena berada di periode 5",
+    "Unsur tersebut memiliki nomor atom 38 (Sr)",
+    "Unsur tersebut memiliki jari-jari atom lebih besar dari Rb"
+  ],
+  ans: [0, 1],
+  exp: "Kriteria: 2 elektron valensi → golongan IIA. Periode 5 → kulit terluar n=5. Konfigurasi: [Kr] 5s². Unsur ini adalah Sr (Z=38). Opsi C salah (bukan transisi). Opsi D salah karena Sr sudah ada (kriteria 'baru' tidak terpenuhi, tapi ini soal rancangan berdasarkan kriteria). Opsi E salah karena Sr (golongan IIA) lebih kecil dari Rb (golongan IA) dalam periode yang sama."
+});
+
+// ================================================================
+// LEVEL C6 — Menilai (3 soal)
+// ================================================================
+
+// ── SOAL C6.1 (REVISI) — Single choice nilai pernyataan ──
+QS.push({
+  id: 6001, topic: "struktur", type: "single", level: "c6",
+  stim: `
+    <div class="stim">
+      <p>Seorang siswa menulis ringkasan tentang sifat keperiodikan unsur:</p>
+      <ol style="margin-left:1.2rem;margin-top:0.4rem;">
+        <li>Unsur dalam satu golongan memiliki jumlah kulit yang sama.</li>
+        <li>Unsur dalam satu periode memiliki jumlah elektron valensi yang sama.</li>
+        <li>Jari-jari atom meningkat dalam satu golongan dari atas ke bawah.</li>
+        <li>Energi ionisasi meningkat dalam satu golongan dari atas ke bawah.</li>
+        <li>Keelektronegatifan menurun dalam satu periode dari kiri ke kanan.</li>
+      </ol>
+    </div>
+  `,
+  q: "Penilaian yang PALING TEPAT terhadap ringkasan siswa tersebut adalah...",
+  opts: [
+    "Hanya pernyataan 3 yang benar; pernyataan lain salah",
+    "Pernyataan 1 dan 3 benar; pernyataan 2, 4, 5 salah",
+    "Pernyataan 1, 2, dan 3 benar; pernyataan 4 dan 5 salah",
+    "Hanya pernyataan 2 dan 5 yang benar",
+    "Semua pernyataan benar"
+  ],
+  ans: 1,
+  exp: "Pernyataan 1 BENAR: satu golongan = jumlah kulit sama. Pernyataan 2 SALAH: satu periode = jumlah kulit sama, bukan elektron valensi. Pernyataan 3 BENAR: jari-jari meningkat dalam golongan (atas→bawah). Pernyataan 4 SALAH: IE menurun dalam golongan. Pernyataan 5 SALAH: keelektronegatifan meningkat dalam periode. Jadi hanya 1 dan 3 yang benar."
+});
+
+// ── SOAL C6.2 (REVISI) — Nilai pemilihan logam konstruksi ──
+QS.push({
+  id: 6002, topic: "struktur", type: "mcma", level: "c6",
+  stim: `
+    <div class="stim">
+      <p>Sebuah perusahaan konstruksi akan memilih logam untuk <strong>kerangka jembatan</strong>. 
+      Kriteria utama: titik leleh tinggi, kuat, dan tahan korosi.</p>
+    </div>
+    <div class="table-wrap">
+      <table class="soal-table">
+        <tr><th>Logam</th><th>Titik Leleh (°C)</th><th>Golongan</th><th>Keterangan</th></tr>
+        <tr><td>Na</td><td>98</td><td>IA</td><td>Reaktif dengan air</td></tr>
+        <tr><td>Mg</td><td>650</td><td>IIA</td><td>Ringan, mudah teroksidasi</td></tr>
+        <tr><td>Al</td><td>660</td><td>IIIA</td><td>Ringan, tahan korosi (lapisan oksida)</td></tr>
+        <tr><td>Fe</td><td>1538</td><td>Transisi</td><td>Kuat, mudah berkarat</td></tr>
+        <tr><td>W</td><td>3422</td><td>Transisi</td><td>Sangat kuat, titik leleh tertinggi</td></tr>
+      </table>
+    </div>
+  `,
+  q: "Berdasarkan data dan kriteria di atas, penilaian yang PALING TEPAT adalah... (Pilih 2 jawaban benar)",
+  opts: [
+    "W adalah pilihan terbaik untuk kekuatan dan titik leleh tinggi, tetapi mahal dan berat",
+    "Fe adalah pilihan seimbang, tetapi perlu perlindungan dari korosi (misalnya cat atau galvanisasi)",
+    "Na adalah pilihan terbaik karena titik lelehnya rendah sehingga mudah dibentuk",
+    "Mg lebih baik dari Al karena titik lelehnya hampir sama tetapi lebih ringan",
+    "Semua logam golongan IA dan IIA cocok untuk konstruksi jembatan"
+  ],
+  ans: [0, 1],
+  exp: "W (tungsten) memiliki titik leleh tertinggi (3422°C) dan sangat kuat, tetapi berat dan mahal. Fe adalah pilihan seimbang dengan titik leleh 1538°C dan kuat, tetapi mudah berkarat sehingga perlu perlindungan. Na tidak cocok (titik leleh rendah, reaktif). Mg mudah teroksidasi. Golongan IA/IIA umumnya tidak cocok untuk konstruksi."
+});
+
+// ── SOAL C6.3 (BARU) — Nilai 3 klaim siswa ──
+QS.push({
+  id: 6003, topic: "struktur", type: "single", level: "c6",
+  stim: `
+    <div class="stim">
+      <p>Tiga siswa berdebat tentang <strong>mengapa jari-jari atom Na lebih besar dari Cl</strong>:</p>
+      <ul style="margin-left:1.2rem;margin-top:0.4rem;">
+        <li><strong>Siswa A:</strong> "Karena Na memiliki lebih sedikit elektron valensi, sehingga elektron tidak tertarik kuat."</li>
+        <li><strong>Siswa B:</strong> "Karena Na memiliki lebih sedikit proton, sehingga tarikan inti terhadap elektron lebih lemah."</li>
+        <li><strong>Siswa C:</strong> "Karena Na berada di golongan IA yang jari-jarinya memang selalu besar."</li>
+      </ul>
+    </div>
+  `,
+  q: "Penilaian yang PALING TEPAT terhadap ketiga argumen tersebut adalah...",
+  opts: [
+    "Siswa B benar karena jumlah proton menentukan kekuatan tarikan inti, sedangkan A dan C tidak menjelaskan sebab utama",
+    "Siswa A benar karena jumlah elektron valensi menentukan jari-jari, sedangkan B dan C salah",
+    "Siswa C benar karena golongan IA selalu memiliki jari-jari terbesar",
+    "Ketiga siswa benar karena semua argumen saling melengkapi",
+    "Ketiga siswa salah karena jari-jari atom tidak dapat dijelaskan"
+  ],
+  ans: 0,
+  exp: "Sebab utama jari-jari Na > Cl: Na memiliki 11 proton, Cl memiliki 17 proton. Dengan jumlah kulit sama (n=3), tarikan inti Cl lebih kuat → elektron tertarik lebih dekat → jari-jari Cl lebih kecil. Siswa B benar. Siswa A kurang tepat: elektron valensi bukan sebab utama. Siswa C hanya menyebut posisi tanpa menjelaskan sebab (circular reasoning)."
+});
+
+// ================================================================
+// STATE MANAGEMENT
+// ================================================================
+var S = {
+  view: "home", qids: [], qi: 0, ans: {}, mode: "topic",
+  ri: 0, rqs: [], wrong: [], done: {}, scores: {}, filter: "all"
+};
+
+function load() {
+  try {
+    var d = JSON.parse(localStorage.getItem("tka_kim_spu"));
+    if (d) {
+      S.done = {};
+      (d.done || []).forEach(function(x) { S.done[x] = true; });
+      S.wrong = d.wrong || [];
+      S.scores = d.scores || {};
+    }
+  } catch(e) {}
+}
+function save() {
+  try {
+    localStorage.setItem("tka_kim_spu", JSON.stringify({
+      done: Object.keys(S.done), wrong: S.wrong, scores: S.scores
+    }));
+  } catch(e) {}
+}
+load();
+
+function go(v) {
+  var names = {home:"vHome", quiz:"vQuiz", res:"vRes", rev:"vRev"};
+  document.querySelectorAll(".view").forEach(function(el) { el.classList.remove("active"); });
+  var el = document.getElementById(names[v]);
+  if (el) el.classList.add("active");
+  S.view = v;
+  window.scrollTo(0, 0);
+  if (v === "home") renderHome();
+}
+
+function renderHome() {
+  document.getElementById("bWR").style.display = S.wrong.length > 0 ? "flex" : "none";
+  updateNS();
+  renderList();
+}
+
+function updateNS() {
+  var tc = 0, cc = 0;
+  for (var k in S.scores) { tc += S.scores[k].t; cc += S.scores[k].c; }
+  document.getElementById("nst").textContent = tc > 0 ? cc + "/" + tc : "0/0";
+}
+
+function getLevelBadge(level) {
+  var labels = {c2:"C2", c3:"C3", c4:"C4", c5:"C5", c6:"C6"};
+  var colors = {c2:"#34d399", c3:"#fbbf24", c4:"#f97316", c5:"#ef4444", c6:"#8b5cf6"};
+  var bgColors = {
+    c2:"rgba(52,211,153,0.15)", c3:"rgba(251,191,36,0.15)",
+    c4:"rgba(249,115,22,0.15)", c5:"rgba(239,68,68,0.15)",
+    c6:"rgba(139,92,246,0.15)"
+  };
+  return '<span class="badge" style="background:' + bgColors[level] + ';color:' + colors[level] + ';font-size:0.65rem;">' + labels[level] + '</span>';
+}
+
+function renderList() {
+  var list = document.getElementById("qList");
+  list.innerHTML = "";
+  var filtered = QS.filter(function(q) {
+    if (S.filter === "all") return true;
+    return q.level === S.filter;
+  });
+  filtered.forEach(function(q, i) {
+    var answered = S.done[q.id];
+    var wasWrong = S.wrong.indexOf(q.id) >= 0;
+    var tl = q.type === "mcma" ? "MCMA" : "Pilihan Ganda";
+    var levelLabel = q.level ? getLevelBadge(q.level) : "";
+
+    var d = document.createElement("div");
+    d.className = "glow-card";
+    d.style.cursor = "pointer";
+    d.onclick = function() { singleQ(q.id); };
+    d.innerHTML =
+      '<div class="w-9 h-9 rounded-lg flex items-center justify-center text-sm font-bold flex-shrink-0" style="background:' +
+        (answered ? (wasWrong ? 'rgba(248,113,113,.12);color:var(--error)' : 'rgba(52,211,153,.12);color:var(--success)') : 'var(--bg2);color:var(--muted)') +
+      '">' + (answered ? (wasWrong ? '<i class="fa-solid fa-xmark"></i>' : '<i class="fa-solid fa-check"></i>') : (i + 1)) + '</div>' +
+      '<div class="flex-1 min-w-0">' +
+        '<div class="text-sm font-semibold mb-0.5 truncate" style="color:var(--text)">' + plain(q.q).substring(0, 75) + (q.q.length > 75 ? '...' : '') + '</div>' +
+        '<div class="flex items-center gap-2 flex-wrap">' +
+          '<span class="badge" style="background:var(--bg2);color:var(--muted);font-size:.68rem">' + tl + '</span>' +
+          levelLabel +
+        '</div>' +
+      '</div>' +
+      '<i class="fa-solid fa-chevron-right text-xs" style="color:var(--border)"></i>';
+    list.appendChild(d);
+  });
+}
+
+function filterLevel(level) {
+  S.filter = level;
+  document.querySelectorAll('[id^="filter"]').forEach(function(el) {
+    el.style.background = "transparent";
+  });
+  var btn = document.getElementById("filter" + level.toUpperCase());
+  if (btn) btn.style.background = "rgba(212,160,74,.15)";
+  renderList();
+}
+
+function plain(html) {
+  var d = document.createElement("div");
+  d.innerHTML = html;
+  return d.textContent || "";
+}
+
+function startQuiz() {
+  S.qids = QS.map(function(q) { return q.id; });
+  S.ans = {}; S.qi = 0; S.mode = "topic";
+  go("quiz"); renderQ();
+}
+function startRandom() {
+  var sh = QS.slice().sort(function() { return Math.random() - 0.5; }).slice(0, 10);
+  S.qids = sh.map(function(q) { return q.id; });
+  S.ans = {}; S.qi = 0; S.mode = "random";
+  go("quiz"); renderQ();
+}
+function startWrong() {
+  var wq = QS.filter(function(q) { return S.wrong.indexOf(q.id) >= 0; });
+  if (wq.length === 0) return;
+  S.qids = wq.map(function(q) { return q.id; });
+  S.ans = {}; S.qi = 0; S.mode = "wrong";
+  go("quiz"); renderQ();
+}
+function singleQ(qid) {
+  S.qids = [qid]; S.ans = {}; S.qi = 0; S.mode = "single";
+  go("quiz"); renderQ();
+}
+
+function renderQ() {
+  var qid = S.qids[S.qi];
+  var q = QS.find(function(x) { return x.id === qid; });
+  if (!q) return;
+  var total = S.qids.length;
+  var idx = S.qi + 1;
+  var pct = Math.round(idx / total * 100);
+
+  document.getElementById("qCtr").textContent = idx + " / " + total;
+  document.getElementById("qBar").style.width = pct + "%";
+  var tl = {single: "Pilihan Ganda", mcma: "MCMA"};
+  document.getElementById("qTyp").textContent = tl[q.type] || q.type;
+  var levelLabels = {c2:"C2 - Pemahaman", c3:"C3 - Menganalisis", c4:"C4 - Mengevaluasi", c5:"C5 - Mencipta", c6:"C6 - Menilai"};
+  document.getElementById("qLevel").textContent = q.level ? levelLabels[q.level] : "";
+  document.getElementById("bPrv").style.visibility = S.qi > 0 ? "visible" : "hidden";
+  var isLast = S.qi === total - 1;
+  document.getElementById("bNxt").innerHTML = isLast ? "Selesai <i class='fa-solid fa-check ml-1'></i>" : "Selanjutnya <i class='fa-solid fa-chevron-right ml-1'></i>";
+
+  var h = "";
+  if (q.stim) h += '<div class="stim">' + q.stim + '</div>';
+  h += '<h3 class="font-bold text-base mb-4 leading-relaxed" style="color:var(--text)">' + q.q + '</h3>';
+
+  if (q.type === "single") {
+    var letters = "ABCDE";
+    h += '<div class="space-y-2.5">';
+    q.opts.forEach(function(opt, i) {
+      var sel = S.ans[qid] === i;
+      h += '<button class="ob' + (sel ? ' sel' : '') + '" onclick="selS(' + qid + ',' + i + ')">' +
+        '<span class="w-7 h-7 min-w-[1.75rem] rounded-full border-2 flex items-center justify-center text-xs font-bold flex-shrink-0" style="border-color:' + (sel ? 'var(--accent)' : 'var(--border)') + ';color:' + (sel ? 'var(--accent)' : 'var(--muted)') + '">' + letters[i] + '</span>' +
+        '<span class="text-sm">' + opt + '</span></button>';
+    });
+    h += '</div>';
+  } else if (q.type === "mcma") {
+    var ua = S.ans[qid] || [];
+    h += '<div class="space-y-2.5">';
+    q.opts.forEach(function(opt, i) {
+      var sel = ua.indexOf(i) >= 0;
+      h += '<button class="ob' + (sel ? ' sel' : '') + '" onclick="togM(' + qid + ',' + i + ')">' +
+        '<div class="ck">' + (sel ? '<i class="fa-solid fa-check text-xs" style="color:#0b1a17"></i>' : '') + '</div>' +
+        '<span class="text-sm">' + opt + '</span></button>';
+    });
+    h += '</div>';
+    h += '<p class="text-xs mt-2.5" style="color:var(--muted)"><i class="fa-solid fa-circle-info mr-1"></i>Pilih SEMUA jawaban yang benar</p>';
+  }
+  document.getElementById("qArea").innerHTML = h;
+}
+
+function selS(qid, i) { S.ans[qid] = i; renderQ(); }
+function togM(qid, i) {
+  if (!S.ans[qid]) S.ans[qid] = [];
+  var arr = S.ans[qid];
+  var idx = arr.indexOf(i);
+  if (idx >= 0) arr.splice(idx, 1); else arr.push(i);
+  renderQ();
+}
+
+function qNext() {
+  if (S.qi === S.qids.length - 1) { finishQ(); return; }
+  S.qi++; renderQ(); window.scrollTo(0, 0);
+}
+function qPrev() {
+  if (S.qi > 0) { S.qi--; renderQ(); window.scrollTo(0, 0); }
+}
+
+function finishQ() {
+  var correct = 0, wrong = 0;
+  var ts = {};
+  S.qids.forEach(function(qid) {
+    var q = QS.find(function(x) { return x.id === qid; });
+    if (!q) return;
+    var ua = S.ans[qid];
+    var ok = false;
+    if (q.type === "single") ok = ua === q.ans;
+    else if (q.type === "mcma") {
+      var u = (ua || []).slice().sort().join(",");
+      var c = q.ans.slice().sort().join(",");
+      ok = u === c;
+    }
+    S.done[qid] = true;
+    if (ok) correct++; else { wrong++; S.wrong.push(qid); }
+    if (!ts[q.topic]) ts[q.topic] = {c:0, t:0};
+    ts[q.topic].t++;
+    if (ok) ts[q.topic].c++;
+  });
+  S.wrong = uniq(S.wrong);
+  for (var k in ts) {
+    if (!S.scores[k]) S.scores[k] = {c:0, t:0};
+    S.scores[k].c += ts[k].c;
+    S.scores[k].t += ts[k].t;
+  }
+  save();
+
+  var total = correct + wrong;
+  var pct = total > 0 ? Math.round(correct / total * 100) : 0;
+  document.getElementById("rPct").textContent = pct + "%";
+  document.getElementById("rOk").textContent = correct;
+  document.getElementById("rNo").textContent = wrong;
+  document.getElementById("rTot").textContent = total;
+
+  var circ = 2 * Math.PI * 55;
+  var ring = document.getElementById("rRing");
+  ring.style.strokeDasharray = circ;
+  ring.style.strokeDashoffset = circ - (circ * pct / 100);
+  ring.style.stroke = pct >= 70 ? "var(--success)" : pct >= 40 ? "var(--accent)" : "var(--error)";
+
+  var lbl = pct >= 90 ? "Luar Biasa!" : pct >= 70 ? "Bagus Sekali!" : pct >= 50 ? "Cukup Baik" : "Perlu Belajar Lagi";
+  document.getElementById("rLbl").textContent = lbl;
+  document.getElementById("bRW").style.display = wrong > 0 ? "inline-flex" : "none";
+  go("res");
+}
+
+function uniq(arr) {
+  var seen = {}, out = [];
+  arr.forEach(function(x) { if (!seen[x]) { seen[x] = true; out.push(x); } });
+  return out;
+}
+
+function retryQ() {
+  if (S.mode === "topic") startQuiz();
+  else if (S.mode === "random") startRandom();
+  else if (S.mode === "wrong") startWrong();
+  else if (S.mode === "single") singleQ(S.qids[0]);
+}
+
+function revWrong() {
+  var wqs = S.qids.filter(function(qid) { return S.wrong.indexOf(qid) >= 0; });
+  if (wqs.length === 0) { toast("Tidak ada jawaban salah", "var(--success)"); return; }
+  S.rqs = wqs.map(function(qid) { return QS.find(function(x) { return x.id === qid; }); }).filter(Boolean);
+  S.ri = 0;
+  go("rev"); renderRev();
+}
+
+function renderRev() {
+  var q = S.rqs[S.ri];
+  if (!q) return;
+  var total = S.rqs.length;
+  document.getElementById("rvPr").style.visibility = S.ri > 0 ? "visible" : "hidden";
+  document.getElementById("rvNx").innerHTML = S.ri === total - 1 ? "Kembali <i class='fa-solid fa-check ml-1'></i>" : "Selanjutnya <i class='fa-solid fa-chevron-right ml-1'></i>";
+
+  var ua = S.ans[q.id];
+  var ok = false;
+  if (q.type === "single") ok = ua === q.ans;
+  else if (q.type === "mcma") {
+    var u = (ua || []).slice().sort().join(",");
+    ok = u === q.ans.slice().sort().join(",");
+  }
+
+  var letters = "ABCDE";
+  var h = '<div class="text-xs mb-2 font-semibold" style="color:var(--muted)">Soal ' + (S.ri + 1) + " / " + total + '</div>';
+  if (q.stim) h += '<div class="stim">' + q.stim + '</div>';
+  h += '<h3 class="font-bold text-sm mb-4 leading-relaxed">' + q.q + '</h3>';
+  h += '<div class="space-y-2.5">';
+
+  if (q.type === "single") {
+    q.opts.forEach(function(opt, i) {
+      var cls = "off";
+      if (i === q.ans) cls += " ok";
+      else if (ua === i && i !== q.ans) cls += " no";
+      h += '<button class="ob ' + cls + '">' +
+        '<span class="w-7 h-7 min-w-[1.75rem] rounded-full border-2 flex items-center justify-center text-xs font-bold flex-shrink-0" style="border-color:' + (i === q.ans ? "var(--success)" : ua === i ? "var(--error)" : "var(--border)") + ';color:' + (i === q.ans ? "var(--success)" : ua === i ? "var(--error)" : "var(--muted)") + '">' + letters[i] + '</span>' +
+        '<span class="text-sm">' + opt + '</span>' +
+        (i === q.ans ? '<i class="fa-solid fa-circle-check ml-auto" style="color:var(--success)"></i>' : '') +
+        (ua === i && i !== q.ans ? '<i class="fa-solid fa-circle-xmark ml-auto" style="color:var(--error)"></i>' : '') +
+      '</button>';
+    });
+  } else if (q.type === "mcma") {
+    q.opts.forEach(function(opt, i) {
+      var isUA = (ua || []).indexOf(i) >= 0;
+      var isCA = q.ans.indexOf(i) >= 0;
+      var cls = "off";
+      if (isCA) cls += " ok";
+      else if (isUA && !isCA) cls += " no";
+      h += '<button class="ob ' + cls + '">' +
+        '<div class="ck">' + (isCA ? '<i class="fa-solid fa-check text-xs" style="color:#0b1a17"></i>' : isUA ? '<i class="fa-solid fa-xmark text-xs" style="color:#fff"></i>' : '') + '</div>' +
+        '<span class="text-sm">' + opt + '</span></button>';
+    });
+  }
+  h += '</div>';
+  h += '<div class="expbox ' + (ok ? 'good' : 'bad') + '">' +
+    '<div class="flex items-center gap-2 mb-1.5 font-bold text-sm">' +
+      '<i class="fa-solid ' + (ok ? 'fa-circle-check' : 'fa-circle-xmark') + '" style="color:' + (ok ? 'var(--success)' : 'var(--error)') + '"></i>' +
+      (ok ? 'Jawaban Benar' : 'Jawaban Salah') +
+    '</div>' +
+    '<p style="color:var(--text);line-height:1.6;font-size:0.9rem;">' + q.exp + '</p>' +
+  '</div>';
+
+  document.getElementById("revA").innerHTML = h;
+  window.scrollTo(0, 0);
+}
+
+function rvNav(dir) {
+  if (dir === 1 && S.ri === S.rqs.length - 1) { backRev(); return; }
+  S.ri = Math.max(0, Math.min(S.rqs.length - 1, S.ri + dir));
+  renderRev();
+}
+function backRev() {
+  if (S.mode === "single") go("home");
+  else go("res");
+}
+
+function openExit() { document.getElementById("exMod").classList.add("open"); }
+function closeMod() { document.getElementById("exMod").classList.remove("open"); }
+function doExit() { closeMod(); go("home"); }
+
+function resetAll() {
+  S.done = {}; S.wrong = []; S.scores = {};
+  save(); renderHome(); toast("Progress berhasil direset", "var(--success)");
+}
+function toast(msg, bg) {
+  var t = document.getElementById("toast");
+  t.style.display = "block";
+  t.style.background = bg || "var(--card)";
+  t.style.color = "#fff";
+  t.textContent = msg;
+  setTimeout(function() { t.style.display = "none"; }, 2200);
+}
+
+renderHome();
+console.log("Sistem Periodik Unsur - HOTS C2-C6 loaded: " + QS.length + " soal");
+</script>
+</body>
+</html>
